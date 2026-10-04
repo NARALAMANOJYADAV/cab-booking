@@ -10,11 +10,12 @@ import { syncBookingToSupabase } from '../services/supabaseSync.service.js';
 
 export const bookingRouter = Router();
 
-function getBookingQuery(idParam: string) {
-  if (mongoose.Types.ObjectId.isValid(idParam)) {
-    return { $or: [{ _id: idParam }, { bookingReference: idParam }] };
+function getBookingQuery(idParam: any) {
+  const idStr = Array.isArray(idParam) ? idParam[0] : String(idParam || '');
+  if (idStr && mongoose.Types.ObjectId.isValid(idStr)) {
+    return { $or: [{ _id: idStr }, { bookingReference: idStr }] };
   }
-  return { bookingReference: idParam };
+  return { bookingReference: idStr };
 }
 
 /**
