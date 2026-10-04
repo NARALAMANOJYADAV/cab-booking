@@ -1,4 +1,6 @@
 import http from 'http';
+import path from 'path';
+import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -68,6 +70,34 @@ app.use('/api/v1/wallet', walletRouter);
 app.use('/api/v1/corporate', corporateRouter);
 app.use('/api/v1/ai', aiRouter);
 app.use('/api/v1/admin', adminRouter);
+
+// Serve Frontend SPA if built (for all-in-one unified Render deployment)
+const webDistPath = path.resolve(process.cwd(), 'apps/web/dist');
+const altWebDistPath = path.resolve(process.cwd(), '../web/dist');
+const distPath = fs.existsSync(webDistPath) ? webDistPath : (fs.existsSync(altWebDistPath) ? altWebDistPath : null);
+
+if (distPath) {
+  console.log(`[Server] Serving frontend SPA from: ${distPath}`);
+  app.use(express.static(distPath));
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health' || req.path.startsWith('/socket.io')) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.json({
+      status: 'healthy',
+      platform: 'FairRide Intelligent Mobility API',
+      tagline: 'Book With Confidence.',
+      message: 'Backend API is running. Build frontend to view web interface.',
+      healthCheck: '/health',
+      adminOverview: '/api/v1/admin/overview'
+    });
+  });
+}
 
 // Global Error Handler
 app.use(errorHandler);
