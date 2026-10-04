@@ -12,6 +12,7 @@ import {
 } from '../models/index.js';
 import { authenticate, AuthenticatedRequest, requireRole } from '../middleware/auth.middleware.js';
 import { VEHICLE_CONFIGS } from '@fairride/constants';
+import { syncAllDatabaseToSupabase, getSupabaseSyncStatus } from '../services/supabaseSync.service.js';
 
 export const adminRouter = Router();
 
@@ -220,6 +221,30 @@ adminRouter.get('/users', authenticate, async (req: Request, res: Response) => {
       success: true,
       data: usersWithWallets
     });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+/**
+ * Get Supabase Connection & Table Sync Status
+ */
+adminRouter.get('/supabase-status', authenticate, async (req: Request, res: Response) => {
+  try {
+    const status = await getSupabaseSyncStatus();
+    res.json({ success: true, data: status });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+/**
+ * Trigger Full MongoDB -> Supabase PostgreSQL Synchronization
+ */
+adminRouter.post('/sync-supabase', authenticate, async (req: Request, res: Response) => {
+  try {
+    const result = await syncAllDatabaseToSupabase();
+    res.json(result);
   } catch (err: any) {
     res.status(500).json({ success: false, message: err.message });
   }

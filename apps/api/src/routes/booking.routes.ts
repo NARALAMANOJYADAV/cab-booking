@@ -5,9 +5,17 @@ import { DispatchService } from '../services/dispatch.service.js';
 import { AntiCancellationEngine } from '../services/antiCancellation.service.js';
 import { generateTripPin } from '@fairride/shared';
 import { v4 as uuidv4 } from 'uuid';
+import mongoose from 'mongoose';
 import { syncBookingToSupabase } from '../services/supabaseSync.service.js';
 
 export const bookingRouter = Router();
+
+function getBookingQuery(idParam: string) {
+  if (mongoose.Types.ObjectId.isValid(idParam)) {
+    return { $or: [{ _id: idParam }, { bookingReference: idParam }] };
+  }
+  return { bookingReference: idParam };
+}
 
 /**
  * Create a new ride booking from a locked fare
@@ -16,6 +24,7 @@ bookingRouter.post('/create', authenticate, async (req: AuthenticatedRequest, re
   try {
     const {
       lockId,
+      fareLockId,
       pickup,
       destination,
       vehicleCategory,
@@ -26,7 +35,8 @@ bookingRouter.post('/create', authenticate, async (req: AuthenticatedRequest, re
       corporateId
     } = req.body;
 
-    const fareLock = await FareLock.findById(lockId);
+    const targetLockId = lockId || fareLockId;
+    const fareLock = await FareLock.findById(targetLockId);
     if (!fareLock || fareLock.status !== 'ACTIVE') {
       res.status(400).json({
         success: false,
@@ -118,7 +128,7 @@ bookingRouter.post('/create', authenticate, async (req: AuthenticatedRequest, re
  */
 bookingRouter.get('/:id', authenticate, async (req: Request, res: Response) => {
   try {
-    const booking = await Booking.findById(req.params.id)
+    const booking = await Booking.findOne(getBookingQuery(req.params.id))
       .populate('passengerId', 'name phone rating profilePicture emergencyContacts')
       .populate({
         path: 'driverId',
@@ -143,7 +153,7 @@ bookingRouter.get('/:id', authenticate, async (req: Request, res: Response) => {
 bookingRouter.post('/:id/driver-response', authenticate, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { action, reason, wasAfterContact, demandedExtraCash } = req.body;
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findOne(getBookingQuery(req.params.id));
     if (!booking) {
       res.status(404).json({ success: false, message: 'Booking not found' });
       return;
@@ -203,7 +213,7 @@ bookingRouter.post('/:id/driver-response', authenticate, async (req: Authenticat
 bookingRouter.post('/:id/transition', authenticate, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { nextState, pin, tollAdjustment = 0 } = req.body;
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findOne(getBookingQuery(req.params.id));
     if (!booking) {
       res.status(404).json({ success: false, message: 'Booking not found' });
       return;
@@ -248,7 +258,7 @@ bookingRouter.post('/:id/transition', authenticate, async (req: AuthenticatedReq
 bookingRouter.post('/:id/passenger-cancel', authenticate, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { reason } = req.body;
-    const booking = await Booking.findById(req.params.id);
+    const booking = await Booking.findOne(getBookingQuery(req.params.id));
     if (!booking) {
       res.status(404).json({ success: false, message: 'Booking not found' });
       return;
@@ -264,6 +274,7 @@ bookingRouter.post('/:id/passenger-cancel', authenticate, async (req: Authentica
       metadata: { reason }
     });
     await booking.save();
+    await syncBookingToSupabase(booking);
 
     res.json({ success: true, message: 'Ride cancelled without hidden penalties', data: booking });
   } catch (err: any) {

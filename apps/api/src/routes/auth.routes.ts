@@ -6,6 +6,7 @@ import { authenticate, AuthenticatedRequest } from '../middleware/auth.middlewar
 import { validate } from '../middleware/error.middleware.js';
 import { RegisterUserSchema, LoginSchema, SendOtpSchema, VerifyOtpSchema } from '@fairride/validation';
 import { v4 as uuidv4 } from 'uuid';
+import { syncUserToSupabase } from '../services/supabaseSync.service.js';
 
 export const authRouter = Router();
 
@@ -40,6 +41,7 @@ authRouter.post('/register', validate(RegisterUserSchema), async (req: Request, 
         existing.isVerified = true;
         if (role) existing.role = role;
         await existing.save();
+        await syncUserToSupabase(existing).catch(() => {});
 
         const tokens = AuthService.generateTokens(existing);
         res.status(200).json({
@@ -83,6 +85,9 @@ authRouter.post('/register', validate(RegisterUserSchema), async (req: Request, 
       userId: user._id,
       balance: 100
     });
+
+    // Real-time synchronization to Supabase public.users
+    await syncUserToSupabase(user, user.role === 'PASSENGER' ? 100 : 0).catch(() => {});
 
     const tokens = AuthService.generateTokens(user);
     res.status(201).json({
@@ -142,6 +147,9 @@ authRouter.post('/login', validate(LoginSchema), async (req: Request, res: Respo
     }
 
     const tokens = AuthService.generateTokens(user);
+    // Background sync to keep Supabase user record updated
+    syncUserToSupabase(user).catch(() => {});
+
     res.json({
       success: true,
       message: 'Logged in successfully',
@@ -262,6 +270,9 @@ authRouter.post('/verify-otp', validate(VerifyOtpSchema), async (req: Request, r
     }
 
     const tokens = AuthService.generateTokens(user);
+    // Real-time synchronization to Supabase public.users
+    await syncUserToSupabase(user, 100).catch(() => {});
+
     res.json({
       success: true,
       message: 'Mobile number verified successfully',

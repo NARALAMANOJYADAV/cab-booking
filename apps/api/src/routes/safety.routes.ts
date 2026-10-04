@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { SafetyService } from '../services/safety.service.js';
 import { SafetyIncident, Booking, User } from '../models/index.js';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { syncSafetyIncidentToSupabase } from '../services/supabaseSync.service.js';
 
 export const safetyRouter = Router();
 
@@ -17,6 +18,8 @@ safetyRouter.post('/sos', authenticate, async (req: AuthenticatedRequest, res: R
     }
 
     const incident = await SafetyService.triggerSos(bookingId, coordinates, address, audioSnapshot);
+    syncSafetyIncidentToSupabase(incident).catch(() => {});
+
     res.status(201).json({
       success: true,
       message: 'Emergency SOS activated. Safety Operations team and emergency contacts alerted.',

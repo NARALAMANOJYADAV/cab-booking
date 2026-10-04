@@ -111,5 +111,7 @@ export const api = {
     if (params?.role) q.append('role', params.role);
     const qs = q.toString();
     return request<any>(`/admin/users${qs ? '?' + qs : ''}`);
-  }
+  },
+  getSupabaseStatus: () => request<any>('/admin/supabase-status'),
+  syncSupabase: () => request<any>('/admin/sync-supabase', { method: 'POST' })
 };

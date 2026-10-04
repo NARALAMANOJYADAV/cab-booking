@@ -10,6 +10,7 @@ import { setupSocketIO } from './socket/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
 import { User } from './models/index.js';
 import { runSeed } from './scripts/seed.js';
+import { syncAllDatabaseToSupabase } from './services/supabaseSync.service.js';
 
 import { authRouter } from './routes/auth.routes.js';
 import { locationRouter } from './routes/location.routes.js';
@@ -83,6 +84,9 @@ async function start() {
       console.log('[Server] Database is empty. Running initial seed...');
       await runSeed();
     }
+
+    // Auto-sync existing MongoDB data to Supabase in the background
+    syncAllDatabaseToSupabase().catch((e) => console.warn('[Supabase Auto-Sync] Warning:', e.message));
 
     server.listen(config.PORT, () => {
       console.log(`====================================================`);

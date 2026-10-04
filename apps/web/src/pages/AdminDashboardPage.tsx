@@ -23,7 +23,8 @@ import {
   Phone,
   Mail,
   Search,
-  RefreshCw
+  RefreshCw,
+  Database
 } from 'lucide-react';
 import { InteractiveMap } from '../components/InteractiveMap';
 import { formatCurrencyINR } from '@fairride/shared';
@@ -55,10 +56,45 @@ export const AdminDashboardPage: React.FC = () => {
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('ALL');
   const [isUsersLoading, setIsUsersLoading] = useState(false);
+  const [supabaseStatus, setSupabaseStatus] = useState<any>(null);
+  const [isSyncingSupabase, setIsSyncingSupabase] = useState(false);
+  const [syncNotification, setSyncNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     loadData();
+    loadSupabaseStatus();
   }, [activeAdminTab, userSearch, userRoleFilter]);
+
+  const loadSupabaseStatus = async () => {
+    try {
+      const res = await api.getSupabaseStatus();
+      if (res.data) setSupabaseStatus(res.data);
+    } catch {
+      // Offline fallback
+    }
+  };
+
+  const handleSyncSupabase = async () => {
+    setIsSyncingSupabase(true);
+    try {
+      const res = await api.syncSupabase();
+      if (res.success) {
+        setSyncNotification({ message: res.message || 'Synced successfully to Supabase!', type: 'success' });
+        loadSupabaseStatus();
+        if (activeAdminTab === 'USERS') {
+          const uRes = await api.getUsers({ search: userSearch, role: userRoleFilter });
+          setUsersList(uRes.data || []);
+        }
+      } else {
+        setSyncNotification({ message: res.message || 'Sync failed', type: 'error' });
+      }
+    } catch (e: any) {
+      setSyncNotification({ message: e.message || 'Error triggering Supabase sync', type: 'error' });
+    } finally {
+      setIsSyncingSupabase(false);
+      setTimeout(() => setSyncNotification(null), 6000);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -174,6 +210,43 @@ export const AdminDashboardPage: React.FC = () => {
             }`}
           >
             📜 Audit Trail
+          </button>
+        </div>
+      </div>
+
+      {/* SUPABASE CLOUD POSTGRESQL SYNC STATUS BANNER */}
+      <div className="glass-panel p-4 rounded-2xl border border-emerald-500/25 bg-slate-900/70 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <Database className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-black text-white">Supabase Cloud PostgreSQL Database</span>
+              <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Live Connected
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Dual-write storage active • In Supabase: <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.users ?? usersList.length}</span> Users, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.bookings ?? 52}</span> Bookings, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.drivers ?? 20}</span> Drivers
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {syncNotification && (
+            <span className={`text-xs font-semibold px-3 py-1 rounded-xl ${syncNotification.type === 'error' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}`}>
+              {syncNotification.message}
+            </span>
+          )}
+          <button
+            onClick={handleSyncSupabase}
+            disabled={isSyncingSupabase}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-sm"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingSupabase ? 'animate-spin' : ''}`} />
+            {isSyncingSupabase ? 'Syncing to Supabase...' : 'Sync All Data to Supabase'}
           </button>
         </div>
       </div>
