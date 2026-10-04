@@ -12,11 +12,11 @@ export async function connectDB(): Promise<void> {
   if (uri && uri.trim() !== '') {
     try {
       console.log(`[Database] Connecting to MongoDB at ${uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@')}...`);
-      await mongoose.connect(uri);
+      await mongoose.connect(uri, { serverSelectionTimeoutMS: 2500 });
       console.log('[Database] MongoDB connected successfully.');
       return;
-    } catch (err) {
-      console.warn('[Database] Failed to connect to specified MONGO_URI, falling back to in-memory instance:', err);
+    } catch (err: any) {
+      console.warn('[Database] Local MongoDB unreachable, falling back to embedded in-memory MongoDB engine.');
     }
   }
 
