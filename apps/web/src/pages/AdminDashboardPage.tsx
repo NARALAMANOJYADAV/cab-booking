@@ -19,7 +19,11 @@ import {
   MapPin,
   ChevronRight,
   ShieldCheck,
-  Layers
+  Layers,
+  Phone,
+  Mail,
+  Search,
+  RefreshCw
 } from 'lucide-react';
 import { InteractiveMap } from '../components/InteractiveMap';
 import { formatCurrencyINR } from '@fairride/shared';
@@ -27,7 +31,7 @@ import { formatCurrencyINR } from '@fairride/shared';
 export const AdminDashboardPage: React.FC = () => {
   const { currentUser } = useAppStore();
 
-  const [activeAdminTab, setActiveAdminTab] = useState<'OVERVIEW' | 'LIVE_OPS' | 'SAFETY' | 'DISPUTES' | 'FRAUD' | 'AUDIT_LOGS'>('OVERVIEW');
+  const [activeAdminTab, setActiveAdminTab] = useState<'OVERVIEW' | 'LIVE_OPS' | 'USERS' | 'SAFETY' | 'DISPUTES' | 'FRAUD' | 'AUDIT_LOGS'>('OVERVIEW');
   const [kpis, setKpis] = useState<any>({
     totalBookings: 184,
     activeTrips: 12,
@@ -47,16 +51,25 @@ export const AdminDashboardPage: React.FC = () => {
   const [safetyIncidents, setSafetyIncidents] = useState<any[]>([]);
   const [fraudAlerts, setFraudAlerts] = useState<any[]>([]);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [usersList, setUsersList] = useState<any[]>([]);
+  const [userSearch, setUserSearch] = useState('');
+  const [userRoleFilter, setUserRoleFilter] = useState('ALL');
+  const [isUsersLoading, setIsUsersLoading] = useState(false);
 
   useEffect(() => {
     loadData();
-  }, [activeAdminTab]);
+  }, [activeAdminTab, userSearch, userRoleFilter]);
 
   const loadData = async () => {
     try {
       if (activeAdminTab === 'OVERVIEW') {
         const res = await api.getAdminOverview();
         if (res.data?.kpis) setKpis(res.data.kpis);
+      } else if (activeAdminTab === 'USERS') {
+        setIsUsersLoading(true);
+        const res = await api.getUsers({ search: userSearch, role: userRoleFilter });
+        setUsersList(res.data || []);
+        setIsUsersLoading(false);
       } else if (activeAdminTab === 'DISPUTES') {
         const res = await api.getAllDisputes();
         setDisputes(res.data || []);
@@ -113,6 +126,14 @@ export const AdminDashboardPage: React.FC = () => {
             }`}
           >
             📊 Overview
+          </button>
+          <button
+            onClick={() => setActiveAdminTab('USERS')}
+            className={`px-3 py-1.5 rounded-xl transition-all ${
+              activeAdminTab === 'USERS' ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            👥 Users ({usersList.length || kpis.totalPassengers || 65})
           </button>
           <button
             onClick={() => setActiveAdminTab('LIVE_OPS')}
@@ -224,6 +245,135 @@ export const AdminDashboardPage: React.FC = () => {
       {activeAdminTab === 'LIVE_OPS' && (
         <div className="space-y-4">
           <InteractiveMap className="h-[420px]" showCorridor={true} />
+        </div>
+      )}
+
+      {/* TAB: USERS & PASSENGERS DIRECTORY */}
+      {activeAdminTab === 'USERS' && (
+        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div>
+              <h3 className="text-base font-black text-white flex items-center gap-2">
+                <Users className="w-5 h-5 text-emerald-400" />
+                <span>USER & PASSENGER DIRECTORY</span>
+              </h3>
+              <p className="text-xs text-slate-400">
+                Live database of all registered riders, drivers, and partners with instant wallet & verification details
+              </p>
+            </div>
+            <span className="text-xs bg-emerald-500/20 text-emerald-300 font-black px-3 py-1 rounded-full border border-emerald-500/30">
+              {usersList.length} REGISTERED USERS
+            </span>
+          </div>
+
+          {/* Search & Filter Toolbar */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <Search className="w-4 h-4 text-emerald-400" />
+              </div>
+              <input
+                type="text"
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                placeholder="Search by name, phone number, email address, or referral code..."
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+              />
+            </div>
+            <select
+              value={userRoleFilter}
+              onChange={(e) => setUserRoleFilter(e.target.value)}
+              className="px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-semibold focus:outline-none focus:border-emerald-400"
+            >
+              <option value="ALL">All Roles ({usersList.length})</option>
+              <option value="PASSENGER">Passengers</option>
+              <option value="DRIVER">Drivers</option>
+              <option value="CORPORATE_MANAGER">Corporate</option>
+              <option value="SUPER_ADMIN">Admins</option>
+            </select>
+          </div>
+
+          {/* Users List Grid */}
+          <div className="space-y-3">
+            {isUsersLoading ? (
+              <div className="p-8 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+                <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
+                <span>Loading live user directory...</span>
+              </div>
+            ) : usersList.length === 0 ? (
+              <div className="p-8 text-center text-xs text-slate-400 bg-slate-950/60 rounded-2xl border border-slate-800">
+                No users found matching your search.
+              </div>
+            ) : (
+              usersList.map((user) => (
+                <div
+                  key={user._id || user.userId}
+                  className="p-4 rounded-2xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 text-slate-950 font-black flex items-center justify-center text-sm shadow-md shrink-0">
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-extrabold text-sm text-white">{user.name}</h4>
+                        <span
+                          className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${
+                            user.role === 'PASSENGER'
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                              : user.role === 'DRIVER'
+                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                              : user.role === 'SUPER_ADMIN'
+                              ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                              : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                          }`}
+                        >
+                          {user.role}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 mt-1">
+                        <span className="flex items-center gap-1 font-mono text-slate-300">
+                          <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                          {user.phone || 'Phone not set'}
+                        </span>
+                        <span className="flex items-center gap-1 truncate max-w-[240px]">
+                          <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                          {user.email || 'Email not set'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-4 text-xs shrink-0 self-end md:self-center">
+                    <div className="text-right">
+                      <span className="text-[10px] text-slate-400 block uppercase">Wallet Balance</span>
+                      <span className="font-mono font-bold text-white">
+                        {formatCurrencyINR(user.walletBalance ?? 100)}
+                      </span>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="text-[10px] text-slate-400 block uppercase">Trust Score</span>
+                      <span className="font-mono font-bold text-emerald-400">
+                        {user.trustScore ?? 99}% Verified
+                      </span>
+                    </div>
+
+                    {user.referralCode && (
+                      <div className="text-right hidden lg:block">
+                        <span className="text-[10px] text-slate-400 block uppercase">Referral Code</span>
+                        <span className="font-mono font-bold text-brand-300">{user.referralCode}</span>
+                      </div>
+                    )}
+
+                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                      ✓ Active & Verified
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       )}
 

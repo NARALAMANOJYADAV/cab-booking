@@ -7,7 +7,8 @@ import {
   SafetyIncident,
   Dispute,
   FraudAlert,
-  AuditLog
+  AuditLog,
+  Wallet
 } from '../models/index.js';
 import { authenticate, AuthenticatedRequest, requireRole } from '../middleware/auth.middleware.js';
 import { VEHICLE_CONFIGS } from '@fairride/constants';
@@ -180,6 +181,45 @@ adminRouter.get('/audit-logs', authenticate, async (req: Request, res: Response)
   try {
     const logs = await AuditLog.find().populate('actorId', 'name email role').sort({ createdAt: -1 }).limit(100);
     res.json({ success: true, data: logs });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+/**
+ * List all Registered Users with Wallets
+ */
+adminRouter.get('/users', authenticate, async (req: Request, res: Response) => {
+  try {
+    const { search, role } = req.query;
+    const filter: any = {};
+    if (role && role !== 'ALL') {
+      filter.role = role;
+    }
+    if (search && typeof search === 'string' && search.trim() !== '') {
+      const q = search.trim();
+      filter.$or = [
+        { name: { $regex: q, $options: 'i' } },
+        { email: { $regex: q, $options: 'i' } },
+        { phone: { $regex: q, $options: 'i' } },
+        { referralCode: { $regex: q, $options: 'i' } }
+      ];
+    }
+
+    const users = await User.find(filter).select('-password').sort({ createdAt: -1 }).limit(100);
+    const userIds = users.map((u) => u._id);
+    const wallets = await Wallet.find({ userId: { $in: userIds } });
+    const walletMap = new Map(wallets.map((w) => [w.userId.toString(), w.balance]));
+
+    const usersWithWallets = users.map((u) => ({
+      ...u.toObject(),
+      walletBalance: walletMap.get(u._id.toString()) ?? 100
+    }));
+
+    res.json({
+      success: true,
+      data: usersWithWallets
+    });
   } catch (err: any) {
     res.status(500).json({ success: false, message: err.message });
   }

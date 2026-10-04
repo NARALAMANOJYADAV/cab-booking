@@ -286,7 +286,17 @@ authRouter.get('/me', authenticate, async (req: AuthenticatedRequest, res: Respo
       res.status(404).json({ success: false, code: 'USER_NOT_FOUND', message: 'User not found' });
       return;
     }
-    res.json({ success: true, data: user });
+    const wallet = await Wallet.findOne({ userId: user._id });
+    const fairPoint = await FairPoint.findOne({ userId: user._id });
+
+    res.json({
+      success: true,
+      data: {
+        ...user.toObject(),
+        walletBalance: wallet?.balance ?? 100,
+        fairPoints: fairPoint?.balance ?? 100
+      }
+    });
   } catch (err: any) {
     res.status(500).json({ success: false, message: err.message });
   }

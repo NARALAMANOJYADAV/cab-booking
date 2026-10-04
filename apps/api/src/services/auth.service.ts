@@ -8,6 +8,10 @@ export interface TokenPayload {
   role: UserRole;
   email: string;
   name: string;
+  phone?: string;
+  trustScore?: number;
+  referralCode?: string;
+  isVerified?: boolean;
 }
 
 export class AuthService {
@@ -16,7 +20,11 @@ export class AuthService {
       userId: (user._id as any).toString(),
       role: user.role,
       email: user.email,
-      name: user.name
+      name: user.name,
+      phone: user.phone,
+      trustScore: user.trustScore,
+      referralCode: user.referralCode,
+      isVerified: user.isVerified
     };
 
     const accessToken = jwt.sign(payload, config.JWT_SECRET, {

@@ -104,5 +104,12 @@ export const api = {
   verifyDriver: (id: string, body: any) => request<any>(`/admin/drivers/${id}/verify`, { method: 'POST', body: JSON.stringify(body) }),
   getFraudAlerts: () => request<any>('/admin/fraud-alerts'),
   actionFraudAlert: (id: string, body: any) => request<any>(`/admin/fraud-alerts/${id}/action`, { method: 'POST', body: JSON.stringify(body) }),
-  getAuditLogs: () => request<any>('/admin/audit-logs')
+  getAuditLogs: () => request<any>('/admin/audit-logs'),
+  getUsers: (params?: { search?: string; role?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.search) q.append('search', params.search);
+    if (params?.role) q.append('role', params.role);
+    const qs = q.toString();
+    return request<any>(`/admin/users${qs ? '?' + qs : ''}`);
+  }
 };

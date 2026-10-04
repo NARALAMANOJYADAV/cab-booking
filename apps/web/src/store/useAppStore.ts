@@ -11,6 +11,9 @@ export interface UserSession {
   token?: string;
   trustScore?: number;
   isVerified?: boolean;
+  referralCode?: string;
+  walletBalance?: number;
+  fairPoints?: number;
 }
 
 export interface ActiveBookingState {
@@ -55,6 +58,8 @@ interface AppState {
   logout: () => void;
   setActiveRoleView: (role: 'PASSENGER' | 'DRIVER' | 'ADMIN' | 'CORPORATE') => void;
   quickSwitchRole: (role: 'PASSENGER' | 'DRIVER' | 'ADMIN' | 'CORPORATE') => void;
+  loginDemoPersona: (role: 'PASSENGER' | 'DRIVER' | 'ADMIN' | 'CORPORATE') => void;
+  refreshProfile: () => Promise<void>;
 
   // Active Booking
   activeBooking: ActiveBookingState | null;
@@ -171,6 +176,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   setActiveRoleView: (role) => set({ activeRoleView: role }),
 
   quickSwitchRole: (role) => {
+    // Switch the active dashboard view without overriding the logged in user's profile
+    set({ activeRoleView: role });
+  },
+
+  loginDemoPersona: (role) => {
     if (role === 'PASSENGER') {
       get().login(DEFAULT_PASSENGER, 'mock_jwt_token_demo');
     } else if (role === 'DRIVER') {
@@ -179,6 +189,36 @@ export const useAppStore = create<AppState>((set, get) => ({
       get().login(DEFAULT_ADMIN, 'mock_jwt_token_admin');
     } else if (role === 'CORPORATE') {
       get().login(DEFAULT_CORPORATE, 'mock_jwt_token_corporate');
+    }
+  },
+
+  refreshProfile: async () => {
+    try {
+      const token = get().token;
+      if (!token || token.startsWith('mock_')) return;
+      const res = await fetch('/api/v1/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        const u = data.data;
+        const updated: UserSession = {
+          userId: u._id || u.userId,
+          name: u.name,
+          email: u.email,
+          phone: u.phone,
+          role: u.role,
+          trustScore: u.trustScore ?? 99,
+          isVerified: u.isVerified ?? true,
+          referralCode: u.referralCode,
+          walletBalance: u.walletBalance ?? 100,
+          fairPoints: u.fairPoints ?? 100
+        };
+        set({ currentUser: updated });
+        localStorage.setItem('fairride_auth_user', JSON.stringify(updated));
+      }
+    } catch (err) {
+      console.warn('[Store] refreshProfile error:', err);
     }
   },
 

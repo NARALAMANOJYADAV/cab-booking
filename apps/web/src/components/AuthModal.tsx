@@ -31,7 +31,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onSuccess,
   defaultTab = 'SIGNIN'
 }) => {
-  const { login } = useAppStore();
+  const { login, loginDemoPersona } = useAppStore();
   const [activeTab, setActiveTab] = useState<'SIGNIN' | 'REGISTER' | 'DEMO'>(defaultTab);
 
   // Sign In State (Phone or Email + Password)
@@ -70,7 +70,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         email: userData?.email || (identifier.includes('@') ? identifier : `${identifier}@fairride.local`),
         phone: userData?.phone || (identifier.replace(/\D/g, '').length >= 10 ? identifier : '+91 9800000002'),
         role: userData?.role || 'PASSENGER',
-        trustScore: 99,
+        trustScore: userData?.trustScore ?? 99,
+        referralCode: userData?.referralCode,
+        walletBalance: userData?.walletBalance ?? 100,
+        fairPoints: userData?.fairPoints ?? 100,
         isVerified: true
       };
 
@@ -116,6 +119,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         phone: standardPhone,
         role: regRole,
         trustScore: 100,
+        referralCode: userData?.referralCode,
+        walletBalance: 100,
+        fairPoints: 100,
         isVerified: true
       };
 
@@ -134,51 +140,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   // 1-Click Quick Demo Logins
   const handleQuickDemoLogin = (role: 'PASSENGER' | 'DRIVER' | 'ADMIN' | 'CORPORATE') => {
-    let user: UserSession;
-    if (role === 'PASSENGER') {
-      user = {
-        userId: 'usr_demo_aarav_sharma',
-        name: 'Aarav Sharma',
-        email: 'passenger@fairride.local',
-        phone: '+91 9800000002',
-        role: 'PASSENGER',
-        trustScore: 98,
-        isVerified: true
-      };
-    } else if (role === 'DRIVER') {
-      user = {
-        userId: 'usr_demo_rajesh_kumar',
-        name: 'Rajesh Kumar (Driver TS07UB1420)',
-        email: 'driver@fairride.local',
-        phone: '+91 9800000003',
-        role: 'DRIVER',
-        trustScore: 99,
-        isVerified: true
-      };
-    } else if (role === 'ADMIN') {
-      user = {
-        userId: 'usr_demo_sunita_verma',
-        name: 'Sunita Verma (Safety & Admin)',
-        email: 'admin@fairride.local',
-        phone: '+91 9800000001',
-        role: 'SUPER_ADMIN' as any,
-        trustScore: 100,
-        isVerified: true
-      };
-    } else {
-      user = {
-        userId: 'usr_demo_vikram_patel',
-        name: 'Vikram Patel (Corporate TechCorp)',
-        email: 'corporate@fairride.local',
-        phone: '+91 9800000004',
-        role: 'CORPORATE_MANAGER' as any,
-        trustScore: 97,
-        isVerified: true
-      };
-    }
-
-    login(user, `jwt_demo_${role.toLowerCase()}_token`);
-    setSuccessMsg(`Logged in as ${user.name}!`);
+    loginDemoPersona(role);
+    setSuccessMsg(`Switched to demo persona!`);
     setTimeout(() => {
       onClose();
       if (onSuccess) onSuccess();
