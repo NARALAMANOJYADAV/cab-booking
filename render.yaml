@@ -7,7 +7,7 @@ services:
     env: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm run build --workspaces
+    buildCommand: npm install && npm run build:api
     startCommand: node apps/api/dist/server.js
     envVars:
       - key: PORT
@@ -35,7 +35,7 @@ services:
     env: static
     plan: free
     region: oregon
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npm run build:web
     staticPublishPath: apps/web/dist
     routes:
       - type: rewrite
