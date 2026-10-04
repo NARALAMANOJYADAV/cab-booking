@@ -1,0 +1,26 @@
+{
+  "name": "fairride-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FairRide - Intelligent Mobility Platform: Book With Confidence",
+  "workspaces": [
+    "packages/*",
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n \"API,WEB\" -c \"blue,green\" \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev --workspace=@fairride/api",
+    "dev:web": "npm run dev --workspace=@fairride/web",
+    "dev:ai": "cd apps/ai-service && uvicorn main:app --reload --port 8000",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspace=@fairride/api",
+    "seed": "npm run seed --workspace=@fairride/api",
+    "test:supabase": "npm run test:supabase --workspace=@fairride/api",
+    "lint": "npm run lint --workspaces"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  }
+}
