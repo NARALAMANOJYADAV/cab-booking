@@ -7,8 +7,11 @@ dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+const DEFAULT_SUPABASE_URL = 'https://itctieptnuggjqfhdvbh.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Y3RpZXB0bnVnZ2pxZmhkdmJoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDk1NzI5MywiZXhwIjoyMTA2NTMzMjkzfQ.PTFCu09nOA9IlafU7BoN38MDuaLdnFbhZHIiesm_IWA';
+
+const supabaseUrl = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
 
 let supabase: SupabaseClient | null = null;
 

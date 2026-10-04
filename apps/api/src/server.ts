@@ -13,6 +13,7 @@ import { errorHandler } from './middleware/error.middleware.js';
 import { User } from './models/index.js';
 import { runSeed } from './scripts/seed.js';
 import { syncAllDatabaseToSupabase } from './services/supabaseSync.service.js';
+import { isSupabaseConfigured } from './config/supabase.js';
 
 import { authRouter } from './routes/auth.routes.js';
 import { locationRouter } from './routes/location.routes.js';
@@ -48,11 +49,17 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health Check
 app.get('/health', (req, res) => {
+  const isSupabaseLive = isSupabaseConfigured();
   res.json({
     status: 'healthy',
     platform: 'FairRide Intelligent Mobility API',
     tagline: 'Book With Confidence.',
     version: '1.0.0',
+    supabase: {
+      isConfigured: isSupabaseLive,
+      status: isSupabaseLive ? 'ACTIVE_AND_PERSISTING' : 'NOT_CONFIGURED',
+      url: process.env.SUPABASE_URL || 'https://itctieptnuggjqfhdvbh.supabase.co'
+    },
     timestamp: new Date().toISOString()
   });
 });
