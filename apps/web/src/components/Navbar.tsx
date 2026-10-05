@@ -26,7 +26,15 @@ import {
 } from 'lucide-react';
 import { formatCurrencyINR } from '@fairride/shared';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  onOpenPortalModal?: (portal: 'DRIVER' | 'CORPORATE' | 'ADMIN') => void;
+  onOpenDriverOnboarding?: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  onOpenPortalModal,
+  onOpenDriverOnboarding
+}) => {
   const {
     currentUser,
     isAuthenticated,
@@ -46,6 +54,7 @@ export const Navbar: React.FC = () => {
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isPortalsDropdownOpen, setIsPortalsDropdownOpen] = useState(false);
   const [copiedReferral, setCopiedReferral] = useState(false);
 
   useEffect(() => {
@@ -87,60 +96,126 @@ export const Navbar: React.FC = () => {
               </div>
             </div>
 
-            {/* Role Switcher Toolbar - Changes active view without overriding custom logged in user */}
-            <div className="flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800 shadow-inner">
-              <button
-                onClick={() => setActiveRoleView('PASSENGER')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeRoleView === 'PASSENGER'
-                    ? 'bg-brand-500 text-white shadow-md shadow-brand-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-                title="Passenger View"
-              >
-                <User className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Passenger</span>
-              </button>
+            {/* When in Passenger View: Show separate, restricted Partner Portals dropdown */}
+            {activeRoleView === 'PASSENGER' ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsPortalsDropdownOpen(!isPortalsDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition-all shadow-sm"
+                >
+                  <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Partner Portals</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isPortalsDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-              <button
-                onClick={() => setActiveRoleView('DRIVER')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                {isPortalsDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-72 bg-slate-900 border border-slate-700/80 rounded-2xl p-2 shadow-2xl z-50 space-y-1 animate-in fade-in zoom-in-95">
+                    <div className="px-3 py-1.5 border-b border-slate-800 flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      <span>Restricted Portal Access</span>
+                      <span className="text-amber-400">Code Required</span>
+                    </div>
+
+                    {/* Driver Portal */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPortalsDropdownOpen(false);
+                        if (onOpenPortalModal) onOpenPortalModal('DRIVER');
+                      }}
+                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center gap-2.5 text-xs text-white font-medium group transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                        <Car className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold group-hover:text-amber-300">Driver Partner Login</p>
+                        <p className="text-[10px] text-slate-400 truncate">Requires Driver Partner Code (DRV-)</p>
+                      </div>
+                    </button>
+
+                    {/* Driver Registration with Onboarding Fee */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPortalsDropdownOpen(false);
+                        if (onOpenDriverOnboarding) onOpenDriverOnboarding();
+                      }}
+                      className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 flex items-center gap-2 text-xs text-emerald-300 font-bold transition-colors"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>New Driver? Register & Onboard</span>
+                    </button>
+
+                    {/* Corporate Enterprise Portal */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPortalsDropdownOpen(false);
+                        if (onOpenPortalModal) onOpenPortalModal('CORPORATE');
+                      }}
+                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center gap-2.5 text-xs text-white font-medium group transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                        <Building2 className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold group-hover:text-cyan-300">Corporate Portal</p>
+                        <p className="text-[10px] text-slate-400 truncate">Requires Corporate Org Code (CORP-)</p>
+                      </div>
+                    </button>
+
+                    {/* Admin Console */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPortalsDropdownOpen(false);
+                        if (onOpenPortalModal) onOpenPortalModal('ADMIN');
+                      }}
+                      className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center gap-2.5 text-xs text-white font-medium group transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                        <ShieldAlert className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold group-hover:text-rose-300">Admin & Operations</p>
+                        <p className="text-[10px] text-slate-400 truncate">Requires Security Passcode</p>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* When in Driver / Corporate / Admin view: Distinctive Portal Header with Exit Button */
+              <div className="flex items-center gap-2.5">
+                <span className={`text-xs font-black uppercase px-3 py-1.5 rounded-full border flex items-center gap-1.5 shadow-sm ${
                   activeRoleView === 'DRIVER'
-                    ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-                title="Driver View"
-              >
-                <Car className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Driver</span>
-              </button>
+                    ? 'text-amber-300 bg-amber-500/10 border-amber-500/30'
+                    : activeRoleView === 'CORPORATE'
+                    ? 'text-cyan-300 bg-cyan-500/10 border-cyan-500/30'
+                    : 'text-rose-300 bg-rose-500/10 border-rose-500/30'
+                }`}>
+                  {activeRoleView === 'DRIVER' && <Car className="w-3.5 h-3.5 text-amber-400" />}
+                  {activeRoleView === 'CORPORATE' && <Building2 className="w-3.5 h-3.5 text-cyan-400" />}
+                  {activeRoleView === 'ADMIN' && <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />}
+                  <span>
+                    {activeRoleView === 'DRIVER' && 'DRIVER CONSOLE: Rajesh Kumar (TS 07 UB 1420)'}
+                    {activeRoleView === 'CORPORATE' && 'CORPORATE PORTAL: TCS Hyderabad Mobility'}
+                    {activeRoleView === 'ADMIN' && 'OPERATIONS & SAFETY HEADQUARTERS'}
+                  </span>
+                </span>
 
-              <button
-                onClick={() => setActiveRoleView('ADMIN')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeRoleView === 'ADMIN'
-                    ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-                title="Admin & Safety View"
-              >
-                <ShieldAlert className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Admin / Safety</span>
-              </button>
-
-              <button
-                onClick={() => setActiveRoleView('CORPORATE')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeRoleView === 'CORPORATE'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-                title="Corporate View"
-              >
-                <Building2 className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Corporate</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveRoleView('PASSENGER')}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 hover:text-white flex items-center gap-1.5 transition-all border border-slate-700 shadow-sm cursor-pointer"
+                  title="Return to Consumer Passenger Site"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Exit to Passenger</span>
+                </button>
+              </div>
+            )}
 
             {/* Quick Utility Tools: Senior Mode, Lite Mode, i18n */}
             <div className="flex items-center gap-2">
