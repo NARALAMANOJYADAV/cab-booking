@@ -28,13 +28,17 @@ import {
   Info,
   Compass,
   CreditCard,
-  MessageSquare
+  MessageSquare,
+  Crosshair,
+  Calendar,
+  Share2
 } from 'lucide-react';
 import { InteractiveMap } from '../components/InteractiveMap';
 import { FareLockBadge } from '../components/FareLockBadge';
 import { RouteGuardianBanner } from '../components/RouteGuardianBanner';
 import { VoiceBookingModal } from '../components/VoiceBookingModal';
 import { FareAuditReceiptModal } from '../components/FareAuditReceiptModal';
+import { UpiPaymentModal } from '../components/UpiPaymentModal';
 import { VEHICLE_CONFIGS } from '@fairride/constants';
 import { VehicleCategory, TripType, RidePreference } from '@fairride/types';
 import { formatCurrencyINR } from '@fairride/shared';
@@ -61,6 +65,8 @@ export const PassengerHomePage: React.FC = () => {
   const [flightNumber, setFlightNumber] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearchingDest, setIsSearchingDest] = useState(false);
+  const [pickupSearchResults, setPickupSearchResults] = useState<any[]>([]);
+  const [isSearchingPickup, setIsSearchingPickup] = useState(false);
 
   // Trip selection
   const [tripType, setTripType] = useState<TripType>('ONE_WAY');
@@ -73,6 +79,52 @@ export const PassengerHomePage: React.FC = () => {
   // Modals
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isTripPaid, setIsTripPaid] = useState(false);
+
+  // GPS & Ride Scheduling states
+  const [isLocating, setIsLocating] = useState(false);
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
+  const [scheduledTime, setScheduledTime] = useState(() => {
+    const d = new Date(Date.now() + 3600000);
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  });
+
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setPickupCoords([lng, lat]);
+        setPickupSearch(`GPS: Current Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
+        setIsLocating(false);
+      },
+      (error) => {
+        console.warn('Geolocation error:', error.message);
+        setPickupCoords([78.3811, 17.4474]);
+        setPickupSearch('Cyber Towers, Hitech City (Auto-detected)');
+        setIsLocating(false);
+      },
+      { timeout: 8000, enableHighAccuracy: true }
+    );
+  };
+
+  const handleShareTrip = () => {
+    const ref = activeBooking?.bookingReference || 'FR-8891';
+    const shareUrl = `${window.location.origin}/track/${ref}`;
+    navigator.clipboard?.writeText(shareUrl);
+    const msg = `🚗 Tracking my FairRide trip live: ${shareUrl}\nDriver: ${activeBooking?.driver?.name || 'Verified Driver'} (${activeBooking?.driver?.plateNumber || 'TS07UB1420'})`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+  };
 
   // Quick landmark shortcuts
   const popularPlaces = [
@@ -106,6 +158,31 @@ export const PassengerHomePage: React.FC = () => {
     }
   };
 
+  const handleSelectPickup = (place: any) => {
+    setPickupSearch(place.name || place.address);
+    if (place.coordinates) {
+      setPickupCoords(place.coordinates);
+    }
+    setPickupSearchResults([]);
+    setIsSearchingPickup(false);
+  };
+
+  const handlePickupInput = async (value: string) => {
+    setPickupSearch(value);
+    if (value.length > 2) {
+      setIsSearchingPickup(true);
+      try {
+        const res = await api.searchPlaces(value);
+        setPickupSearchResults(res.data || []);
+      } catch {
+        setPickupSearchResults([]);
+      }
+    } else {
+      setPickupSearchResults([]);
+      setIsSearchingPickup(false);
+    }
+  };
+
   const handleSelectPlace = (place: any) => {
     setDestinationSearch(place.name || place.address);
     if (place.coordinates) {
@@ -133,9 +210,12 @@ export const PassengerHomePage: React.FC = () => {
 
   const handleSwapAddresses = () => {
     setIsSwapping(true);
-    const temp = pickupSearch;
+    const tempSearch = pickupSearch;
+    const tempCoords = pickupCoords;
     setPickupSearch(destinationSearch);
-    setDestinationSearch(temp);
+    setPickupCoords(destinationCoords);
+    setDestinationSearch(tempSearch);
+    setDestinationCoords(tempCoords);
     setTimeout(() => setIsSwapping(false), 300);
   };
 
@@ -162,14 +242,14 @@ export const PassengerHomePage: React.FC = () => {
           lockId: lockData._id,
           pickup: {
             type: 'Point',
-            coordinates: [78.3811, 17.4474],
+            coordinates: pickupCoords,
             address: pickupSearch,
             pickupPointType: 'GATE',
             specificInstructions
           },
           destination: {
             type: 'Point',
-            coordinates: [78.4298, 17.2403],
+            coordinates: destinationCoords,
             address: destinationSearch
           },
           vehicleCategory: selectedCategory,
@@ -191,8 +271,8 @@ export const PassengerHomePage: React.FC = () => {
         state: 'DRIVER_ASSIGNED',
         pickupAddress: pickupSearch,
         destinationAddress: destinationSearch,
-        pickupCoords: [78.3811, 17.4474],
-        destinationCoords: [78.4298, 17.2403],
+        pickupCoords: pickupCoords,
+        destinationCoords: destinationCoords,
         pickupPointType: selectedPickupPoint,
         specificInstructions,
         vehicleCategory: selectedCategory,
@@ -205,7 +285,7 @@ export const PassengerHomePage: React.FC = () => {
           rating: 4.92,
           vehicleModel: 'Hyundai Aura (White)',
           plateNumber: 'TS 07 UB 1420',
-          currentCoords: [78.384, 17.449],
+          currentCoords: [pickupCoords[0] + 0.003, pickupCoords[1] + 0.002],
           etaMinutes: 3
         },
         timeline: b.timeline || []
@@ -241,6 +321,18 @@ export const PassengerHomePage: React.FC = () => {
         destination={activeBooking?.destinationAddress || destinationSearch}
         date={new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
         onOpenDispute={() => alert('FairRide Instant Dispute Console Opened: Refund reviewed in 120s.')}
+      />
+
+      {/* Razorpay & UPI Instant Settlement Modal */}
+      <UpiPaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        bookingId={activeBooking?.bookingId}
+        bookingReference={activeBooking?.bookingReference || 'FR-8891'}
+        amount={activeBooking?.lockedFare || 420}
+        onPaymentSuccess={() => {
+          setIsTripPaid(true);
+        }}
       />
 
       {/* TOP COMMAND HEADER: Personalized Greeting & Trust Metrics */}
@@ -315,6 +407,8 @@ export const PassengerHomePage: React.FC = () => {
 
           {/* Large Live Cartographic Map */}
           <InteractiveMap
+            pickupCoords={activeBooking.pickupCoords || pickupCoords}
+            destinationCoords={activeBooking.destinationCoords || destinationCoords}
             pickupName={activeBooking.pickupAddress}
             destinationName={activeBooking.destinationAddress}
             isDeviated={activeBooking.routeDeviationFlagged}
@@ -428,21 +522,49 @@ export const PassengerHomePage: React.FC = () => {
               </div>
 
               <div className="space-y-2 pt-2">
+                {/* Pay via UPI / Razorpay Button */}
+                {isTripPaid ? (
+                  <div className="w-full py-2.5 px-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <span>Paid via Razorpay UPI</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsPaymentModalOpen(true)}
+                    className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-black shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <CreditCard className="w-3.5 h-3.5 fill-slate-950" />
+                    <span>Pay via UPI / Razorpay</span>
+                  </button>
+                )}
+
+                {/* Share Live Trip Button */}
+                <button
+                  onClick={handleShareTrip}
+                  className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700/80 transition-all flex items-center justify-center gap-1.5"
+                  title="Share Live Trip Tracking URL via WhatsApp"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Share Live Trip</span>
+                </button>
+
+                {/* Inspect Fare Audit */}
                 <button
                   onClick={() => setIsReceiptModalOpen(true)}
-                  className="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700/80 transition-all flex items-center justify-center gap-1.5"
+                  className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700/80 transition-all flex items-center justify-center gap-1.5"
                 >
                   <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Inspect Fare Audit</span>
                 </button>
 
+                {/* Instant Emergency SOS */}
                 <button
                   onClick={() => {
                     if (confirm('🚨 EMERGENCY SOS: Trigger instant emergency police dispatch & alert trusted contacts?')) {
                       alert('EMERGENCY SOS BROADCAST ACTIVE: Police helpline 112 alerted. Emergency contacts pinged with live GPS.');
                     }
                   }}
-                  className="w-full py-3 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black shadow-lg shadow-rose-600/40 glow-rose transition-all flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black shadow-lg shadow-rose-600/40 glow-rose transition-all flex items-center justify-center gap-1.5"
                 >
                   <AlertTriangle className="w-4 h-4" />
                   <span>EMERGENCY SOS</span>
@@ -503,23 +625,110 @@ export const PassengerHomePage: React.FC = () => {
                 })}
               </div>
 
+              {/* Ride Now vs Schedule Later Switcher */}
+              <div className="flex items-center justify-between bg-slate-950/80 p-1 rounded-2xl border border-slate-800/80 text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setIsScheduled(false)}
+                  className={`flex-1 py-1.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                    !isScheduled
+                      ? 'bg-slate-800 text-emerald-300 font-black shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Ride Now</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsScheduled(true)}
+                  className={`flex-1 py-1.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                    isScheduled
+                      ? 'bg-slate-800 text-emerald-300 font-black shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Schedule Later</span>
+                </button>
+              </div>
+
+              {/* Scheduled Date & Time Pickers */}
+              {isScheduled && (
+                <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-slate-950/90 border border-slate-800 animate-in fade-in">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wider">
+                      Trip Date
+                    </label>
+                    <input
+                      type="date"
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wider">
+                      Pickup Time
+                    </label>
+                    <input
+                      type="time"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Connected Journey Route Planner */}
               <div className="relative space-y-3">
                 {/* Visual Route Connector Line */}
                 <div className="absolute left-[21px] top-[26px] bottom-[26px] w-[2px] bg-gradient-to-b from-emerald-500 via-teal-400 to-cyan-400 z-0 pointer-events-none" />
 
                 {/* Pickup Location Field */}
-                <div className="relative z-10">
+                <div className="relative z-30">
                   <div className="absolute left-3.5 top-3.5 w-4 h-4 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   </div>
                   <input
                     type="text"
                     value={pickupSearch}
-                    onChange={(e) => setPickupSearch(e.target.value)}
-                    placeholder="Enter pickup location..."
-                    className="w-full bg-slate-950/90 border border-slate-800 rounded-2xl pl-10 pr-10 py-3 text-xs text-white font-medium focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 transition-all placeholder:text-slate-500"
+                    onChange={(e) => handlePickupInput(e.target.value)}
+                    placeholder="Enter pickup location (e.g. Cyber Towers)..."
+                    className="w-full bg-slate-950/90 border border-slate-800 rounded-2xl pl-10 pr-11 py-3 text-xs text-white font-medium focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 transition-all placeholder:text-slate-500"
                   />
+                  <button
+                    type="button"
+                    onClick={handleGetCurrentLocation}
+                    disabled={isLocating}
+                    className="absolute right-3 top-2.5 p-1 rounded-lg text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-colors"
+                    title="Use My Current GPS Location"
+                  >
+                    <Crosshair className={`w-4 h-4 ${isLocating ? 'animate-spin text-emerald-300' : ''}`} />
+                  </button>
+
+                  {/* Dynamic Pickup Places Autocomplete Dropdown */}
+                  {pickupSearchResults.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-2 shadow-2xl z-50 space-y-1 max-h-56 overflow-y-auto">
+                      {pickupSearchResults.map((result) => (
+                        <button
+                          key={result.id}
+                          type="button"
+                          onClick={() => handleSelectPickup(result)}
+                          className="w-full text-left p-2 rounded-xl hover:bg-slate-800 transition-colors flex items-start gap-2.5 group"
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-white group-hover:text-emerald-300 truncate">
+                              {result.name}
+                            </p>
+                            <p className="text-[10px] text-slate-400 truncate">{result.address}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Swap Addresses Button */}
@@ -729,6 +938,8 @@ export const PassengerHomePage: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             {/* Live Cartographic Map Canvas */}
             <InteractiveMap
+              pickupCoords={pickupCoords}
+              destinationCoords={destinationCoords}
               pickupName={pickupSearch}
               destinationName={destinationSearch}
               showCorridor={true}
@@ -737,6 +948,24 @@ export const PassengerHomePage: React.FC = () => {
 
             {/* Available Vehicle Fleets with Transparent Locked Pricing */}
             <div className="space-y-3">
+              {/* AI Route & Vehicle Recommendation */}
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-transparent border border-emerald-500/20 text-xs flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 animate-pulse" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white font-bold text-xs flex items-center gap-1.5">
+                    <span>AI Route & Vehicle Recommendation</span>
+                    <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono font-black">
+                      OPTIMAL CORRIDOR
+                    </span>
+                  </p>
+                  <p className="text-[11px] text-slate-300 truncate">
+                    Expressway adherence 100% • Lowest surge • Recommended: Sedan for fast airport & city connection.
+                  </p>
+                </div>
+              </div>
+
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-slate-300">
                   SELECT VEHICLE TIER (GUARANTEED FARE):

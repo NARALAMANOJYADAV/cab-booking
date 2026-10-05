@@ -60,23 +60,88 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
   const isDeviated = propIsDeviated || simulatedDeviation;
 
+  // Dynamic projection of pickup and destination coordinates onto the SVG canvas
+  const { startX, startY, controlX, controlY, endX, endY } = React.useMemo(() => {
+    const pLng = Number(pickupCoords?.[0] ?? 78.3811);
+    const pLat = Number(pickupCoords?.[1] ?? 17.4474);
+    const dLng = Number(destinationCoords?.[0] ?? 78.4298);
+    const dLat = Number(destinationCoords?.[1] ?? 17.2403);
+
+    // Bounding calculation with min span safeguard
+    const minLng = Math.min(pLng, dLng);
+    const maxLng = Math.max(pLng, dLng);
+    const minLat = Math.min(pLat, dLat);
+    const maxLat = Math.max(pLat, dLat);
+
+    const spanLng = Math.max(maxLng - minLng, 0.02);
+    const spanLat = Math.max(maxLat - minLat, 0.02);
+
+    // Add 25% padding so pins are clearly separated from boundaries
+    const boundMinLng = minLng - spanLng * 0.25;
+    const boundMaxLng = maxLng + spanLng * 0.25;
+    const boundMinLat = minLat - spanLat * 0.25;
+    const boundMaxLat = maxLat + spanLat * 0.25;
+
+    // Canvas drawing boundaries
+    const canvasMinX = 140;
+    const canvasMaxX = 710;
+    const canvasMinY = 100;
+    const canvasMaxY = 320;
+
+    const project = (lng: number, lat: number): [number, number] => {
+      const normX = (lng - boundMinLng) / (boundMaxLng - boundMinLng);
+      // Invert Y: higher latitude (North) maps to smaller Y (top of SVG)
+      const normY = (boundMaxLat - lat) / (boundMaxLat - boundMinLat);
+      const x = Math.round(canvasMinX + normX * (canvasMaxX - canvasMinX));
+      const y = Math.round(canvasMinY + normY * (canvasMaxY - canvasMinY));
+      return [
+        Math.max(120, Math.min(730, x)),
+        Math.max(90, Math.min(330, y))
+      ];
+    };
+
+    const [sX, sY] = project(pLng, pLat);
+    const [eX, eY] = project(dLng, dLat);
+
+    // Compute Bezier control point with an organic highway arch perpendicular to direction
+    const midX = (sX + eX) / 2;
+    const midY = (sY + eY) / 2;
+    const dx = eX - sX;
+    const dy = eY - sY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Perpendicular vector for natural curve offset
+    const perpOffset = Math.min(60, Math.max(25, dist * 0.15));
+    const perpX = dist > 0 ? (-dy / dist) * perpOffset : 0;
+    const perpY = dist > 0 ? (dx / dist) * perpOffset : -30;
+
+    const cX = Math.round(Math.max(120, Math.min(730, midX + perpX)));
+    const cY = Math.round(Math.max(80, Math.min(330, midY + perpY)));
+
+    return {
+      startX: sX,
+      startY: sY,
+      controlX: cX,
+      controlY: cY,
+      endX: eX,
+      endY: eY
+    };
+  }, [pickupCoords, destinationCoords]);
+
+  // Route path dynamic definition
+  const routePath = `M ${startX} ${startY} Q ${controlX} ${controlY}, ${endX} ${endY}`;
+
   // Calculate coordinates along a smooth curve
   const t = tripProgress;
-  // Quadratic bezier calculation for the route path (P0 = [120, 110], P1 = [360, 160], P2 = [680, 310])
-  const startX = 130;
-  const startY = 110;
-  const controlX = 380;
-  const controlY = 170;
-  const endX = 690;
-  const endY = 320;
-
   // Bezier point formula: (1-t)^2 * P0 + 2(1-t)t * P1 + t^2 * P2
   const normalX = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * controlX + t * t * endX;
   const normalY = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * endY;
 
-  // If deviated, driver veers off toward north-east detour coordinates
-  const driverScreenX = isDeviated ? 480 : normalX;
-  const driverScreenY = isDeviated ? 120 : normalY;
+  // If deviated, driver veers off toward north-east detour coordinates relative to route
+  const detourX = Math.round(Math.max(100, Math.min(750, controlX + (endX - startX) * 0.15)));
+  const detourY = Math.round(Math.max(65, Math.min(350, controlY - 55)));
+  const driverScreenX = isDeviated ? detourX : normalX;
+  const driverScreenY = isDeviated ? detourY : normalY;
 
   const handleToggleDeviation = () => {
     const nextState = !simulatedDeviation;
@@ -209,7 +274,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         {/* Route Guardian Safe Corridor Tube (500m Safety Margin) */}
         {showCorridor && (
           <path
-            d="M 130 110 Q 380 170, 690 320"
+            d={routePath}
             stroke="rgba(16, 185, 129, 0.16)"
             strokeWidth="48"
             strokeLinecap="round"
@@ -220,7 +285,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
         {/* Planned High-Confidence Trip Route */}
         <path
-          d="M 130 110 Q 380 170, 690 320"
+          d={routePath}
           stroke="url(#safe-route-gradient)"
           strokeWidth="6"
           strokeLinecap="round"
@@ -229,7 +294,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
         {/* Real-time Animated Route Pulse Dotted Line */}
         <path
-          d="M 130 110 Q 380 170, 690 320"
+          d={routePath}
           stroke="#ffffff"
           strokeWidth="2.5"
           strokeLinecap="round"
@@ -242,7 +307,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         {isDeviated && (
           <>
             <path
-              d="M 330 145 C 380 90, 430 85, 480 120"
+              d={`M ${normalX} ${normalY} Q ${(normalX + detourX) / 2} ${Math.min(normalY, detourY) - 25}, ${detourX} ${detourY}`}
               stroke="url(#detour-gradient)"
               strokeWidth="5"
               strokeDasharray="6 4"
@@ -250,16 +315,32 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
               fill="none"
             />
             {/* Warning zone indicator */}
-            <circle cx="480" cy="120" r="35" fill="rgba(239, 68, 68, 0.18)" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4 4" />
+            <circle cx={detourX} cy={detourY} r="35" fill="rgba(239, 68, 68, 0.18)" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4 4" />
           </>
         )}
 
-        {/* Simulated Ambient Cabs Roaming Nearby */}
-        <g opacity="0.75">
-          <circle cx="190" cy="170" r="3" fill="#10b981" />
-          <circle cx="520" cy="240" r="3" fill="#06b6d4" />
-          <circle cx="340" cy="95" r="3" fill="#10b981" />
-          <circle cx="620" cy="190" r="3" fill="#f59e0b" />
+        {/* Real-time Roaming Ambient Cabs */}
+        <g opacity="0.85">
+          <g transform="translate(190, 165)">
+            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.2)" />
+            <circle cx="0" cy="0" r="4" fill="#10b981" />
+          </g>
+          <g transform="translate(520, 235)">
+            <circle cx="0" cy="0" r="10" fill="rgba(6, 182, 212, 0.2)" />
+            <circle cx="0" cy="0" r="4" fill="#06b6d4" />
+          </g>
+          <g transform="translate(340, 95)">
+            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.2)" />
+            <circle cx="0" cy="0" r="4" fill="#10b981" />
+          </g>
+          <g transform="translate(620, 185)">
+            <circle cx="0" cy="0" r="10" fill="rgba(245, 158, 11, 0.2)" />
+            <circle cx="0" cy="0" r="4" fill="#f59e0b" />
+          </g>
+          <g transform="translate(270, 310)">
+            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.2)" />
+            <circle cx="0" cy="0" r="4" fill="#10b981" />
+          </g>
         </g>
       </svg>
 
@@ -286,35 +367,40 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           </div>
         </div>
 
-        {/* Right: Live Traffic Flow Badge */}
+        {/* Right: Live Traffic Flow & Real-time Cabs Available Badges */}
         <div className="hidden sm:flex items-center gap-2 pointer-events-auto">
+          <div className="px-2.5 py-1.5 rounded-2xl bg-emerald-950/80 backdrop-blur-md border border-emerald-500/30 text-[11px] font-bold text-emerald-300 flex items-center gap-1.5 shadow-lg">
+            <Car className="w-3 h-3 text-emerald-400" />
+            <span>6 Cabs Nearby (2-4 min)</span>
+          </div>
+
           <div className="px-3 py-1.5 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-slate-700/60 text-xs font-bold text-slate-200 flex items-center gap-2 shadow-lg">
             <Activity className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Expressway Traffic: Optimal (38 km/h)</span>
+            <span>Expressway: Optimal</span>
           </div>
         </div>
       </div>
 
       {/* Origin Pickup Point Marker (Left Hub) */}
       <div
-        className="absolute z-10 flex flex-col items-center pointer-events-none"
+        className="absolute z-10 flex flex-col items-center pointer-events-none transition-all duration-700 ease-out"
         style={{ left: `${(startX / 850) * 100}%`, top: `${(startY / 420) * 100}%`, transform: 'translate(-50%, -100%)' }}
       >
-        <div className="px-2.5 py-1 rounded-xl bg-emerald-500 text-slate-950 font-black text-[11px] shadow-xl flex items-center gap-1.5 border border-emerald-300">
-          <MapPin className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>PICKUP: {pickupName}</span>
+        <div className="px-2.5 py-1 rounded-xl bg-emerald-500 text-slate-950 font-black text-[11px] shadow-xl flex items-center gap-1.5 border border-emerald-300 max-w-[210px]" title={pickupName}>
+          <MapPin className="w-3.5 h-3.5 stroke-[2.5] shrink-0" />
+          <span className="truncate">PICKUP: {pickupName}</span>
         </div>
         <div className="w-4 h-4 rounded-full bg-emerald-400 border-2 border-slate-950 shadow-lg shadow-emerald-500/80 mt-1" />
       </div>
 
       {/* Destination Dropoff Point Marker (Right Hub) */}
       <div
-        className="absolute z-10 flex flex-col items-center pointer-events-none"
+        className="absolute z-10 flex flex-col items-center pointer-events-none transition-all duration-700 ease-out"
         style={{ left: `${(endX / 850) * 100}%`, top: `${(endY / 420) * 100}%`, transform: 'translate(-50%, -100%)' }}
       >
-        <div className="px-2.5 py-1 rounded-xl bg-cyan-500 text-slate-950 font-black text-[11px] shadow-xl flex items-center gap-1.5 border border-cyan-200">
-          <Navigation className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>DESTINATION: {destinationName}</span>
+        <div className="px-2.5 py-1 rounded-xl bg-cyan-500 text-slate-950 font-black text-[11px] shadow-xl flex items-center gap-1.5 border border-cyan-200 max-w-[210px]" title={destinationName}>
+          <Navigation className="w-3.5 h-3.5 stroke-[2.5] shrink-0" />
+          <span className="truncate">DESTINATION: {destinationName}</span>
         </div>
         <div className="w-4 h-4 rounded-full bg-cyan-400 border-2 border-slate-950 shadow-lg shadow-cyan-400/80 mt-1" />
       </div>
