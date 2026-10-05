@@ -12,8 +12,6 @@ import {
   X,
   ArrowRight,
   Sparkles,
-  Car,
-  Building2,
   RefreshCw,
   Gift
 } from 'lucide-react';
@@ -22,7 +20,7 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-  defaultTab?: 'SIGNIN' | 'REGISTER' | 'DEMO';
+  defaultTab?: 'SIGNIN' | 'REGISTER';
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -31,19 +29,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onSuccess,
   defaultTab = 'SIGNIN'
 }) => {
-  const { login, loginDemoPersona } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'SIGNIN' | 'REGISTER' | 'DEMO'>(defaultTab);
+  const { login } = useAppStore();
+  const [activeTab, setActiveTab] = useState<'SIGNIN' | 'REGISTER'>(defaultTab);
 
   // Sign In State (Phone or Email + Password)
   const [identifier, setIdentifier] = useState('8106905004');
   const [password, setPassword] = useState('password123');
 
-  // Register State
+  // Register State (Strictly Passenger)
   const [regName, setRegName] = useState('Manoj N');
   const [regEmail, setRegEmail] = useState('manoj@fairride.local');
   const [regPhone, setRegPhone] = useState('8106905004');
   const [regPassword, setRegPassword] = useState('password123');
-  const [regRole, setRegRole] = useState<'PASSENGER' | 'DRIVER' | 'CORPORATE_MANAGER'>('PASSENGER');
   const [regReferral, setRegReferral] = useState('');
 
   // UI status
@@ -52,6 +49,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   if (!isOpen) return null;
+
+  // Quick fill demo passenger
+  const handleQuickFillPassenger = () => {
+    setIdentifier('8106905004');
+    setPassword('password123');
+  };
 
   // Handle Login with Mobile or Email + Password
   const handleLogin = async (e: React.FormEvent) => {
@@ -69,7 +72,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         name: userData?.name || identifier.split('@')[0],
         email: userData?.email || (identifier.includes('@') ? identifier : `${identifier}@fairride.local`),
         phone: userData?.phone || (identifier.replace(/\D/g, '').length >= 10 ? identifier : '+91 9800000002'),
-        role: userData?.role || 'PASSENGER',
+        role: 'PASSENGER',
         trustScore: userData?.trustScore ?? 99,
         referralCode: userData?.referralCode,
         walletBalance: userData?.walletBalance ?? 100,
@@ -90,7 +93,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // Handle Registration
+  // Handle Passenger Registration
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -105,7 +108,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         email: regEmail.trim(),
         phone: standardPhone,
         password: regPassword,
-        role: regRole,
+        role: 'PASSENGER',
         referralCode: regReferral.trim() || undefined
       });
 
@@ -117,7 +120,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         name: regName.trim(),
         email: regEmail.trim(),
         phone: standardPhone,
-        role: regRole,
+        role: 'PASSENGER',
         trustScore: 100,
         referralCode: userData?.referralCode,
         walletBalance: 100,
@@ -126,7 +129,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       };
 
       login(userSession, accessToken);
-      setSuccessMsg('Account created successfully! ₹100 Welcome Bonus credited to your wallet.');
+      setSuccessMsg('Passenger account created successfully! ₹100 Welcome Bonus credited to your wallet.');
       setTimeout(() => {
         onClose();
         if (onSuccess) onSuccess();
@@ -138,19 +141,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // 1-Click Quick Demo Logins
-  const handleQuickDemoLogin = (role: 'PASSENGER' | 'DRIVER' | 'ADMIN' | 'CORPORATE') => {
-    loginDemoPersona(role);
-    setSuccessMsg(`Switched to demo persona!`);
-    setTimeout(() => {
-      onClose();
-      if (onSuccess) onSuccess();
-    }, 500);
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden ring-1 ring-white/10 flex flex-col">
+      <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden ring-1 ring-white/10 flex flex-col">
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900">
           <div className="flex items-center gap-3">
@@ -159,12 +152,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-base text-white tracking-tight">FairRide Sign In</h3>
+                <h3 className="font-extrabold text-base text-white tracking-tight">Passenger Sign In</h3>
                 <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-1.5 py-0.5 rounded border border-emerald-500/30">
-                  SECURE
+                  RIDER ACCOUNT
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Zero-surge booking • Verified drivers • Instant UPI settlements</p>
+              <p className="text-xs text-slate-400">Zero-surge booking • Verified drivers • Fair fares</p>
             </div>
           </div>
           <button
@@ -175,8 +168,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </button>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="grid grid-cols-3 p-1.5 bg-slate-950/90 border-b border-slate-800 text-xs font-bold">
+        {/* Tab Switcher - Strictly Passenger */}
+        <div className="grid grid-cols-2 p-1.5 bg-slate-950/90 border-b border-slate-800 text-xs font-bold">
           <button
             onClick={() => { setActiveTab('SIGNIN'); setErrorMsg(null); }}
             className={`py-2.5 px-3 text-center rounded-xl transition-all ${
@@ -197,17 +190,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           >
             Create Account
           </button>
-          <button
-            onClick={() => { setActiveTab('DEMO'); setErrorMsg(null); }}
-            className={`py-2.5 px-3 text-center rounded-xl transition-all flex items-center justify-center gap-1 ${
-              activeTab === 'DEMO'
-                ? 'bg-amber-400 text-slate-950 shadow-md font-black'
-                : 'text-amber-400 hover:text-amber-300'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>1-Click Demo</span>
-          </button>
         </div>
 
         {/* Content Body */}
@@ -226,7 +208,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
-          {/* TAB 1: SIGN IN (MOBILE OR EMAIL + PASSWORD) */}
+          {/* TAB 1: PASSENGER SIGN IN */}
           {activeTab === 'SIGNIN' && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
@@ -247,13 +229,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   />
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1.5">
-                  Enter your 10-digit mobile number or registered email
+                  Enter your registered 10-digit mobile number or email
                 </p>
               </div>
 
               <div>
                 <label className="text-xs font-bold text-slate-300 block mb-1.5">
-                  Password
+                  Account Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -270,28 +252,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
               </div>
 
+              <div className="flex items-center justify-between text-xs pt-1">
+                <button
+                  type="button"
+                  onClick={handleQuickFillPassenger}
+                  className="text-brand-400 hover:text-brand-300 font-medium cursor-pointer flex items-center gap-1"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Auto-fill Demo Rider</span>
+                </button>
+                <span className="text-slate-500">Default: password123</span>
+              </div>
+
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-brand-500 via-emerald-400 to-teal-400 hover:from-brand-400 hover:to-teal-300 text-slate-950 font-black text-sm shadow-xl shadow-brand-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all mt-2"
               >
                 {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-                <span>Sign In to FairRide</span>
+                <span>Sign In to Passenger Account</span>
               </button>
 
-              <div className="pt-2 text-center">
+              <div className="pt-2 text-center border-t border-slate-800/80">
                 <button
                   type="button"
                   onClick={() => { setActiveTab('REGISTER'); setErrorMsg(null); }}
-                  className="text-xs text-emerald-400 hover:text-emerald-300 font-bold transition-colors cursor-pointer"
+                  className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
-                  New to FairRide? Create an account & claim ₹100
+                  New to FairRide? <strong className="text-emerald-400">Create Passenger Account (₹100 Bonus)</strong>
                 </button>
               </div>
             </form>
           )}
 
-          {/* TAB 2: CREATE ACCOUNT (REGISTER) */}
+          {/* TAB 2: PASSENGER REGISTRATION */}
           {activeTab === 'REGISTER' && (
             <form onSubmit={handleRegister} className="space-y-3">
               <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center gap-2">
@@ -299,30 +293,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <span>Instant signup! ₹100 Welcome Bonus automatically credited to your FairRide wallet.</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    placeholder="Manoj N"
-                    required
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-400"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Account Role</label>
-                  <select
-                    value={regRole}
-                    onChange={(e) => setRegRole(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-400"
-                  >
-                    <option value="PASSENGER">Passenger (Rider)</option>
-                    <option value="DRIVER">Driver Partner</option>
-                    <option value="CORPORATE_MANAGER">Corporate Manager</option>
-                  </select>
-                </div>
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Full Name</label>
+                <input
+                  type="text"
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  placeholder="Manoj N"
+                  required
+                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-400"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -383,7 +363,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all mt-2"
               >
                 {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
-                <span>Create Account & Claim ₹100</span>
+                <span>Create Passenger Account & Claim ₹100</span>
               </button>
 
               <div className="pt-1 text-center">
@@ -397,98 +377,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
             </form>
           )}
-
-          {/* TAB 3: 1-CLICK QUICK DEMO PROFILES */}
-          {activeTab === 'DEMO' && (
-            <div className="space-y-2.5">
-              <p className="text-xs text-slate-400">
-                Instantly switch to any pre-seeded persona with verified KYC, trust score, and active wallet balance:
-              </p>
-
-              <button
-                onClick={() => handleQuickDemoLogin('PASSENGER')}
-                className="w-full p-3 rounded-2xl bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-brand-500/50 flex items-center justify-between transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-brand-500/20 text-brand-300 flex items-center justify-center font-bold">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-brand-300">Aarav Sharma (Passenger)</p>
-                    <p className="text-[10px] text-slate-400">98% Trust Score • ₹1,250 Wallet • 480 FairPoints</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-black uppercase text-brand-400 bg-brand-500/10 px-2 py-1 rounded-lg border border-brand-500/20">
-                  Select
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleQuickDemoLogin('DRIVER')}
-                className="w-full p-3 rounded-2xl bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-amber-500/50 flex items-center justify-between transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold">
-                    <Car className="w-4 h-4" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-amber-300">Rajesh Kumar (Driver Partner)</p>
-                    <p className="text-[10px] text-slate-400">Hyundai Aura TS07UB1420 • 92% Take-Home Net</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-black uppercase text-amber-400 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
-                  Select
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleQuickDemoLogin('ADMIN')}
-                className="w-full p-3 rounded-2xl bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-rose-500/50 flex items-center justify-between transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-300 flex items-center justify-center font-bold">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-rose-300">Sunita Verma (Super Admin)</p>
-                    <p className="text-[10px] text-slate-400">Safety Incident Center • Driver KYC • Surge Audits</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-black uppercase text-rose-400 bg-rose-500/10 px-2 py-1 rounded-lg border border-rose-500/20">
-                  Select
-                </span>
-              </button>
-
-              <button
-                onClick={() => handleQuickDemoLogin('CORPORATE')}
-                className="w-full p-3 rounded-2xl bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-blue-500/50 flex items-center justify-between transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-300 flex items-center justify-center font-bold">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-blue-300">Vikram Patel (Corporate Manager)</p>
-                    <p className="text-[10px] text-slate-400">TechCorp Solutions • GST Invoicing • Employee Rides</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-black uppercase text-blue-400 bg-blue-500/10 px-2 py-1 rounded-lg border border-blue-500/20">
-                  Select
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-3 bg-slate-950/80 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-          <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            256-Bit Encrypted Sessions
-          </span>
-          <span>FairRide Identity Engine</span>
         </div>
       </div>
     </div>
   );
 };
+export default AuthModal;

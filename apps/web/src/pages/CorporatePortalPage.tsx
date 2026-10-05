@@ -17,7 +17,45 @@ import {
 import { formatCurrencyINR } from '@fairride/shared';
 
 export const CorporatePortalPage: React.FC = () => {
-  const { currentUser } = useAppStore();
+  const { currentUser, setCurrentUser, setActiveRoleView } = useAppStore();
+
+  const isCorporateAuth = currentUser?.role?.startsWith('CORPORATE');
+
+  // Corporate Login form states
+  const [corpCode, setCorpCode] = useState('CORP-TCS');
+  const [workEmail, setWorkEmail] = useState('priya.sharma@tcs.com');
+  const [corpPassword, setCorpPassword] = useState('password123');
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const handleCorporateLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+
+    const cleanCode = corpCode.trim().toUpperCase();
+    if (!cleanCode) {
+      setLoginError('Please enter your Corporate Organization Code');
+      return;
+    }
+    if (!cleanCode.startsWith('CORP')) {
+      setLoginError('Invalid Org Code! Corporate codes start with CORP- (e.g. CORP-TCS or CORP-TECHCORP)');
+      return;
+    }
+
+    setIsLoggingIn(true);
+    setTimeout(() => {
+      setCurrentUser({
+        userId: 'corp_user_01',
+        name: 'Priya Sharma (Corporate Admin)',
+        email: workEmail.trim() || 'priya.sharma@tcs.com',
+        phone: '+91 9800000005',
+        role: 'CORPORATE_MANAGER',
+        walletBalance: 50000,
+        fairPoints: 1200
+      });
+      setIsLoggingIn(false);
+    }, 500);
+  };
 
   const [account, setAccount] = useState<any>({
     companyName: 'TechCorp Solutions India Pvt Ltd',
@@ -68,6 +106,114 @@ export const CorporatePortalPage: React.FC = () => {
   };
 
   const spendPercentage = Math.round((account.currentSpend / account.monthlyBudget) * 100);
+
+  // If not authenticated as Corporate, show dedicated Corporate Enterprise Login Page
+  if (!isCorporateAuth) {
+    return (
+      <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative">
+          {/* Top back button */}
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => setActiveRoleView('PASSENGER')}
+              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors font-medium cursor-pointer"
+            >
+              <span>← Back to Passenger Booking</span>
+            </button>
+            <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
+              B2B Enterprise Portal
+            </span>
+          </div>
+
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center mx-auto mb-4 shadow-xl shadow-cyan-500/20">
+              <Building2 className="w-7 h-7" />
+            </div>
+            <h2 className="text-xl font-black text-white tracking-tight">Corporate Travel Desk</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Enter your enterprise organization code to access employee billing and ride approvals.
+            </p>
+          </div>
+
+          {loginError && (
+            <div className="mb-4 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300">
+              {loginError}
+            </div>
+          )}
+
+          <form onSubmit={handleCorporateLogin} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                Corporate Organization Code
+              </label>
+              <input
+                type="text"
+                value={corpCode}
+                onChange={(e) => setCorpCode(e.target.value.toUpperCase())}
+                placeholder="e.g. CORP-TCS or CORP-INFY"
+                required
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm font-mono font-bold text-white focus:outline-none focus:border-cyan-400 transition-colors"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                Issued to your company travel administrator
+              </p>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                Work Email Address
+              </label>
+              <input
+                type="email"
+                value={workEmail}
+                onChange={(e) => setWorkEmail(e.target.value)}
+                placeholder="travel-desk@company.com"
+                required
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                Account Password
+              </label>
+              <input
+                type="password"
+                value={corpPassword}
+                onChange={(e) => setCorpPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setCorpCode('CORP-TCS');
+                  setWorkEmail('priya.sharma@tcs.com');
+                  setCorpPassword('password123');
+                }}
+                className="text-cyan-400 hover:text-cyan-300 font-medium cursor-pointer"
+              >
+                Auto-fill Demo: TCS Enterprise
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+            >
+              <Building2 className="w-4 h-4" />
+              <span>{isLoggingIn ? 'Verifying Organization...' : 'Sign In to Corporate Console'}</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">

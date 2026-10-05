@@ -3,7 +3,6 @@ import { useAppStore } from './store/useAppStore';
 import { Navbar } from './components/Navbar';
 import { DemoSimulationModal } from './components/DemoSimulationModal';
 import { AuthModal } from './components/AuthModal';
-import { PortalAccessModal } from './components/PortalAccessModal';
 import { LandingPage } from './pages/LandingPage';
 import { PassengerHomePage } from './pages/PassengerHomePage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
@@ -44,8 +43,6 @@ export const App: React.FC = () => {
   const [passengerSubTab, setPassengerSubTab] = useState<'BOOK' | 'TRIPS' | 'WALLET' | 'SAFETY' | 'LANDING'>('BOOK');
   const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
   const [isSimControlsOpen, setIsSimControlsOpen] = useState(true);
-  const [isDriverOnboardingOpen, setIsDriverOnboardingOpen] = useState(false);
-  const [portalModalTarget, setPortalModalTarget] = useState<'DRIVER' | 'CORPORATE' | 'ADMIN' | null>(null);
 
   // One-click demo simulation actions
   const handleSimulateRequest = () => {
@@ -150,13 +147,10 @@ export const App: React.FC = () => {
   return (
     <div className={`min-h-screen bg-[#080d1a] text-slate-100 flex flex-col font-sans ${seniorMode ? 'senior-mode' : ''} ${lowInternetMode ? 'low-internet' : ''}`}>
       {/* Top Universal Navbar */}
-      <Navbar
-        onOpenPortalModal={(portal) => setPortalModalTarget(portal)}
-        onOpenDriverOnboarding={() => setIsDriverOnboardingOpen(true)}
-      />
+      <Navbar />
 
       {/* Top Passenger Ribbon & Centered DEMO SIMULATION CONTROLLER (ONE-CLICK TESTING) */}
-      {!isDriverOnboardingOpen && activeRoleView === 'PASSENGER' && (
+      {activeRoleView === 'PASSENGER' && (
         <div className="bg-slate-900/90 border-b border-slate-800/80 px-4 py-2.5 backdrop-blur-md sticky top-16 z-40 transition-all">
           <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-2.5">
             {/* Top Row: Centered Navigation Tabs + Controller Button beside Explore FairRide */}
@@ -352,12 +346,7 @@ export const App: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 pb-10">
-        {isDriverOnboardingOpen ? (
-          <DriverOnboardingPage
-            onSuccessRedirect={() => setIsDriverOnboardingOpen(false)}
-            onBackToPassenger={() => setIsDriverOnboardingOpen(false)}
-          />
-        ) : activeRoleView === 'PASSENGER' ? (
+        {activeRoleView === 'PASSENGER' ? (
           passengerSubTab === 'BOOK' ? (
             <PassengerHomePage />
           ) : passengerSubTab === 'TRIPS' ? (
@@ -377,17 +366,6 @@ export const App: React.FC = () => {
           <CorporatePortalPage />
         )}
       </main>
-
-      {/* Restricted Portal Access Security Code Gate Modal */}
-      <PortalAccessModal
-        isOpen={portalModalTarget !== null}
-        targetPortal={portalModalTarget}
-        onClose={() => setPortalModalTarget(null)}
-        onNavigateToOnboarding={() => {
-          setPortalModalTarget(null);
-          setIsDriverOnboardingOpen(true);
-        }}
-      />
 
       {/* Full Demo Simulation Controller Modal */}
       <DemoSimulationModal

@@ -30,7 +30,40 @@ import { InteractiveMap } from '../components/InteractiveMap';
 import { formatCurrencyINR } from '@fairride/shared';
 
 export const AdminDashboardPage: React.FC = () => {
-  const { currentUser } = useAppStore();
+  const { currentUser, setCurrentUser, setActiveRoleView } = useAppStore();
+
+  const isAdminAuth = currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'OPERATIONS_ADMIN';
+
+  // Admin Login form states
+  const [adminPasscode, setAdminPasscode] = useState('ADMIN-2026');
+  const [adminEmail, setAdminEmail] = useState('admin@fairride.in');
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+
+    const cleanCode = adminPasscode.trim().toUpperCase();
+    if (cleanCode !== 'ADMIN-2026' && cleanCode !== 'ADMIN' && cleanCode !== '1234') {
+      setLoginError('Invalid Security Passcode! Access restricted to verified platform operations admins.');
+      return;
+    }
+
+    setIsLoggingIn(true);
+    setTimeout(() => {
+      setCurrentUser({
+        userId: 'admin_master_01',
+        name: 'Operations Dispatcher (Admin)',
+        email: adminEmail.trim() || 'admin@fairride.in',
+        phone: '+91 9800000001',
+        role: 'SUPER_ADMIN',
+        walletBalance: 99999,
+        fairPoints: 5000
+      });
+      setIsLoggingIn(false);
+    }, 500);
+  };
 
   const [activeAdminTab, setActiveAdminTab] = useState<'OVERVIEW' | 'LIVE_OPS' | 'USERS' | 'SAFETY' | 'DISPUTES' | 'FRAUD' | 'AUDIT_LOGS'>('OVERVIEW');
   const [kpis, setKpis] = useState<any>({
@@ -139,6 +172,99 @@ export const AdminDashboardPage: React.FC = () => {
       alert(`Dispute ${status} processed successfully.`);
     }
   };
+
+  // If not authenticated as Admin, show dedicated Admin Security Gateway Login Page
+  if (!isAdminAuth) {
+    return (
+      <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative">
+          {/* Top back button */}
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => setActiveRoleView('PASSENGER')}
+              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors font-medium cursor-pointer"
+            >
+              <span>← Back to Passenger Booking</span>
+            </button>
+            <span className="text-[10px] font-black uppercase tracking-wider text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+              Operations Clearance
+            </span>
+          </div>
+
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center mx-auto mb-4 shadow-xl shadow-rose-500/20">
+              <ShieldAlert className="w-7 h-7" />
+            </div>
+            <h2 className="text-xl font-black text-white tracking-tight">Operations Command Center</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Restricted access for fleet controllers, safety incident dispatchers, and platform admins.
+            </p>
+          </div>
+
+          {loginError && (
+            <div className="mb-4 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300">
+              {loginError}
+            </div>
+          )}
+
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                Admin Security Passcode
+              </label>
+              <input
+                type="password"
+                value={adminPasscode}
+                onChange={(e) => setAdminPasscode(e.target.value)}
+                placeholder="Enter security key (e.g. ADMIN-2026)"
+                required
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm font-mono font-bold text-white focus:outline-none focus:border-rose-400 transition-colors"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                Required for security clearance & audit logging
+              </p>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                Admin Identity / Work Email
+              </label>
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@fairride.in"
+                required
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm text-white focus:outline-none focus:border-rose-400 transition-colors"
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminPasscode('ADMIN-2026');
+                  setAdminEmail('admin@fairride.in');
+                }}
+                className="text-rose-400 hover:text-rose-300 font-medium cursor-pointer"
+              >
+                Auto-fill Demo Key (ADMIN-2026)
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-white font-black text-sm shadow-xl shadow-rose-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+            >
+              <ShieldAlert className="w-4 h-4" />
+              <span>{isLoggingIn ? 'Verifying Security Clearance...' : 'Authenticate & Enter Command Room'}</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">

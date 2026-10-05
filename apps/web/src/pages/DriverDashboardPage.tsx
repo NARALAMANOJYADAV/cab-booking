@@ -22,9 +22,20 @@ import {
 import { DriverEarningsCard } from '../components/DriverEarningsCard';
 import { InteractiveMap } from '../components/InteractiveMap';
 import { calculateDriverNetEarnings, formatCurrencyINR } from '@fairride/shared';
+import { DriverOnboardingPage } from './DriverOnboardingPage';
 
 export const DriverDashboardPage: React.FC = () => {
-  const { currentUser, activeBooking, setActiveBooking } = useAppStore();
+  const { currentUser, activeBooking, setActiveBooking, setActiveRoleView } = useAppStore();
+
+  // If not authenticated as Driver, directly render dedicated Driver Login & Onboarding Portal
+  if (currentUser?.role !== 'DRIVER') {
+    return (
+      <DriverOnboardingPage
+        onSuccessRedirect={() => {}}
+        onBackToPassenger={() => setActiveRoleView('PASSENGER')}
+      />
+    );
+  }
 
   const [isOnline, setIsOnline] = useState(true);
   const [boardPinInput, setBoardPinInput] = useState('');

@@ -31,10 +31,7 @@ interface NavbarProps {
   onOpenDriverOnboarding?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  onOpenPortalModal,
-  onOpenDriverOnboarding
-}) => {
+export const Navbar: React.FC<NavbarProps> = () => {
   const {
     currentUser,
     isAuthenticated,
@@ -121,7 +118,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       type="button"
                       onClick={() => {
                         setIsPortalsDropdownOpen(false);
-                        if (onOpenPortalModal) onOpenPortalModal('DRIVER');
+                        setActiveRoleView('DRIVER');
                       }}
                       className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center gap-2.5 text-xs text-white font-medium group transition-colors"
                     >
@@ -129,8 +126,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <Car className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold group-hover:text-amber-300">Driver Partner Login</p>
-                        <p className="text-[10px] text-slate-400 truncate">Requires Driver Partner Code (DRV-)</p>
+                        <p className="font-bold group-hover:text-amber-300">Driver Partner Portal</p>
+                        <p className="text-[10px] text-slate-400 truncate">Login with Partner Code (DRV-) or Register</p>
                       </div>
                     </button>
 
@@ -139,12 +136,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                       type="button"
                       onClick={() => {
                         setIsPortalsDropdownOpen(false);
-                        if (onOpenDriverOnboarding) onOpenDriverOnboarding();
+                        setActiveRoleView('DRIVER');
                       }}
                       className="w-full text-left p-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 flex items-center gap-2 text-xs text-emerald-300 font-bold transition-colors"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span>New Driver? Register & Onboard</span>
+                      <span>New Driver? Register & Pay Fee</span>
                     </button>
 
                     {/* Corporate Enterprise Portal */}
@@ -152,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       type="button"
                       onClick={() => {
                         setIsPortalsDropdownOpen(false);
-                        if (onOpenPortalModal) onOpenPortalModal('CORPORATE');
+                        setActiveRoleView('CORPORATE');
                       }}
                       className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center gap-2.5 text-xs text-white font-medium group transition-colors"
                     >
@@ -161,7 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
                       <div className="min-w-0">
                         <p className="font-bold group-hover:text-cyan-300">Corporate Portal</p>
-                        <p className="text-[10px] text-slate-400 truncate">Requires Corporate Org Code (CORP-)</p>
+                        <p className="text-[10px] text-slate-400 truncate">Enterprise Org Code (CORP-)</p>
                       </div>
                     </button>
 
@@ -170,7 +167,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       type="button"
                       onClick={() => {
                         setIsPortalsDropdownOpen(false);
-                        if (onOpenPortalModal) onOpenPortalModal('ADMIN');
+                        setActiveRoleView('ADMIN');
                       }}
                       className="w-full text-left p-2.5 rounded-xl hover:bg-slate-800 flex items-center gap-2.5 text-xs text-white font-medium group transition-colors"
                     >
@@ -179,7 +176,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
                       <div className="min-w-0">
                         <p className="font-bold group-hover:text-rose-300">Admin & Operations</p>
-                        <p className="text-[10px] text-slate-400 truncate">Requires Security Passcode</p>
+                        <p className="text-[10px] text-slate-400 truncate">Security Passcode Required</p>
                       </div>
                     </button>
                   </div>
@@ -199,9 +196,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {activeRoleView === 'CORPORATE' && <Building2 className="w-3.5 h-3.5 text-cyan-400" />}
                   {activeRoleView === 'ADMIN' && <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />}
                   <span>
-                    {activeRoleView === 'DRIVER' && 'DRIVER CONSOLE: Rajesh Kumar (TS 07 UB 1420)'}
-                    {activeRoleView === 'CORPORATE' && 'CORPORATE PORTAL: TCS Hyderabad Mobility'}
-                    {activeRoleView === 'ADMIN' && 'OPERATIONS & SAFETY HEADQUARTERS'}
+                    {activeRoleView === 'DRIVER' && (currentUser?.role === 'DRIVER' ? `DRIVER CONSOLE: ${currentUser.name}` : 'DRIVER PARTNER PORTAL')}
+                    {activeRoleView === 'CORPORATE' && (currentUser?.role?.startsWith('CORPORATE') ? `CORPORATE PORTAL: ${currentUser.name}` : 'CORPORATE MOBILITY DESK')}
+                    {activeRoleView === 'ADMIN' && (currentUser?.role === 'SUPER_ADMIN' || currentUser?.role === 'OPERATIONS_ADMIN' ? `OPERATIONS ROOM: ${currentUser.name}` : 'OPERATIONS COMMAND CENTER')}
                   </span>
                 </span>
 
