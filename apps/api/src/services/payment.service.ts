@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../config/index.js';
 import { Booking, Wallet, WalletTransaction, Driver } from '../models/index.js';
+import { syncBookingToSupabase } from './supabaseSync.service.js';
 
 export class PaymentService {
   /**
@@ -103,6 +104,9 @@ export class PaymentService {
         await driver.save();
       }
     }
+
+    // Sync to Supabase in background
+    syncBookingToSupabase(booking).catch(() => {});
 
     return { success: true, booking };
   }

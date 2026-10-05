@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Dispute, Booking, FareLock, AuditLog } from '../models/index.js';
 import { PaymentService } from './payment.service.js';
 import { DisputeCategory } from '@fairride/types';
+import { syncDisputeToSupabase, syncBookingToSupabase } from './supabaseSync.service.js';
 
 export class DisputeService {
   /**
@@ -57,6 +58,10 @@ export class DisputeService {
     });
     await booking.save();
 
+    // Sync to Supabase in background
+    syncDisputeToSupabase(dispute).catch(() => {});
+    syncBookingToSupabase(booking).catch(() => {});
+
     return dispute;
   }
 
@@ -106,6 +111,11 @@ export class DisputeService {
       newState: { status, refundAmount, decisionNotes }
     });
 
+    // Sync to Supabase in background
+    syncDisputeToSupabase(dispute).catch(() => {});
+    if (booking) syncBookingToSupabase(booking).catch(() => {});
+
     return dispute;
   }
 }
+

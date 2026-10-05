@@ -169,6 +169,7 @@ bookingRouter.post('/:id/driver-response', authenticate, async (req: Authenticat
         metadata: { driverId: req.user!.userId }
       });
       await booking.save();
+      await syncBookingToSupabase(booking);
 
       res.json({ success: true, message: 'Ride accepted', data: booking });
       return;
@@ -196,6 +197,7 @@ bookingRouter.post('/:id/driver-response', authenticate, async (req: Authenticat
         booking._id.toString(),
         booking.driverId?.toString()
       );
+      await syncBookingToSupabase(booking);
 
       res.json({
         success: true,

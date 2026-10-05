@@ -4,6 +4,7 @@ import { authenticate, AuthenticatedRequest } from '../middleware/auth.middlewar
 import { VehicleCategory } from '@fairride/types';
 import { VEHICLE_CONFIGS } from '@fairride/constants';
 import { FareLock, FareAudit } from '../models/index.js';
+import { syncFareLockToSupabase } from '../services/supabaseSync.service.js';
 
 export const fareRouter = Router();
 
@@ -77,6 +78,12 @@ fareRouter.post('/lock', authenticate, async (req: AuthenticatedRequest, res: Re
     }
 
     const fareLock = await FareService.lockFare(req.user!.userId, quote);
+    
+    // Sync FareLock to Supabase in real-time
+    syncFareLockToSupabase(fareLock).catch((err) => {
+      console.warn('[Supabase Sync] Background fare lock sync warning:', err.message);
+    });
+
     res.status(201).json({
       success: true,
       message: 'Fare successfully locked with 15-minute guarantee.',

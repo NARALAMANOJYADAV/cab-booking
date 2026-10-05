@@ -7,11 +7,19 @@ dotenv.config({ path: path.resolve(process.cwd(), '../../.env') });
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-const DEFAULT_SUPABASE_URL = 'https://itctieptnuggjqfhdvbh.supabase.co';
-const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Y3RpZXB0bnVnZ2pxZmhkdmJoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDk1NzI5MywiZXhwIjoyMTA2NTMzMjkzfQ.PTFCu09nOA9IlafU7BoN38MDuaLdnFbhZHIiesm_IWA';
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseServiceKey =
+  process.env.SUPABASE_SECRET_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_KEY ||
+  '';
 
-const supabaseUrl = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
+export const supabaseConfig = {
+  url: supabaseUrl,
+  publishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || '',
+  secretKey: supabaseServiceKey,
+  jwksUrl: process.env.SUPABASE_JWKS_URL || ''
+};
 
 let supabase: SupabaseClient | null = null;
 
@@ -23,12 +31,12 @@ if (supabaseUrl && supabaseServiceKey) {
         persistSession: false
       }
     });
-    console.log('[Supabase] Initialized Supabase backend client successfully.');
+    console.log('[Supabase] Initialized Supabase backend client successfully connected to:', supabaseUrl);
   } catch (err) {
     console.error('[Supabase] Failed to initialize Supabase client:', err);
   }
 } else {
-  console.log('[Supabase] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not configured. Running in local fallback mode.');
+  console.log('[Supabase] SUPABASE_URL or SUPABASE_SECRET_KEY not configured. Running in local fallback mode.');
 }
 
 /**

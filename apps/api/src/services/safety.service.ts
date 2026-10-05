@@ -3,6 +3,7 @@ import { SafetyIncident, Booking, User } from '../models/index.js';
 import { calculateDistanceMeters } from '@fairride/shared';
 import { ROUTE_DEVIATION_TOLERANCE_METERS } from '@fairride/constants';
 import { SafetyPriority } from '@fairride/types';
+import { syncSafetyIncidentToSupabase } from './supabaseSync.service.js';
 
 export class SafetyService {
   /**
@@ -51,6 +52,9 @@ export class SafetyService {
     });
     await booking.save();
 
+    // Sync to Supabase
+    syncSafetyIncidentToSupabase(incident).catch(() => {});
+
     return incident;
   }
 
@@ -85,7 +89,7 @@ export class SafetyService {
       // If deviation is acute (> 800m), escalate to Safety Incident
       if (deviationMeters > 800) {
         const priority: SafetyPriority = deviationMeters > 1500 ? 'HIGH' : 'MEDIUM';
-        await SafetyIncident.create({
+        const incident = await SafetyIncident.create({
           incidentNumber: `DEV-${Date.now().toString().slice(-6)}`,
           bookingId: booking._id,
           passengerId: booking.passengerId,
@@ -106,6 +110,9 @@ export class SafetyService {
           ],
           status: 'OPEN'
         });
+
+        // Sync to Supabase
+        syncSafetyIncidentToSupabase(incident).catch(() => {});
       }
     }
 
@@ -119,3 +126,4 @@ export class SafetyService {
     };
   }
 }
+

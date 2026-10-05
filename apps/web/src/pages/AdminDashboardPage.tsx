@@ -355,7 +355,7 @@ export const AdminDashboardPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Dual-write storage active • In Supabase: <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.users ?? usersList.length}</span> Users, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.bookings ?? 52}</span> Bookings, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.drivers ?? 20}</span> Drivers
+              Dual-write storage active • In Supabase: <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.users ?? usersList.length}</span> Users, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.drivers ?? 20}</span> Drivers, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.bookings ?? 52}</span> Bookings, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.fareLocks ?? 0}</span> Fare Locks, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.driverEarnings ?? 0}</span> Earnings, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.disputes ?? 0}</span> Disputes, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.safetyIncidents ?? 0}</span> Incidents
             </p>
           </div>
         </div>
