@@ -143,14 +143,17 @@ export const App: React.FC = () => {
   };
 
   const currentBookingState = activeBooking?.state || 'IDLE';
+  const isLanding = activeRoleView === 'PASSENGER' && passengerSubTab === 'LANDING';
 
   return (
-    <div className={`min-h-screen bg-[#080d1a] text-slate-100 flex flex-col font-sans ${seniorMode ? 'senior-mode' : ''} ${lowInternetMode ? 'low-internet' : ''}`}>
+    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
+      isLanding ? 'bg-[#FAFBFD] text-slate-900' : 'bg-[#080d1a] text-slate-100'
+    } ${seniorMode ? 'senior-mode' : ''} ${lowInternetMode ? 'low-internet' : ''}`}>
       {/* Top Universal Navbar */}
-      <Navbar />
+      <Navbar isLandingPage={isLanding} onNavigateToBook={() => setPassengerSubTab('BOOK')} />
 
-      {/* Top Passenger Ribbon & Centered DEMO SIMULATION CONTROLLER (ONE-CLICK TESTING) */}
-      {activeRoleView === 'PASSENGER' && (
+      {/* Top Passenger Ribbon & Centered DEMO SIMULATION CONTROLLER (ONE-CLICK TESTING) - ONLY in App views */}
+      {activeRoleView === 'PASSENGER' && !isLanding && (
         <div className="bg-slate-900/90 border-b border-slate-800/80 px-4 py-2.5 backdrop-blur-md sticky top-16 z-40 transition-all">
           <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-2.5">
             {/* Top Row: Centered Navigation Tabs + Controller Button beside Explore FairRide */}
