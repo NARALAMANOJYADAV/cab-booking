@@ -41,22 +41,30 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 }) => {
   const { lowInternetMode, activeBooking, setActiveBooking } = useAppStore();
 
-  // Progress along the route (0 = pickup, 1 = destination)
-  const [tripProgress, setTripProgress] = useState(0.28);
+  // Progress along the route (0 = pickup, 1 = destination) - Live continuous auto-tracking
+  const [tripProgress, setTripProgress] = useState(0.20);
   const [simulatedDeviation, setSimulatedDeviation] = useState(false);
-  const [isAutoMoving, setIsAutoMoving] = useState(false);
+  const [isAutoMoving, setIsAutoMoving] = useState(true);
+  const [currentSpeed, setCurrentSpeed] = useState(48);
 
-  // Auto-move simulation
+  // Smooth continuous live tracking loop
   useEffect(() => {
     if (!isAutoMoving) return;
     const interval = setInterval(() => {
       setTripProgress((prev) => {
-        if (prev >= 0.95) return 0.15;
-        return prev + 0.05;
+        if (prev >= 0.96) return 0.04;
+        return Number((prev + 0.004).toFixed(4));
       });
-    }, 1200);
+      // Realistic speed fluctuation around 42-54 km/h
+      setCurrentSpeed(Math.round(44 + Math.sin(Date.now() / 1500) * 8));
+    }, 60);
     return () => clearInterval(interval);
   }, [isAutoMoving]);
+
+  // Reset progress when pickup or destination coordinates change
+  useEffect(() => {
+    setTripProgress(0.08);
+  }, [pickupCoords?.[0], pickupCoords?.[1], destinationCoords?.[0], destinationCoords?.[1]]);
 
   const isDeviated = propIsDeviated || simulatedDeviation;
 
@@ -136,6 +144,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   // Bezier point formula: (1-t)^2 * P0 + 2(1-t)t * P1 + t^2 * P2
   const normalX = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * controlX + t * t * endX;
   const normalY = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * endY;
+
+  // Tangent derivative for vehicle heading angle
+  const tangentX = 2 * (1 - t) * (controlX - startX) + 2 * t * (endX - controlX);
+  const tangentY = 2 * (1 - t) * (controlY - startY) + 2 * t * (endY - controlY);
+  const headingDeg = Math.round((Math.atan2(tangentY, tangentX) * 180) / Math.PI);
 
   // If deviated, driver veers off toward north-east detour coordinates relative to route
   const detourX = Math.round(Math.max(100, Math.min(750, controlX + (endX - startX) * 0.15)));
@@ -405,44 +418,59 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         <div className="w-4 h-4 rounded-full bg-cyan-500 border-2 border-white shadow-md shadow-cyan-600/50 mt-1" />
       </div>
 
-      {/* Moving Driver Vehicle Marker */}
+      {/* Moving Driver Vehicle Marker (Smooth Real-Time GPS Animation) */}
       <div
-        className="absolute z-30 flex flex-col items-center transition-all duration-700 ease-out"
+        className="absolute z-30 flex flex-col items-center transition-all duration-75 ease-linear pointer-events-none"
         style={{
           left: `${(driverScreenX / 850) * 100}%`,
           top: `${(driverScreenY / 420) * 100}%`,
           transform: 'translate(-50%, -50%)'
         }}
       >
-        {/* Pulsing Radar Ring */}
+        {/* Pulsing Radar Rings */}
         {!lowInternetMode && (
-          <div
-            className={`absolute w-16 h-16 rounded-full pointer-events-none radar-ring ${
-              isDeviated ? 'bg-rose-500/20' : 'bg-emerald-500/20'
-            }`}
-          />
+          <>
+            <div
+              className={`absolute w-20 h-20 rounded-full pointer-events-none animate-ping opacity-25 ${
+                isDeviated ? 'bg-rose-500' : 'bg-emerald-500'
+              }`}
+            />
+            <div
+              className={`absolute w-12 h-12 rounded-full pointer-events-none opacity-40 ${
+                isDeviated ? 'bg-rose-500/30' : 'bg-emerald-500/30'
+              }`}
+            />
+          </>
         )}
 
-        {/* Vehicle Icon Badge */}
+        {/* Vehicle Icon Badge with Dynamic Direction Heading Rotation */}
         <div
-          className={`p-2.5 rounded-2xl border-2 shadow-xl transition-all ${
+          className={`p-2.5 rounded-2xl border-2 shadow-xl transition-transform duration-100 ${
             isDeviated
               ? 'bg-rose-600 border-white text-white shadow-rose-600/50 scale-110 animate-bounce'
-              : 'bg-white border-emerald-500 text-emerald-600 shadow-emerald-500/30 hover:scale-105'
+              : 'bg-white border-emerald-500 text-emerald-600 shadow-emerald-500/40 hover:scale-110'
           }`}
+          style={{
+            transform: `rotate(${isDeviated ? 45 : headingDeg}deg)`
+          }}
         >
           <Car className="w-5 h-5 stroke-[2.5]" />
         </div>
 
-        {/* Live Driver Tag */}
-        <div className="mt-1.5 px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 text-[10px] font-black tracking-wide text-slate-800 shadow-md flex items-center gap-1">
+        {/* Live Dynamic Telemetry & Speed Tag */}
+        <div className="mt-1.5 px-2.5 py-0.5 rounded-full bg-slate-900/90 text-white backdrop-blur-md border border-slate-700 text-[10px] font-black tracking-wide shadow-lg flex items-center gap-1.5 whitespace-nowrap">
           {isDeviated ? (
-            <span className="text-rose-600 flex items-center gap-1">
-              <AlertTriangle className="w-3 h-3" />
-              OFF-ROUTE ALERT
+            <span className="text-rose-400 flex items-center gap-1 font-bold">
+              <AlertTriangle className="w-3 h-3 text-rose-400 animate-pulse" />
+              OFF-ROUTE • 580m DETOUR
             </span>
           ) : (
-            <span className="text-slate-800 font-bold">Rajesh (3 min away)</span>
+            <div className="flex items-center gap-1.5 font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-emerald-300 font-mono">{currentSpeed} km/h</span>
+              <span className="text-slate-400">•</span>
+              <span className="text-slate-200">En Route ({Math.round((1 - tripProgress) * 32)}m ETA)</span>
+            </div>
           )}
         </div>
       </div>

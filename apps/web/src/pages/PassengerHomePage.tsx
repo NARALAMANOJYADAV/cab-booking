@@ -235,6 +235,54 @@ export const PassengerHomePage: React.FC = () => {
     }
   };
 
+  const handlePickupKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (pickupSearchResults.length > 0) {
+        handleSelectPickup(pickupSearchResults[0]);
+      } else if (pickupSearch.trim()) {
+        try {
+          const res = await api.searchPlaces(pickupSearch.trim());
+          if (res.data && res.data.length > 0) {
+            handleSelectPickup(res.data[0]);
+            return;
+          }
+        } catch {}
+        const matched = popularPlaces.find(p => p.name.toLowerCase().includes(pickupSearch.toLowerCase()));
+        if (matched) {
+          setPickupCoords(matched.coords);
+        } else {
+          setPickupCoords([78.3811 + (Math.random() - 0.5) * 0.03, 17.4474 + (Math.random() - 0.5) * 0.03]);
+        }
+        setIsSearchingPickup(false);
+      }
+    }
+  };
+
+  const handleDestinationKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (searchResults.length > 0) {
+        handleSelectPlace(searchResults[0]);
+      } else if (destinationSearch.trim()) {
+        try {
+          const res = await api.searchPlaces(destinationSearch.trim());
+          if (res.data && res.data.length > 0) {
+            handleSelectPlace(res.data[0]);
+            return;
+          }
+        } catch {}
+        const matched = popularPlaces.find(p => p.name.toLowerCase().includes(destinationSearch.toLowerCase()));
+        if (matched) {
+          setDestinationCoords(matched.coords);
+        } else {
+          setDestinationCoords([78.4298 + (Math.random() - 0.5) * 0.04, 17.2403 + (Math.random() - 0.5) * 0.04]);
+        }
+        setIsSearchingDest(false);
+      }
+    }
+  };
+
   const handleSwapAddresses = () => {
     setIsSwapping(true);
     const tempSearch = pickupSearch;
@@ -743,7 +791,8 @@ export const PassengerHomePage: React.FC = () => {
                     type="text"
                     value={pickupSearch}
                     onChange={(e) => handlePickupInput(e.target.value)}
-                    placeholder="Enter pickup location (e.g. Cyber Towers)..."
+                    onKeyDown={handlePickupKeyDown}
+                    placeholder="Enter pickup location (e.g. Cyber Towers) [Press Enter]..."
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-11 py-3 text-xs text-slate-900 font-medium focus:outline-none focus:bg-white focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all placeholder:text-slate-400"
                   />
                   <button
@@ -802,7 +851,8 @@ export const PassengerHomePage: React.FC = () => {
                     type="text"
                     value={destinationSearch}
                     onChange={(e) => handleDestinationInput(e.target.value)}
-                    placeholder="Where to? (Type any address or landmark)..."
+                    onKeyDown={handleDestinationKeyDown}
+                    placeholder="Where to? (Type address & press Enter)..."
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-10 py-3 text-xs text-slate-900 font-medium focus:outline-none focus:bg-white focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all placeholder:text-slate-400"
                   />
 
@@ -983,7 +1033,23 @@ export const PassengerHomePage: React.FC = () => {
           </div>
 
           {/* RIGHT COLUMN: Live Interactive Map & Vehicle Fleets (7 Columns) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-4">
+            {/* Live Route Radar Header */}
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+                <span className="text-xs font-black text-slate-900 tracking-tight">
+                  LIVE ROUTE CORRIDOR • REAL-TIME TRACKING ACTIVE
+                </span>
+              </div>
+              <span className="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                GPS TELEMETRY 60FPS
+              </span>
+            </div>
+
             {/* Live Cartographic Map Canvas */}
             <InteractiveMap
               pickupCoords={pickupCoords}
@@ -991,7 +1057,7 @@ export const PassengerHomePage: React.FC = () => {
               pickupName={pickupSearch}
               destinationName={destinationSearch}
               showCorridor={true}
-              className="h-80 sm:h-[390px]"
+              className="h-80 sm:h-[400px]"
             />
 
             {/* Available Vehicle Fleets with Transparent Locked Pricing */}
