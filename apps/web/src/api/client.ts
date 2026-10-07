@@ -43,6 +43,7 @@ export const api = {
   // Auth
   register: (body: any) => request<any>('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
   login: (body: any) => request<any>('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
+  syncGoogleAuth: (body: any) => request<any>('/auth/google-sync', { method: 'POST', body: JSON.stringify(body) }),
   sendOtp: (phone: string) => request<any>('/auth/send-otp', { method: 'POST', body: JSON.stringify({ phone }) }),
   verifyOtp: (phone: string, otp: string) => request<any>('/auth/verify-otp', { method: 'POST', body: JSON.stringify({ phone, otp }) }),
   getMe: () => request<any>('/auth/me'),

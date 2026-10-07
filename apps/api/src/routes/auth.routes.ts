@@ -288,6 +288,67 @@ authRouter.post('/verify-otp', validate(VerifyOtpSchema), async (req: Request, r
 });
 
 /**
+ * Supabase Google OAuth Sync - Login/Register via Google
+ */
+authRouter.post('/google-sync', async (req: Request, res: Response) => {
+  try {
+    const { email, name, avatarUrl, supabaseUid, role } = req.body;
+    if (!email) {
+      res.status(400).json({ success: false, message: 'Email is required for Google authentication' });
+      return;
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    let user = await User.findOne({ email: cleanEmail });
+
+    if (!user) {
+      const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
+      const safeName = name || email.split('@')[0];
+      const newReferralCode = `FR${safeName.replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase()}${uniqueSuffix}`;
+
+      user = await User.create({
+        name: safeName,
+        email: cleanEmail,
+        phone: '+91 9' + Math.floor(100000000 + Math.random() * 900000000),
+        role: role || 'PASSENGER',
+        referralCode: newReferralCode,
+        isVerified: true
+      });
+
+      // Create wallet & fairpoint accounts with welcome ₹100
+      await Wallet.create({
+        userId: user._id,
+        userRole: user.role,
+        balance: 100
+      });
+
+      await FairPoint.create({
+        userId: user._id,
+        balance: 100
+      });
+    } else {
+      if (name && (!user.name || user.name.startsWith('Rider '))) {
+        user.name = name;
+      }
+      user.isVerified = true;
+      await user.save();
+    }
+
+    // Sync to Supabase public.users
+    await syncUserToSupabase(user, 100).catch(() => {});
+
+    const tokens = AuthService.generateTokens(user);
+    res.status(200).json({
+      success: true,
+      message: 'Google authentication synced successfully',
+      data: tokens
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, code: 'GOOGLE_AUTH_ERROR', message: err.message });
+  }
+});
+
+/**
  * Get Current Authenticated Profile
  */
 authRouter.get('/me', authenticate, async (req: AuthenticatedRequest, res: Response) => {

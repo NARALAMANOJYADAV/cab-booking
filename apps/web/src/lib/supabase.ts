@@ -69,3 +69,31 @@ export function subscribeToBookingRealtime(
     supabaseClient?.removeChannel(channel);
   };
 }
+
+/**
+ * Sign in using Google OAuth via Supabase
+ */
+export async function signInWithGoogle(redirectTo?: string) {
+  if (!supabaseClient) {
+    throw new Error('Supabase client is not configured with VITE_SUPABASE_URL / ANON_KEY');
+  }
+
+  const redirectUrl = redirectTo || (typeof window !== 'undefined' ? window.location.origin : undefined);
+
+  const { data, error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: redirectUrl,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent'
+      }
+    }
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

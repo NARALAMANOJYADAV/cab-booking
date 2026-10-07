@@ -14,6 +14,7 @@ export interface UserSession {
   referralCode?: string;
   walletBalance?: number;
   fairPoints?: number;
+  avatarUrl?: string;
 }
 
 export interface ActiveBookingState {

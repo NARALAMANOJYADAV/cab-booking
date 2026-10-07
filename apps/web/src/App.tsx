@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { useAppStore } from './store/useAppStore';
+import React, { useState, useEffect } from 'react';
+import { useAppStore, UserSession } from './store/useAppStore';
+import { supabase } from './lib/supabase';
+import { api } from './api/client';
 import { Navbar } from './components/Navbar';
 import { AuthModal } from './components/AuthModal';
 import { BecomeDriverModal } from './components/BecomeDriverModal';
@@ -30,9 +32,85 @@ export const App: React.FC = () => {
     isAuthModalOpen,
     setAuthModalOpen,
     isBecomeDriverModalOpen,
-    setBecomeDriverModalOpen
+    setBecomeDriverModalOpen,
+    login,
+    isAuthenticated
   } = useAppStore();
   const [passengerSubTab, setPassengerSubTab] = useState<'BOOK' | 'TRIPS' | 'WALLET' | 'SAFETY' | 'LANDING'>('LANDING');
+
+  // Supabase Google OAuth Session Sync Listener
+  useEffect(() => {
+    if (!supabase) return;
+
+    const syncSession = async (session: any) => {
+      if (!session?.user) return;
+      const u = session.user;
+      const meta = u.user_metadata || {};
+      const fullName = meta.full_name || meta.name || u.email?.split('@')[0] || 'Google Rider';
+      const email = u.email || `${u.id.substring(0, 8)}@fairride.auth`;
+
+      try {
+        const res = await api.syncGoogleAuth({
+          email,
+          name: fullName,
+          avatarUrl: meta.avatar_url || meta.picture,
+          supabaseUid: u.id,
+          role: 'PASSENGER'
+        });
+
+        const userData = res.data?.user;
+        const accessToken = res.data?.accessToken || session.access_token;
+
+        const sessionObj: UserSession = {
+          userId: userData?.userId || userData?._id || u.id,
+          name: fullName,
+          email: email,
+          phone: userData?.phone || u.phone || '+91 9800000002',
+          role: (userData?.role as any) || 'PASSENGER',
+          trustScore: userData?.trustScore ?? 100,
+          walletBalance: userData?.walletBalance ?? 100,
+          fairPoints: userData?.fairPoints ?? 100,
+          isVerified: true,
+          referralCode: userData?.referralCode,
+          avatarUrl: meta.avatar_url || meta.picture
+        };
+
+        login(sessionObj, accessToken);
+      } catch {
+        // Fallback local login if backend is booting or syncing
+        const fallbackSession: UserSession = {
+          userId: u.id,
+          name: fullName,
+          email: email,
+          phone: u.phone || '+91 9800000002',
+          role: 'PASSENGER',
+          trustScore: 100,
+          walletBalance: 100,
+          fairPoints: 100,
+          isVerified: true,
+          avatarUrl: meta.avatar_url || meta.picture
+        };
+        login(fallbackSession, session.access_token);
+      }
+    };
+
+    // Check existing or returned OAuth session (e.g. from redirect hash/query)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session && !isAuthenticated) {
+        syncSession(session);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && !isAuthenticated) {
+        syncSession(session);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [isAuthenticated]);
 
   const isLanding = activeRoleView === 'PASSENGER' && passengerSubTab === 'LANDING';
 
