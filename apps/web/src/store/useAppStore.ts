@@ -116,15 +116,27 @@ const DEFAULT_CORPORATE: UserSession = {
   trustScore: 97
 };
 
+const GUEST_PASSENGER: UserSession = {
+  userId: '',
+  name: '',
+  email: '',
+  phone: '',
+  role: 'PASSENGER',
+  trustScore: 100
+};
+
 const getInitialAuth = (): { user: UserSession; token: string | null; isAuth: boolean } => {
   try {
     const savedUser = localStorage.getItem('fairride_auth_user');
     const savedToken = localStorage.getItem('fairride_auth_token');
     if (savedUser && savedToken) {
-      return { user: JSON.parse(savedUser), token: savedToken, isAuth: true };
+      const parsed = JSON.parse(savedUser);
+      if (parsed?.userId) {
+        return { user: parsed, token: savedToken, isAuth: true };
+      }
     }
   } catch {}
-  return { user: DEFAULT_PASSENGER, token: 'mock_jwt_token_demo', isAuth: true };
+  return { user: GUEST_PASSENGER, token: null, isAuth: false };
 };
 
 const initialAuth = getInitialAuth();

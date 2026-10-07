@@ -33,14 +33,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [activeTab, setActiveTab] = useState<'SIGNIN' | 'REGISTER'>(defaultTab);
 
   // Sign In State (Phone or Email + Password)
-  const [identifier, setIdentifier] = useState('8106905004');
-  const [password, setPassword] = useState('password123');
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
 
   // Register State (Strictly Passenger)
-  const [regName, setRegName] = useState('Manoj N');
-  const [regEmail, setRegEmail] = useState('manoj@fairride.local');
-  const [regPhone, setRegPhone] = useState('8106905004');
-  const [regPassword, setRegPassword] = useState('password123');
+  const [regName, setRegName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regPassword, setRegPassword] = useState('');
   const [regReferral, setRegReferral] = useState('');
 
   // UI status
@@ -50,7 +50,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Quick fill demo passenger
+  // Quick fill demo passenger (optional test helper)
   const handleQuickFillPassenger = () => {
     setIdentifier('8106905004');
     setPassword('password123');
