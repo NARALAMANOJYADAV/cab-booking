@@ -133,24 +133,24 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-amber-500/40 rounded-3xl shadow-2xl overflow-hidden ring-1 ring-white/10 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-800">
+        <div className="flex items-center justify-between p-5 bg-slate-50 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-amber-100 border border-amber-200 text-amber-800 flex items-center justify-center shadow-sm">
               <Zap className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-black text-white tracking-wide uppercase">
+                <h3 className="text-base font-black text-slate-900 tracking-wide uppercase">
                   DEMO SIMULATION CONTROLLER
                 </h3>
-                <span className="text-[10px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded-full">
+                <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-200 font-black px-2 py-0.5 rounded-full">
                   ONE-CLICK TESTING
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 font-medium">
                 Trigger any core FairRide innovation with 1-click to test the dynamic platform
               </p>
             </div>
@@ -158,7 +158,7 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
 
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -166,11 +166,11 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
 
         {/* Action Status Notification */}
         {lastAction && (
-          <div className="px-5 py-2.5 bg-emerald-500/15 border-b border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center justify-between animate-in fade-in">
+          <div className="px-5 py-2.5 bg-emerald-50 border-b border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between animate-in fade-in">
             <span>⚡ {lastAction}</span>
             <button
               onClick={() => setLastAction(null)}
-              className="text-[10px] text-emerald-400 hover:underline uppercase"
+              className="text-[10px] text-emerald-700 hover:underline uppercase cursor-pointer"
             >
               Dismiss
             </button>
@@ -182,25 +182,25 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
           {/* 1. Request Ride */}
           <div
             onClick={handleSimulateRequest}
-            className="p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 cursor-pointer transition-all flex items-center justify-between group"
+            className="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 cursor-pointer transition-all flex items-center justify-between group"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 text-slate-300 group-hover:text-white group-hover:bg-slate-700 flex items-center justify-center font-black">
+              <div className="w-10 h-10 rounded-xl bg-slate-200 text-slate-700 group-hover:bg-slate-300 flex items-center justify-center font-black">
                 1
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors flex items-center gap-1.5">
+                <h4 className="text-sm font-bold text-slate-900 transition-colors flex items-center gap-1.5">
                   <span>1. Request Ride & Lock Fare</span>
-                  <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.2 rounded font-mono">
+                  <span className="text-[10px] bg-white border border-slate-200 text-slate-800 px-1.5 py-0.2 rounded font-mono font-bold">
                     ₹617 Locked
                   </span>
                 </h4>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Simulates Cyber Towers Gate 1 to RGIA Airport with zero-surge guarantee.
                 </p>
               </div>
             </div>
-            <button className="px-3 py-1.5 rounded-xl bg-slate-800 group-hover:bg-slate-700 text-xs font-bold text-slate-200 border border-slate-700">
+            <button className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 group-hover:bg-slate-50 text-xs font-bold text-slate-700 cursor-pointer">
               Run Step 1
             </button>
           </div>
@@ -208,25 +208,25 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
           {/* 2. Driver Accepts */}
           <div
             onClick={handleSimulateDriverAccept}
-            className="p-4 rounded-2xl bg-emerald-950/20 hover:bg-emerald-950/30 border border-emerald-500/30 hover:border-emerald-500/50 cursor-pointer transition-all flex items-center justify-between group"
+            className="p-4 rounded-2xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 cursor-pointer transition-all flex items-center justify-between group"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black">
                 2
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors flex items-center gap-1.5">
+                <h4 className="text-sm font-bold text-emerald-950 transition-colors flex items-center gap-1.5">
                   <span>2. Driver Accepts Ride</span>
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-200 px-1.5 py-0.2 rounded font-semibold">
                     Rajesh (3 min away)
                   </span>
                 </h4>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Assigns verified partner Rajesh Kumar (Hyundai Aura TS 07 UB 1420).
                 </p>
               </div>
             </div>
-            <button className="px-3 py-1.5 rounded-xl bg-emerald-500/20 group-hover:bg-emerald-500/30 text-xs font-bold text-emerald-300 border border-emerald-500/40">
+            <button className="px-3 py-1.5 rounded-xl bg-emerald-600 group-hover:bg-emerald-700 text-xs font-bold text-white shadow-sm cursor-pointer">
               Run Step 2
             </button>
           </div>
@@ -234,25 +234,25 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
           {/* 3. Driver Cancel & Auto-Recovery */}
           <div
             onClick={handleSimulateDriverCancelAndAutoRecovery}
-            className="p-4 rounded-2xl bg-amber-950/20 hover:bg-amber-950/30 border border-amber-500/40 hover:border-amber-500/60 cursor-pointer transition-all flex items-center justify-between group"
+            className="p-4 rounded-2xl bg-amber-50/70 hover:bg-amber-100/70 border border-amber-200 cursor-pointer transition-all flex items-center justify-between group"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black">
-                <RotateCcw className="w-5 h-5 animate-spin" />
+              <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-black">
+                <RotateCcw className="w-5 h-5 animate-spin text-amber-700" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors flex items-center gap-1.5">
+                <h4 className="text-sm font-bold text-amber-950 transition-colors flex items-center gap-1.5">
                   <span>3. Driver Cancel &amp; Auto-Recovery Engine</span>
-                  <span className="text-[10px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] bg-amber-200 text-amber-900 font-black px-1.5 py-0.2 rounded">
                     ZERO PENALTY
                   </span>
                 </h4>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Driver cancels &rarr; System immediately heals and auto-reassigns replacement driver!
                 </p>
               </div>
             </div>
-            <button className="px-3 py-1.5 rounded-xl bg-amber-500/20 group-hover:bg-amber-500/30 text-xs font-bold text-amber-300 border border-amber-500/40">
+            <button className="px-3 py-1.5 rounded-xl bg-amber-600 group-hover:bg-amber-700 text-xs font-bold text-white shadow-sm cursor-pointer">
               Run Step 3
             </button>
           </div>
@@ -260,25 +260,25 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
           {/* 4. Route Detour & SOS */}
           <div
             onClick={handleSimulateRouteDeviation}
-            className="p-4 rounded-2xl bg-rose-950/20 hover:bg-rose-950/30 border border-rose-500/30 hover:border-rose-500/50 cursor-pointer transition-all flex items-center justify-between group"
+            className="p-4 rounded-2xl bg-rose-50/70 hover:bg-rose-100/70 border border-rose-200 cursor-pointer transition-all flex items-center justify-between group"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-black">
+              <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-black">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white group-hover:text-rose-300 transition-colors flex items-center gap-1.5">
+                <h4 className="text-sm font-bold text-rose-950 transition-colors flex items-center gap-1.5">
                   <span>4. 580m Route Detour &amp; Route Guardian Alert</span>
-                  <span className="text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] bg-rose-200 text-rose-900 px-1.5 py-0.2 rounded font-bold">
                     SAFETY ALARM
                   </span>
                 </h4>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Simulates cab veering off corridor. Prompts passenger "Are you safe?" & dispatch alert.
                 </p>
               </div>
             </div>
-            <button className="px-3 py-1.5 rounded-xl bg-rose-500/20 group-hover:bg-rose-500/30 text-xs font-bold text-rose-300 border border-rose-500/40">
+            <button className="px-3 py-1.5 rounded-xl bg-rose-600 group-hover:bg-rose-700 text-xs font-bold text-white shadow-sm cursor-pointer">
               Run Step 4
             </button>
           </div>
@@ -286,39 +286,39 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
           {/* 5. Finish Trip */}
           <div
             onClick={handleSimulateCompleteTrip}
-            className="p-4 rounded-2xl bg-cyan-950/20 hover:bg-cyan-950/30 border border-cyan-500/30 hover:border-cyan-500/50 cursor-pointer transition-all flex items-center justify-between group"
+            className="p-4 rounded-2xl bg-indigo-50/70 hover:bg-indigo-100/70 border border-indigo-200 cursor-pointer transition-all flex items-center justify-between group"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-black">
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-black">
                 <CheckCircle className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors flex items-center gap-1.5">
+                <h4 className="text-sm font-bold text-indigo-950 transition-colors flex items-center gap-1.5">
                   <span>5. Complete Trip &amp; Download Fare Audit</span>
-                  <span className="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.2 rounded">
+                  <span className="text-[10px] bg-indigo-200 text-indigo-900 px-1.5 py-0.2 rounded font-bold">
                     RECEIPT READY
                   </span>
                 </h4>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Completes ride, credits driver wallet (92%), and issues tamper-proof audit receipt.
                 </p>
               </div>
             </div>
-            <button className="px-3 py-1.5 rounded-xl bg-cyan-500/20 group-hover:bg-cyan-500/30 text-xs font-bold text-cyan-300 border border-cyan-500/40">
+            <button className="px-3 py-1.5 rounded-xl bg-indigo-600 group-hover:bg-indigo-700 text-xs font-bold text-white shadow-sm cursor-pointer">
               Run Step 5
             </button>
           </div>
         </div>
 
         {/* Footer with Active Status & Reset */}
-        <div className="p-4 bg-slate-950/90 border-t border-slate-800 flex items-center justify-between text-xs">
+        <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400">Current Trip State:</span>
-            <span className="font-mono font-black text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+            <span className="text-slate-500 font-medium">Current Trip State:</span>
+            <span className="font-mono font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
               {activeBooking?.state || 'NO ACTIVE TRIP'}
             </span>
             {activeBooking?.verificationPin && (
-              <span className="font-mono font-bold text-slate-300">
+              <span className="font-mono font-bold text-slate-600">
                 (PIN: {activeBooking.verificationPin})
               </span>
             )}
@@ -328,7 +328,7 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
             {activeBooking && (
               <button
                 onClick={handleReset}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 flex items-center gap-1.5 transition-all"
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-bold border border-slate-300 flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <RefreshCw className="w-3 h-3" />
                 <span>Reset Trip</span>
@@ -336,7 +336,7 @@ export const DemoSimulationModal: React.FC<DemoSimulationModalProps> = ({ isOpen
             )}
             <button
               onClick={onClose}
-              className="px-4 py-1.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-slate-950 font-black shadow-md"
+              className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black shadow cursor-pointer"
             >
               Done
             </button>

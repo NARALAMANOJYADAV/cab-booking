@@ -146,24 +146,22 @@ export const App: React.FC = () => {
   const isLanding = activeRoleView === 'PASSENGER' && passengerSubTab === 'LANDING';
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
-      isLanding ? 'bg-[#FAFBFD] text-slate-900' : 'bg-[#080d1a] text-slate-100'
-    } ${seniorMode ? 'senior-mode' : ''} ${lowInternetMode ? 'low-internet' : ''}`}>
+    <div className={`min-h-screen bg-[#FAFBFD] text-slate-900 flex flex-col font-sans transition-colors duration-200 ${seniorMode ? 'senior-mode' : ''} ${lowInternetMode ? 'low-internet' : ''}`}>
       {/* Top Universal Navbar */}
       <Navbar isLandingPage={isLanding} onNavigateToBook={() => setPassengerSubTab('BOOK')} />
 
       {/* Top Passenger Ribbon & Centered DEMO SIMULATION CONTROLLER (ONE-CLICK TESTING) - ONLY in App views */}
       {activeRoleView === 'PASSENGER' && !isLanding && (
-        <div className="bg-slate-900/90 border-b border-slate-800/80 px-4 py-2.5 backdrop-blur-md sticky top-16 z-40 transition-all">
+        <div className="bg-white border-b border-slate-200 px-4 py-2.5 shadow-sm sticky top-16 z-40 transition-all">
           <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-2.5">
             {/* Top Row: Centered Navigation Tabs + Controller Button beside Explore FairRide */}
             <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
               <button
                 onClick={() => setPassengerSubTab('BOOK')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   passengerSubTab === 'BOOK'
-                    ? 'bg-brand-500 text-slate-950 font-black shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-emerald-600 text-white font-black shadow-sm'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
                 }`}
               >
                 <Compass className="w-3.5 h-3.5" />
@@ -172,10 +170,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setPassengerSubTab('TRIPS')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   passengerSubTab === 'TRIPS'
-                    ? 'bg-brand-500 text-slate-950 font-black shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-emerald-600 text-white font-black shadow-sm'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
                 }`}
               >
                 <History className="w-3.5 h-3.5" />
@@ -184,10 +182,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setPassengerSubTab('WALLET')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   passengerSubTab === 'WALLET'
-                    ? 'bg-brand-500 text-slate-950 font-black shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-emerald-600 text-white font-black shadow-sm'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
                 }`}
               >
                 <Wallet className="w-3.5 h-3.5" />
@@ -196,10 +194,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setPassengerSubTab('SAFETY')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   passengerSubTab === 'SAFETY'
-                    ? 'bg-rose-500 text-white font-black shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-rose-600 text-white font-black shadow-sm'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
                 }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
@@ -208,10 +206,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setPassengerSubTab('LANDING')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                   passengerSubTab === 'LANDING'
-                    ? 'bg-slate-700 text-white font-black shadow-md'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-slate-800 text-white font-black shadow-sm'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
                 }`}
               >
                 <Home className="w-3.5 h-3.5" />
@@ -221,45 +219,45 @@ export const App: React.FC = () => {
               {/* DEMO SIMULATION CONTROLLER (ONE-CLICK TESTING) beside Explore FairRide */}
               <button
                 onClick={() => setIsSimControlsOpen(!isSimControlsOpen)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border shadow-lg cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border shadow-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                   isSimControlsOpen
-                    ? 'bg-gradient-to-r from-amber-500/25 via-brand-500/25 to-emerald-500/25 text-amber-300 border-amber-400 ring-2 ring-amber-400/40 shadow-amber-500/20'
-                    : 'bg-gradient-to-r from-amber-500/15 via-brand-500/15 to-emerald-500/15 text-amber-300 border-amber-500/40 ring-1 ring-amber-400/20 hover:from-amber-500/30'
+                    ? 'bg-amber-50 text-amber-900 border-amber-300 ring-2 ring-amber-300/50'
+                    : 'bg-amber-50/60 text-amber-800 border-amber-200 hover:bg-amber-100'
                 }`}
                 title="Toggle Demo Simulation Controller (One-Click Testing) at the Top"
               >
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                <Zap className="w-3.5 h-3.5 text-amber-600" />
                 <span className="tracking-wide uppercase font-black">
                   DEMO SIMULATION CONTROLLER (ONE-CLICK TESTING)
                 </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono border border-slate-700">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-mono border border-amber-200 font-bold">
                   {currentBookingState}
                 </span>
                 {isSimControlsOpen ? (
-                  <ChevronUp className="w-3.5 h-3.5 text-amber-400" />
+                  <ChevronUp className="w-3.5 h-3.5 text-amber-700" />
                 ) : (
-                  <ChevronDown className="w-3.5 h-3.5 text-amber-400" />
+                  <ChevronDown className="w-3.5 h-3.5 text-amber-700" />
                 )}
               </button>
             </div>
 
             {/* Top One-Click Testing Strip (Rendered directly at the top) */}
             {isSimControlsOpen && (
-              <div className="w-full max-w-5xl p-2 rounded-2xl bg-slate-900/95 border border-amber-500/30 backdrop-blur-xl shadow-xl flex items-center justify-center gap-1.5 flex-wrap">
+              <div className="w-full max-w-5xl p-2.5 rounded-2xl bg-slate-50 border border-slate-200 shadow-inner flex items-center justify-center gap-1.5 flex-wrap">
                 {/* Step 1 */}
                 <button
                   onClick={handleSimulateRequest}
                   className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                     activeBooking?.state === 'REQUESTED'
-                      ? 'bg-blue-500/25 text-blue-200 border-blue-400 ring-1 ring-blue-400'
-                      : 'bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700/80'
+                      ? 'bg-blue-600 text-white border-blue-700 shadow-sm'
+                      : 'bg-white hover:bg-blue-50 text-slate-700 border-slate-200'
                   }`}
                   title="1. Lock Fare & Request Ride (₹617)"
                 >
-                  <Play className="w-3.5 h-3.5 text-blue-400 fill-blue-400" />
+                  <Play className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
                   <span>1. Request Ride</span>
-                  <span className="text-[10px] text-blue-300/80 font-normal hidden sm:inline">(₹617)</span>
+                  <span className="text-[10px] font-normal hidden sm:inline">(₹617)</span>
                 </button>
 
                 {/* Step 2 */}
@@ -267,14 +265,14 @@ export const App: React.FC = () => {
                   onClick={handleSimulateDriverAccept}
                   className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                     activeBooking?.state === 'DRIVER_ACCEPTED'
-                      ? 'bg-emerald-500/25 text-emerald-200 border-emerald-400 ring-1 ring-emerald-400'
-                      : 'bg-emerald-950/30 hover:bg-emerald-900/40 text-emerald-300 border-emerald-800/50'
+                      ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                      : 'bg-white hover:bg-emerald-50 text-slate-700 border-slate-200'
                   }`}
                   title="2. Driver Rajesh Accepts (3m ETA)"
                 >
-                  <Car className="w-3.5 h-3.5 text-emerald-400" />
+                  <Car className="w-3.5 h-3.5 text-emerald-600" />
                   <span>2. Driver Accepts</span>
-                  <span className="text-[10px] text-emerald-400/80 font-normal hidden sm:inline">Rajesh (3m)</span>
+                  <span className="text-[10px] font-normal hidden sm:inline">Rajesh (3m)</span>
                 </button>
 
                 {/* Step 3 */}
@@ -282,14 +280,14 @@ export const App: React.FC = () => {
                   onClick={handleSimulateDriverCancelAndAutoRecovery}
                   className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                     activeBooking?.state === 'RECOVERY' || activeBooking?.isRecovered
-                      ? 'bg-amber-500/25 text-amber-200 border-amber-400 ring-1 ring-amber-400'
-                      : 'bg-amber-950/30 hover:bg-amber-900/40 text-amber-300 border-amber-800/50'
+                      ? 'bg-amber-500 text-white border-amber-600 shadow-sm'
+                      : 'bg-white hover:bg-amber-50 text-slate-700 border-slate-200'
                   }`}
                   title="3. Auto-Recovery Engine: Driver cancels -> Instant zero-penalty reassignment"
                 >
-                  <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+                  <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
                   <span>3. Auto-Recovery</span>
-                  <span className="text-[10px] text-amber-400/80 font-normal hidden sm:inline">Zero Penalty</span>
+                  <span className="text-[10px] font-normal hidden sm:inline">Zero Penalty</span>
                 </button>
 
                 {/* Step 4 */}
@@ -297,12 +295,12 @@ export const App: React.FC = () => {
                   onClick={handleSimulateRouteDeviation}
                   className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                     activeBooking?.routeDeviationFlagged
-                      ? 'bg-rose-500/25 text-rose-200 border-rose-400 ring-1 ring-rose-400'
-                      : 'bg-rose-950/30 hover:bg-rose-900/40 text-rose-300 border-rose-800/50'
+                      ? 'bg-rose-600 text-white border-rose-700 shadow-sm'
+                      : 'bg-white hover:bg-rose-50 text-slate-700 border-slate-200'
                   }`}
                   title="4. Trigger Route Guardian Detour Alert"
                 >
-                  <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
                   <span>4. Detour / SOS</span>
                 </button>
 
@@ -311,12 +309,12 @@ export const App: React.FC = () => {
                   onClick={handleSimulateCompleteTrip}
                   className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer hover:scale-[1.02] active:scale-[0.98] ${
                     activeBooking?.state === 'TRIP_COMPLETED'
-                      ? 'bg-brand-500/30 text-brand-200 border-brand-400 ring-1 ring-brand-400'
-                      : 'bg-brand-950/30 hover:bg-brand-900/40 text-brand-300 border-brand-800/50'
+                      ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                      : 'bg-white hover:bg-emerald-50 text-slate-700 border-slate-200'
                   }`}
                   title="5. Finish Trip & Generate Zero-Hidden-Fee Fare Audit Receipt"
                 >
-                  <CheckCircle className="w-3.5 h-3.5 text-brand-400" />
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
                   <span>5. Finish Trip</span>
                 </button>
 
@@ -324,10 +322,10 @@ export const App: React.FC = () => {
                 {activeBooking && (
                   <button
                     onClick={handleResetSimulation}
-                    className="px-2 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition-all flex items-center gap-1 cursor-pointer"
+                    className="px-2 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 transition-all flex items-center gap-1 cursor-pointer"
                     title="Reset Active Booking Simulation"
                   >
-                    <RotateCw className="w-3 h-3" />
+                    <RotateCw className="w-3 h-3 text-slate-500" />
                     <span>Reset</span>
                   </button>
                 )}
@@ -335,10 +333,10 @@ export const App: React.FC = () => {
                 {/* Full Advanced Modal */}
                 <button
                   onClick={() => setIsSimulationModalOpen(true)}
-                  className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl text-xs font-bold text-amber-800 hover:text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-all flex items-center gap-1 cursor-pointer shadow-sm"
                   title="Open Full Demo Simulation Modal with Custom Parameters"
                 >
-                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <Sparkles className="w-3 h-3 text-amber-600" />
                   <span>More Scenarios...</span>
                 </button>
               </div>

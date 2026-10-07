@@ -111,39 +111,39 @@ export const CorporatePortalPage: React.FC = () => {
   if (!isCorporateAuth) {
     return (
       <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative">
+        <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 shadow-xl relative">
           {/* Top back button */}
           <div className="flex justify-between items-center mb-6">
             <button
               onClick={() => setActiveRoleView('PASSENGER')}
-              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors font-medium cursor-pointer"
+              className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-colors font-medium cursor-pointer"
             >
               <span>← Back to Passenger Booking</span>
             </button>
-            <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
+            <span className="text-[10px] font-black uppercase tracking-wider text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
               B2B Enterprise Portal
             </span>
           </div>
 
           <div className="text-center mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center mx-auto mb-4 shadow-xl shadow-cyan-500/20">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center mx-auto mb-4 shadow-md">
               <Building2 className="w-7 h-7" />
             </div>
-            <h2 className="text-xl font-black text-white tracking-tight">Corporate Travel Desk</h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">Corporate Travel Desk</h2>
+            <p className="text-xs text-slate-600 mt-1">
               Enter your enterprise organization code to access employee billing and ride approvals.
             </p>
           </div>
 
           {loginError && (
-            <div className="mb-4 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300">
+            <div className="mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
               {loginError}
             </div>
           )}
 
           <form onSubmit={handleCorporateLogin} className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">
                 Corporate Organization Code
               </label>
               <input
@@ -152,7 +152,7 @@ export const CorporatePortalPage: React.FC = () => {
                 onChange={(e) => setCorpCode(e.target.value.toUpperCase())}
                 placeholder="e.g. CORP-TCS or CORP-INFY"
                 required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm font-mono font-bold text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-sm font-mono font-bold text-slate-900 focus:outline-none focus:border-indigo-500 transition-colors"
               />
               <p className="text-[11px] text-slate-500 mt-1">
                 Issued to your company travel administrator
@@ -160,7 +160,7 @@ export const CorporatePortalPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">
                 Work Email Address
               </label>
               <input
@@ -169,12 +169,12 @@ export const CorporatePortalPage: React.FC = () => {
                 onChange={(e) => setWorkEmail(e.target.value)}
                 placeholder="travel-desk@company.com"
                 required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-sm text-slate-900 focus:outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">
                 Account Password
               </label>
               <input
@@ -183,7 +183,7 @@ export const CorporatePortalPage: React.FC = () => {
                 onChange={(e) => setCorpPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-sm text-slate-900 focus:outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
 
@@ -195,7 +195,7 @@ export const CorporatePortalPage: React.FC = () => {
                   setWorkEmail('priya.sharma@tcs.com');
                   setCorpPassword('password123');
                 }}
-                className="text-cyan-400 hover:text-cyan-300 font-medium cursor-pointer"
+                className="text-indigo-600 hover:text-indigo-800 font-bold cursor-pointer"
               >
                 Auto-fill Demo: TCS Enterprise
               </button>
@@ -204,7 +204,7 @@ export const CorporatePortalPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+              className="w-full py-3.5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
               <Building2 className="w-4 h-4" />
               <span>{isLoggingIn ? 'Verifying Organization...' : 'Sign In to Corporate Console'}</span>
@@ -218,19 +218,19 @@ export const CorporatePortalPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Corporate Header */}
-      <div className="glass-panel rounded-3xl p-6 border border-slate-800 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+      <div className="rounded-3xl p-6 border border-slate-200 bg-white flex flex-wrap items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 border border-indigo-200 flex items-center justify-center font-bold">
             <Building2 className="w-6 h-6 stroke-[2.5]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-black text-white">{account.companyName}</h2>
-              <span className="text-xs bg-blue-500/20 text-blue-300 font-bold px-2 py-0.5 rounded-full border border-blue-500/30">
+              <h2 className="text-xl font-black text-slate-900">{account.companyName}</h2>
+              <span className="text-xs bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full border border-indigo-200">
                 CODE: {account.corporateCode}
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 font-medium">
               Corporate Travel Management Desk • Manager: {currentUser.name}
             </p>
           </div>
@@ -239,9 +239,9 @@ export const CorporatePortalPage: React.FC = () => {
         <div className="flex gap-2">
           <button
             onClick={() => alert('Monthly consolidated GST tax invoice downloaded.')}
-            className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5"
+            className="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4 text-slate-600" />
             <span>Download Invoice</span>
           </button>
         </div>
@@ -249,22 +249,22 @@ export const CorporatePortalPage: React.FC = () => {
 
       {/* Budget & Spend Progress */}
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
-          <span className="text-xs font-black uppercase text-slate-400 tracking-wider">MONTHLY TRAVEL BUDGET</span>
+        <div className="rounded-3xl p-6 border border-slate-200 bg-white space-y-4 shadow-sm">
+          <span className="text-xs font-black uppercase text-slate-500 tracking-wider">MONTHLY TRAVEL BUDGET</span>
           <div>
             <div className="flex justify-between items-baseline mb-2">
-              <span className="text-2xl font-black text-white font-mono">{formatCurrencyINR(account.currentSpend)}</span>
-              <span className="text-xs text-slate-400 font-mono">of {formatCurrencyINR(account.monthlyBudget)}</span>
+              <span className="text-2xl font-black text-slate-900 font-mono">{formatCurrencyINR(account.currentSpend)}</span>
+              <span className="text-xs text-slate-500 font-mono font-medium">of {formatCurrencyINR(account.monthlyBudget)}</span>
             </div>
-            <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+            <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
               <div
                 className={`h-full rounded-full transition-all ${
-                  spendPercentage > 85 ? 'bg-rose-500' : 'bg-gradient-to-r from-blue-500 to-emerald-400'
+                  spendPercentage > 85 ? 'bg-rose-500' : 'bg-gradient-to-r from-indigo-500 to-emerald-500'
                 }`}
                 style={{ width: `${spendPercentage}%` }}
               />
             </div>
-            <div className="flex justify-between text-[11px] text-slate-400 mt-2">
+            <div className="flex justify-between text-[11px] text-slate-600 mt-2 font-medium">
               <span>{spendPercentage}% Budget Utilized</span>
               <span>{formatCurrencyINR(account.monthlyBudget - account.currentSpend)} remaining</span>
             </div>
@@ -272,14 +272,14 @@ export const CorporatePortalPage: React.FC = () => {
         </div>
 
         {/* Department Budgets */}
-        <div className="lg:col-span-2 glass-panel rounded-3xl p-6 border border-slate-800 space-y-3">
-          <span className="text-xs font-black uppercase text-slate-400 tracking-wider">DEPARTMENT BUDGET BREAKDOWN</span>
+        <div className="lg:col-span-2 rounded-3xl p-6 border border-slate-200 bg-white space-y-3 shadow-sm">
+          <span className="text-xs font-black uppercase text-slate-500 tracking-wider">DEPARTMENT BUDGET BREAKDOWN</span>
           <div className="grid sm:grid-cols-3 gap-3">
             {account.departments.map((dept: any, i: number) => (
-              <div key={i} className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="font-bold text-xs text-white block truncate">{dept.name}</span>
-                <p className="text-sm font-black text-emerald-400 font-mono">{formatCurrencyINR(dept.spend)}</p>
-                <span className="text-[10px] text-slate-400">Budget: {formatCurrencyINR(dept.budget)}</span>
+              <div key={i} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="font-bold text-xs text-slate-900 block truncate">{dept.name}</span>
+                <p className="text-sm font-black text-emerald-700 font-mono">{formatCurrencyINR(dept.spend)}</p>
+                <span className="text-[10px] text-slate-500 font-medium">Budget: {formatCurrencyINR(dept.budget)}</span>
               </div>
             ))}
           </div>
@@ -287,16 +287,16 @@ export const CorporatePortalPage: React.FC = () => {
       </div>
 
       {/* Manager Ride Request Approvals Queue */}
-      <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="rounded-3xl p-6 border border-slate-200 bg-white space-y-4 shadow-sm">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div>
-            <h3 className="text-base font-black text-white flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-blue-400" />
+            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-indigo-600" />
               <span>EMPLOYEE RIDE APPROVAL QUEUE</span>
             </h3>
-            <p className="text-xs text-slate-400">Review business travel justifications before dispatch</p>
+            <p className="text-xs text-slate-500 font-medium">Review business travel justifications before dispatch</p>
           </div>
-          <span className="text-xs bg-blue-500/20 text-blue-300 font-bold px-2.5 py-1 rounded-full border border-blue-500/30">
+          <span className="text-xs bg-indigo-100 text-indigo-800 font-bold px-2.5 py-1 rounded-full border border-indigo-200">
             {pendingApprovals.length} PENDING
           </span>
         </div>
@@ -306,28 +306,28 @@ export const CorporatePortalPage: React.FC = () => {
             {pendingApprovals.map((req) => (
               <div
                 key={req.id}
-                className="p-5 rounded-2xl bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-4"
+                className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-4"
               >
                 <div className="space-y-1 max-w-xl">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white text-sm">{req.employeeName}</span>
-                    <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">
+                    <span className="font-bold text-slate-900 text-sm">{req.employeeName}</span>
+                    <span className="text-[10px] bg-slate-200 text-slate-700 font-semibold px-2 py-0.5 rounded">
                       {req.department}
                     </span>
-                    <span className="text-xs text-slate-500 font-mono">{req.id}</span>
+                    <span className="text-xs text-slate-500 font-mono font-medium">{req.id}</span>
                   </div>
-                  <p className="text-xs text-slate-300 font-medium">
+                  <p className="text-xs text-slate-700 font-medium">
                     {req.pickup} ➔ {req.destination}
                   </p>
-                  <p className="text-xs text-amber-300/90 italic">
+                  <p className="text-xs text-amber-900 font-medium italic">
                     Reason: "{req.purpose}"
                   </p>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <span className="text-xs text-slate-400 block">Est. Fare</span>
-                    <span className="font-mono font-bold text-white text-base">
+                    <span className="text-xs text-slate-500 block font-medium">Est. Fare</span>
+                    <span className="font-mono font-bold text-slate-900 text-base">
                       {formatCurrencyINR(req.estimatedFare)}
                     </span>
                   </div>
@@ -335,13 +335,13 @@ export const CorporatePortalPage: React.FC = () => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleApprovalAction(req.id, 'APPROVED')}
-                      className="py-2 px-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow-md shadow-emerald-500/20"
+                      className="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow transition-colors cursor-pointer"
                     >
                       Approve Ride ✓
                     </button>
                     <button
                       onClick={() => handleApprovalAction(req.id, 'REJECTED')}
-                      className="py-2 px-3.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-rose-400 font-bold text-xs"
+                      className="py-2 px-3.5 rounded-xl border border-slate-300 hover:bg-slate-200 text-rose-700 font-bold text-xs transition-colors cursor-pointer"
                     >
                       Reject
                     </button>
@@ -351,7 +351,7 @@ export const CorporatePortalPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center text-slate-400 text-xs">
+          <div className="p-8 text-center text-slate-500 text-xs font-medium">
             All employee corporate ride requests approved!
           </div>
         )}

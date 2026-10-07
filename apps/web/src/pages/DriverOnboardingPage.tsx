@@ -132,51 +132,51 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-navy-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-[#FAFBFD] text-slate-900 py-10 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center">
       {/* Back button to consumer passenger site */}
       <div className="w-full max-w-2xl mb-4 flex items-center justify-between">
         <button
           onClick={onBackToPassenger || (() => setActiveRoleView('PASSENGER'))}
-          className="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors p-2 rounded-xl hover:bg-slate-900"
+          className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-colors p-2 rounded-xl hover:bg-slate-200 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Exit to Passenger Booking</span>
         </button>
 
-        <span className="text-xs font-black uppercase text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1.5">
-          <Car className="w-3.5 h-3.5" />
+        <span className="text-xs font-black uppercase text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5">
+          <Car className="w-3.5 h-3.5 text-emerald-600" />
           <span>FAIRRIDE DRIVER PARTNER NETWORK</span>
         </span>
       </div>
 
       {/* Main Container Card */}
-      <div className="w-full max-w-2xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+      <div className="w-full max-w-2xl bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
         {/* Subtle Decorative Background Glow */}
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-100/60 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-100/60 rounded-full blur-3xl pointer-events-none" />
 
         {/* Header Section */}
-        <div className="text-center space-y-2 mb-6">
-          <div className="inline-flex items-center gap-2 p-3 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-2xl text-slate-950 shadow-xl shadow-emerald-500/20">
+        <div className="text-center space-y-2 mb-6 relative z-10">
+          <div className="inline-flex items-center gap-2 p-3 bg-emerald-600 text-white rounded-2xl shadow-md">
             <Car className="w-6 h-6 stroke-[2.5]" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             FairRide Driver Partner Portal
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
-            Take home <strong className="text-emerald-400">92% of every fare</strong> with zero sudden surge penalties & transparent instant bank payouts.
+          <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+            Take home <strong className="text-emerald-700 font-bold">92% of every fare</strong> with zero sudden surge penalties & transparent instant bank payouts.
           </p>
         </div>
 
         {/* Tab Switcher: Register New Driver vs Existing Driver Login */}
-        <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-950 rounded-2xl border border-slate-800 mb-8 text-xs font-bold">
+        <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200 mb-8 text-xs font-bold relative z-10">
           <button
             type="button"
             onClick={() => setActiveTab('REGISTER')}
-            className={`py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
+            className={`py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               activeTab === 'REGISTER'
-                ? 'bg-emerald-500 text-slate-950 font-black shadow-lg shadow-emerald-500/20'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-emerald-600 text-white font-black shadow-md'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <User className="w-4 h-4" />
@@ -186,10 +186,10 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('LOGIN')}
-            className={`py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
+            className={`py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               activeTab === 'LOGIN'
-                ? 'bg-emerald-500 text-slate-950 font-black shadow-lg shadow-emerald-500/20'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-emerald-600 text-white font-black shadow-md'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <KeyRound className="w-4 h-4" />
@@ -201,19 +201,19 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
         {/* VIEW 1: DRIVER PARTNER LOGIN WITH SPECIFIC CODE */}
         {/* ========================================================================= */}
         {activeTab === 'LOGIN' ? (
-          <form onSubmit={handleDriverLogin} className="space-y-5 animate-in fade-in">
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-start gap-2.5">
-              <KeyRound className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+          <form onSubmit={handleDriverLogin} className="space-y-5 animate-in fade-in relative z-10">
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+              <KeyRound className="w-4 h-4 shrink-0 mt-0.5 text-amber-700" />
               <div>
                 <p className="font-bold">Specific Driver Access Code Required</p>
-                <p className="text-slate-300 text-[11px] mt-0.5">
-                  Enter your assigned Driver Partner Code (e.g. <strong className="text-white">DRV-8821</strong> or <strong className="text-white">DRV-HYD-101</strong>) to access the driver dispatch console.
+                <p className="text-slate-600 text-[11px] mt-0.5">
+                  Enter your assigned Driver Partner Code (e.g. <strong className="text-slate-900">DRV-8821</strong> or <strong className="text-slate-900">DRV-HYD-101</strong>) to access the driver dispatch console.
                 </p>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                 Driver Partner Code
               </label>
               <input
@@ -221,13 +221,13 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                 value={loginPartnerCode}
                 onChange={(e) => setLoginPartnerCode(e.target.value)}
                 placeholder="e.g. DRV-8821"
-                className="w-full bg-slate-950 border border-slate-700/80 rounded-2xl px-4 py-3.5 text-sm font-mono font-bold text-white focus:outline-none focus:border-emerald-400 tracking-wider"
+                className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3.5 text-sm font-mono font-bold text-slate-900 focus:outline-none focus:border-emerald-500 tracking-wider"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                 Registered Mobile Number
               </label>
               <div className="relative">
@@ -238,21 +238,21 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                   value={loginPhone}
                   onChange={(e) => setLoginPhone(e.target.value)}
                   placeholder="98000 00003"
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-2xl pl-14 pr-4 py-3.5 text-sm text-white focus:outline-none focus:border-emerald-400 font-medium"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-2xl pl-14 pr-4 py-3.5 text-sm text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
             </div>
 
             {loginError && (
-              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                 <span>{loginError}</span>
               </div>
             )}
 
             {/* Quick Demo Access Buttons */}
             <div className="pt-1">
-              <span className="text-[10px] font-bold text-slate-400 block mb-1.5 uppercase">
+              <span className="text-[10px] font-bold text-slate-500 block mb-1.5 uppercase">
                 Quick Demo Partner Codes:
               </span>
               <div className="flex flex-wrap gap-2">
@@ -268,7 +268,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       setLoginPartnerCode(d.code);
                       setLoginPhone('9800000003');
                     }}
-                    className="px-2.5 py-1 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-300 hover:text-emerald-300 hover:border-emerald-500/40 transition-all font-mono"
+                    className="px-2.5 py-1 rounded-xl bg-slate-100 border border-slate-300 text-[11px] text-slate-700 hover:text-emerald-700 hover:border-emerald-500 transition-all font-mono cursor-pointer"
                   >
                     {d.code} • {d.name.split(' ')[0]}
                   </button>
@@ -278,7 +278,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
 
             <button
               type="submit"
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm uppercase tracking-wider shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Verify Code & Enter Driver Console</span>
               <ArrowRight className="w-4 h-4" />
@@ -288,7 +288,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
           /* ========================================================================= */
           /* VIEW 2: MULTI-STEP DRIVER ONBOARDING & PAYMENT REGISTRATION PROCESS */
           /* ========================================================================= */
-          <div className="space-y-6 animate-in fade-in">
+          <div className="space-y-6 animate-in fade-in relative z-10">
             {/* Step Progress Indicators */}
             <div className="grid grid-cols-4 gap-2 text-center">
               {[
@@ -300,12 +300,12 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                 <div key={s.num} className="space-y-1">
                   <div
                     className={`h-1.5 rounded-full transition-all ${
-                      step >= s.num ? 'bg-emerald-400' : 'bg-slate-800'
+                      step >= s.num ? 'bg-emerald-500' : 'bg-slate-200'
                     }`}
                   />
                   <span
                     className={`text-[10px] font-bold uppercase tracking-wider block ${
-                      step === s.num ? 'text-emerald-300' : 'text-slate-500'
+                      step === s.num ? 'text-emerald-700 font-black' : 'text-slate-400'
                     }`}
                   >
                     {s.num}. {s.label}
@@ -319,13 +319,13 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
             {/* --------------------------------------------------------------------- */}
             {step === 1 && (
               <div className="space-y-4 animate-in fade-in">
-                <div className="border-b border-slate-800 pb-3">
-                  <h3 className="text-base font-black text-white">Step 1: Driver Identity & Driving License</h3>
-                  <p className="text-xs text-slate-400">Required by Ministry of Road Transport & Highways (MoRTH)</p>
+                <div className="border-b border-slate-200 pb-3">
+                  <h3 className="text-base font-black text-slate-900">Step 1: Driver Identity & Driving License</h3>
+                  <p className="text-xs text-slate-500 font-medium">Required by Ministry of Road Transport & Highways (MoRTH)</p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                     Full Legal Name (as per Driving License)
                   </label>
                   <input
@@ -334,14 +334,14 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                     value={formData.fullName}
                     onChange={handleChange}
                     placeholder="e.g. Ramesh Babu Narala"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-400"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     required
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       Phone Number (for OTP & Dispatches)
                     </label>
                     <input
@@ -350,20 +350,20 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="98765 43210"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                       required
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       Operating City
                     </label>
                     <select
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     >
                       <option value="Hyderabad">Hyderabad, Telangana</option>
                       <option value="Bengaluru">Bengaluru, Karnataka</option>
@@ -374,7 +374,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       Commercial Driving License (DL) No.
                     </label>
                     <input
@@ -383,13 +383,13 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       value={formData.licenseNumber}
                       onChange={handleChange}
                       placeholder="TS09 20210008421"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white font-mono focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                       required
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       DL Expiry Date
                     </label>
                     <input
@@ -397,17 +397,17 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       name="licenseExpiry"
                       value={formData.licenseExpiry}
                       onChange={handleChange}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs flex items-center justify-between text-slate-300">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between text-slate-700">
                   <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-emerald-400" />
+                    <FileText className="w-4 h-4 text-emerald-600" />
                     <span>Upload DL & Aadhaar Documents</span>
                   </div>
-                  <span className="text-[11px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  <span className="text-[11px] text-emerald-800 font-bold bg-emerald-100 px-2 py-0.5 rounded">
                     Auto-Verified via DigiLocker API
                   </span>
                 </div>
@@ -425,7 +425,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                     }
                     setStep(2);
                   }}
-                  className="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                  className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
                 >
                   <span>Continue to Vehicle Details</span>
                   <ArrowRight className="w-4 h-4" />
@@ -438,21 +438,21 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
             {/* --------------------------------------------------------------------- */}
             {step === 2 && (
               <div className="space-y-4 animate-in fade-in">
-                <div className="border-b border-slate-800 pb-3">
-                  <h3 className="text-base font-black text-white">Step 2: Vehicle Details & Commercial Permit</h3>
-                  <p className="text-xs text-slate-400">Add the vehicle you will drive on the platform</p>
+                <div className="border-b border-slate-200 pb-3">
+                  <h3 className="text-base font-black text-slate-900">Step 2: Vehicle Details & Commercial Permit</h3>
+                  <p className="text-xs text-slate-500 font-medium">Add the vehicle you will drive on the platform</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       Vehicle Category
                     </label>
                     <select
                       name="vehicleCategory"
                       value={formData.vehicleCategory}
                       onChange={handleChange}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     >
                       <option value="SEDAN">Prime Sedan (Aura, Dzire, Etios)</option>
                       <option value="HATCHBACK">Mini / Hatchback (WagonR, Tiago)</option>
@@ -463,7 +463,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       Vehicle Model & Color
                     </label>
                     <input
@@ -472,14 +472,14 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       value={formData.vehicleModel}
                       onChange={handleChange}
                       placeholder="e.g. Maruti Dzire (Silver)"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       Commercial Number Plate (Yellow Plate)
                     </label>
                     <input
@@ -488,12 +488,12 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       value={formData.plateNumber}
                       onChange={handleChange}
                       placeholder="TS 07 UB 1420"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs font-mono font-bold text-amber-300 focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs font-mono font-bold text-amber-700 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                       Commercial RC Book Number
                     </label>
                     <input
@@ -502,18 +502,18 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       value={formData.rcNumber}
                       onChange={handleChange}
                       placeholder="RC-9982410"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-xs font-mono text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-2xl px-4 py-3 text-xs font-mono text-slate-900 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 {/* Trust & Zero Sudden Surge Pledge */}
-                <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs space-y-1 text-emerald-300">
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs space-y-1 text-emerald-900">
                   <p className="font-bold flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <ShieldCheck className="w-4 h-4 text-emerald-700" />
                     <span>FairRide Driver Partner Guarantee</span>
                   </p>
-                  <p className="text-[11px] text-slate-300">
+                  <p className="text-[11px] text-slate-600">
                     You keep 92% of every rupee earned. The platform takes only an 8% flat fee. No hidden penalties, no forced extra cash demands.
                   </p>
                 </div>
@@ -522,7 +522,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="w-1/3 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs"
+                    className="w-1/3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
                   >
                     Back
                   </button>
@@ -538,7 +538,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       }
                       setStep(3);
                     }}
-                    className="flex-1 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    className="flex-1 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
                   >
                     <span>Continue to Onboarding Fee</span>
                     <ArrowRight className="w-4 h-4" />
@@ -552,75 +552,75 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
             {/* --------------------------------------------------------------------- */}
             {step === 3 && (
               <div className="space-y-4 animate-in fade-in">
-                <div className="border-b border-slate-800 pb-3">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20 mb-1">
+                <div className="border-b border-slate-200 pb-3">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wider mb-1">
                     <DollarSign className="w-3 h-3" />
                     <span>INDUSTRY STANDARD DRIVER ACTIVATION</span>
                   </div>
-                  <h3 className="text-base font-black text-white">
+                  <h3 className="text-base font-black text-slate-900">
                     Step 3: Driver Onboarding Kit & Wallet Activation Deposit
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Why real cab apps charge an initial fee & how it is structured:
                   </p>
                 </div>
 
                 {/* Real-world Breakdown Box */}
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                  <div className="flex justify-between items-baseline border-b border-slate-800 pb-2">
-                    <span className="text-xs font-bold text-slate-300">Total Activation Package:</span>
-                    <span className="text-2xl font-black font-mono text-emerald-400">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div className="flex justify-between items-baseline border-b border-slate-200 pb-2">
+                    <span className="text-xs font-bold text-slate-700">Total Activation Package:</span>
+                    <span className="text-2xl font-black font-mono text-emerald-700">
                       {formatCurrencyINR(ONBOARDING_FEE)}
                     </span>
                   </div>
 
-                  <div className="space-y-2 text-xs text-slate-300">
+                  <div className="space-y-2 text-xs text-slate-600">
                     <div className="flex justify-between items-center">
                       <span className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span>Commercial Fastag + Live GPS Decal Kit:</span>
                       </span>
-                      <span className="font-mono text-slate-200">₹399</span>
+                      <span className="font-mono text-slate-900 font-bold">₹399</span>
                     </div>
 
                     <div className="flex justify-between items-center">
                       <span className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span>Background Verification & Police Clearance Audit:</span>
                       </span>
-                      <span className="font-mono text-slate-200">₹300</span>
+                      <span className="font-mono text-slate-900 font-bold">₹300</span>
                     </div>
 
-                    <div className="flex justify-between items-center text-emerald-300 bg-emerald-500/10 p-2 rounded-xl border border-emerald-500/20 font-bold">
+                    <div className="flex justify-between items-center text-emerald-800 bg-emerald-100 p-2 rounded-xl font-bold">
                       <span className="flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span>Credited Back to Your Driver Wallet:</span>
                       </span>
-                      <span className="font-mono">₹300 (Initial Float)</span>
+                      <span className="font-mono font-bold">₹300 (Initial Float)</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Payment App Selection */}
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
                     Select UPI Payment Method:
                   </label>
                   <div className="grid grid-cols-4 gap-2 text-center text-xs font-bold">
                     {[
-                      { id: 'QR', label: 'Scan QR', color: 'border-emerald-500/50 text-emerald-300' },
-                      { id: 'GPAY', label: 'Google Pay', color: 'border-blue-500/50 text-blue-300' },
-                      { id: 'PHONEPE', label: 'PhonePe', color: 'border-purple-500/50 text-purple-300' },
-                      { id: 'PAYTM', label: 'Paytm UPI', color: 'border-sky-500/50 text-sky-300' }
+                      { id: 'QR', label: 'Scan QR' },
+                      { id: 'GPAY', label: 'Google Pay' },
+                      { id: 'PHONEPE', label: 'PhonePe' },
+                      { id: 'PAYTM', label: 'Paytm UPI' }
                     ].map((app) => (
                       <button
                         key={app.id}
                         type="button"
                         onClick={() => setSelectedPaymentApp(app.id as any)}
-                        className={`p-2.5 rounded-xl border transition-all text-xs ${
+                        className={`p-2.5 rounded-xl border transition-all text-xs cursor-pointer ${
                           selectedPaymentApp === app.id
-                            ? 'bg-slate-800 font-black shadow ring-1 ring-emerald-400 text-white'
-                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                            ? 'bg-emerald-600 text-white font-black shadow-sm border-emerald-600'
+                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
                         }`}
                       >
                         {app.label}
@@ -630,8 +630,8 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                 </div>
 
                 {/* Interactive UPI Payment Demonstration Box */}
-                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-center space-y-3">
-                  <div className="bg-white p-2.5 rounded-2xl inline-block shadow-xl">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200 text-center space-y-3 shadow-sm">
+                  <div className="bg-white p-2.5 rounded-2xl inline-block border border-slate-200 shadow-sm">
                     <svg className="w-28 h-28 mx-auto" viewBox="0 0 100 100" fill="none">
                       <rect width="100" height="100" fill="white" />
                       <rect x="10" y="10" width="25" height="25" fill="#0f172a" rx="4" />
@@ -650,8 +650,8 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                       <rect x="74" y="42" width="6" height="6" fill="#0f172a" />
                     </svg>
                   </div>
-                  <p className="text-[11px] text-slate-400">
-                    UPI ID: <strong className="text-slate-200 font-mono">fairride.onboarding@icici</strong>
+                  <p className="text-[11px] text-slate-500">
+                    UPI ID: <strong className="text-slate-900 font-mono">fairride.onboarding@icici</strong>
                   </p>
                 </div>
 
@@ -659,7 +659,7 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="w-1/3 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs"
+                    className="w-1/3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
                   >
                     Back
                   </button>
@@ -667,9 +667,9 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
                     type="button"
                     onClick={handlePayOnboardingFee}
                     disabled={isProcessingPayment}
-                    className="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/25 transition-all cursor-pointer"
+                    className="flex-1 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
                   >
-                    <Zap className="w-4 h-4 fill-slate-950" />
+                    <Zap className="w-4 h-4 fill-white" />
                     <span>
                       {isProcessingPayment
                         ? 'Verifying Payment...'
@@ -685,53 +685,53 @@ export const DriverOnboardingPage: React.FC<DriverOnboardingPageProps> = ({
             {/* --------------------------------------------------------------------- */}
             {step === 4 && (
               <div className="py-6 text-center space-y-5 animate-in fade-in">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center justify-center mx-auto shadow-sm">
                   <CheckCircle2 className="w-10 h-10" />
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-black text-white">Driver Partner Account Activated!</h3>
-                  <p className="text-xs text-slate-300 mt-1 max-w-sm mx-auto">
+                  <h3 className="text-xl font-black text-slate-900">Driver Partner Account Activated!</h3>
+                  <p className="text-xs text-slate-600 mt-1 max-w-sm mx-auto">
                     Your onboarding deposit is verified, your commercial vehicle is registered, and ₹300 is credited to your driver wallet.
                   </p>
                 </div>
 
                 {/* Assigned Driver Partner Code */}
-                <div className="p-4 rounded-3xl bg-slate-950 border border-amber-500/40 max-w-sm mx-auto space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
+                <div className="p-4 rounded-3xl bg-amber-50 border border-amber-200 max-w-sm mx-auto space-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 block">
                     YOUR SPECIFIC DRIVER PARTNER CODE:
                   </span>
-                  <p className="text-3xl font-black font-mono tracking-wider text-white">
+                  <p className="text-3xl font-black font-mono tracking-wider text-amber-950">
                     {generatedPartnerCode || 'DRV-HYD-5821'}
                   </p>
-                  <span className="text-[10px] text-slate-400 block">
+                  <span className="text-[10px] text-slate-600 block">
                     Save this code! Use this code to log into your driver dashboard anytime.
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-left max-w-md mx-auto text-xs bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
+                <div className="grid grid-cols-2 gap-3 text-left max-w-md mx-auto text-xs bg-slate-50 p-3 rounded-2xl border border-slate-200">
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Driver Name:</span>
-                    <strong className="text-white">{formData.fullName || 'Ramesh Babu'}</strong>
+                    <span className="text-slate-500 block text-[10px]">Driver Name:</span>
+                    <strong className="text-slate-900">{formData.fullName || 'Ramesh Babu'}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Vehicle:</span>
-                    <strong className="text-amber-300 font-mono">{formData.plateNumber || 'TS 07 UB 1420'}</strong>
+                    <span className="text-slate-500 block text-[10px]">Vehicle:</span>
+                    <strong className="text-amber-800 font-mono">{formData.plateNumber || 'TS 07 UB 1420'}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Net Share:</span>
-                    <strong className="text-emerald-400">92% Net Take-Home</strong>
+                    <span className="text-slate-500 block text-[10px]">Net Share:</span>
+                    <strong className="text-emerald-700">92% Net Take-Home</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Initial Wallet Balance:</span>
-                    <strong className="text-emerald-400 font-mono">₹300.00</strong>
+                    <span className="text-slate-500 block text-[10px]">Initial Wallet Balance:</span>
+                    <strong className="text-emerald-700 font-mono">₹300.00</strong>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleFinishOnboarding}
-                  className="w-full max-w-md mx-auto py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm uppercase tracking-wider shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full max-w-md mx-auto py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Go Online & Start Receiving Bookings</span>
                   <ArrowRight className="w-4 h-4" />

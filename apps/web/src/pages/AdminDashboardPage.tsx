@@ -153,7 +153,7 @@ export const AdminDashboardPage: React.FC = () => {
         setAuditLogs(res.data || []);
       }
     } catch {
-      // Mock data fallbacks for flawless offline demo
+      // Mock data fallbacks for offline demo
     }
   };
 
@@ -177,39 +177,39 @@ export const AdminDashboardPage: React.FC = () => {
   if (!isAdminAuth) {
     return (
       <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative">
+        <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 shadow-xl relative">
           {/* Top back button */}
           <div className="flex justify-between items-center mb-6">
             <button
               onClick={() => setActiveRoleView('PASSENGER')}
-              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors font-medium cursor-pointer"
+              className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1.5 transition-colors font-medium cursor-pointer"
             >
               <span>← Back to Passenger Booking</span>
             </button>
-            <span className="text-[10px] font-black uppercase tracking-wider text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+            <span className="text-[10px] font-black uppercase tracking-wider text-rose-800 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
               Operations Clearance
             </span>
           </div>
 
           <div className="text-center mb-6">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center mx-auto mb-4 shadow-xl shadow-rose-500/20">
+            <div className="w-14 h-14 rounded-2xl bg-rose-600 text-white flex items-center justify-center mx-auto mb-4 shadow-md">
               <ShieldAlert className="w-7 h-7" />
             </div>
-            <h2 className="text-xl font-black text-white tracking-tight">Operations Command Center</h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">Operations Command Center</h2>
+            <p className="text-xs text-slate-600 mt-1">
               Restricted access for fleet controllers, safety incident dispatchers, and platform admins.
             </p>
           </div>
 
           {loginError && (
-            <div className="mb-4 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-300">
+            <div className="mb-4 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800">
               {loginError}
             </div>
           )}
 
           <form onSubmit={handleAdminLogin} className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">
                 Admin Security Passcode
               </label>
               <input
@@ -218,7 +218,7 @@ export const AdminDashboardPage: React.FC = () => {
                 onChange={(e) => setAdminPasscode(e.target.value)}
                 placeholder="Enter security key (e.g. ADMIN-2026)"
                 required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm font-mono font-bold text-white focus:outline-none focus:border-rose-400 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-sm font-mono font-bold text-slate-900 focus:outline-none focus:border-rose-500 transition-colors"
               />
               <p className="text-[11px] text-slate-500 mt-1">
                 Required for security clearance & audit logging
@@ -226,7 +226,7 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">
+              <label className="text-xs font-bold text-slate-700 block mb-1.5">
                 Admin Identity / Work Email
               </label>
               <input
@@ -235,7 +235,7 @@ export const AdminDashboardPage: React.FC = () => {
                 onChange={(e) => setAdminEmail(e.target.value)}
                 placeholder="admin@fairride.in"
                 required
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm text-white focus:outline-none focus:border-rose-400 transition-colors"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-sm text-slate-900 focus:outline-none focus:border-rose-500 transition-colors"
               />
             </div>
 
@@ -246,7 +246,7 @@ export const AdminDashboardPage: React.FC = () => {
                   setAdminPasscode('ADMIN-2026');
                   setAdminEmail('admin@fairride.in');
                 }}
-                className="text-rose-400 hover:text-rose-300 font-medium cursor-pointer"
+                className="text-rose-600 hover:text-rose-800 font-bold cursor-pointer"
               >
                 Auto-fill Demo Key (ADMIN-2026)
               </button>
@@ -255,7 +255,7 @@ export const AdminDashboardPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-white font-black text-sm shadow-xl shadow-rose-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all"
+              className="w-full py-3.5 px-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-black text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
               <ShieldAlert className="w-4 h-4" />
               <span>{isLoggingIn ? 'Verifying Security Clearance...' : 'Authenticate & Enter Command Room'}</span>
@@ -269,70 +269,70 @@ export const AdminDashboardPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Admin Operations Navigation Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black text-white">OPERATIONS CONTROL CENTER</h1>
-            <span className="text-xs bg-rose-500/20 text-rose-400 font-bold px-2 py-0.5 rounded-full border border-rose-500/30">
+            <h1 className="text-xl font-black text-slate-900">OPERATIONS CONTROL CENTER</h1>
+            <span className="text-xs bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full border border-rose-200">
               OPERATIONS & SAFETY ACTIVE
             </span>
           </div>
-          <p className="text-xs text-slate-400">Sunita Verma • Senior Mobility Operations Dispatcher</p>
+          <p className="text-xs text-slate-500 font-medium">Sunita Verma • Senior Mobility Operations Dispatcher</p>
         </div>
 
-        <div className="bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 flex flex-wrap gap-1 text-xs font-bold">
+        <div className="bg-slate-100 p-1.5 rounded-2xl border border-slate-200 flex flex-wrap gap-1 text-xs font-bold">
           <button
             onClick={() => setActiveAdminTab('OVERVIEW')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeAdminTab === 'OVERVIEW' ? 'bg-brand-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              activeAdminTab === 'OVERVIEW' ? 'bg-emerald-600 text-white font-black shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             📊 Overview
           </button>
           <button
             onClick={() => setActiveAdminTab('USERS')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeAdminTab === 'USERS' ? 'bg-emerald-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              activeAdminTab === 'USERS' ? 'bg-emerald-600 text-white font-black shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             👥 Users ({usersList.length || kpis.totalPassengers || 65})
           </button>
           <button
             onClick={() => setActiveAdminTab('LIVE_OPS')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeAdminTab === 'LIVE_OPS' ? 'bg-cyan-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              activeAdminTab === 'LIVE_OPS' ? 'bg-indigo-600 text-white font-black shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             🗺️ Live Fleet
           </button>
           <button
             onClick={() => setActiveAdminTab('SAFETY')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeAdminTab === 'SAFETY' ? 'bg-rose-500 text-white font-black' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              activeAdminTab === 'SAFETY' ? 'bg-rose-600 text-white font-black shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             🚨 Safety Center ({kpis.safetyIncidents || 2})
           </button>
           <button
             onClick={() => setActiveAdminTab('DISPUTES')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeAdminTab === 'DISPUTES' ? 'bg-amber-500 text-slate-950 font-black' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              activeAdminTab === 'DISPUTES' ? 'bg-amber-600 text-white font-black shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             ⚖️ Disputes ({kpis.openDisputes || 3})
           </button>
           <button
             onClick={() => setActiveAdminTab('FRAUD')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeAdminTab === 'FRAUD' ? 'bg-purple-600 text-white font-black' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              activeAdminTab === 'FRAUD' ? 'bg-purple-600 text-white font-black shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             🛡️ Fraud AI ({kpis.fraudAlerts || 2})
           </button>
           <button
             onClick={() => setActiveAdminTab('AUDIT_LOGS')}
-            className={`px-3 py-1.5 rounded-xl transition-all ${
-              activeAdminTab === 'AUDIT_LOGS' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
+            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+              activeAdminTab === 'AUDIT_LOGS' ? 'bg-slate-700 text-white font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             📜 Audit Trail
@@ -341,35 +341,35 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* SUPABASE CLOUD POSTGRESQL SYNC STATUS BANNER */}
-      <div className="glass-panel p-4 rounded-2xl border border-emerald-500/25 bg-slate-900/70 flex flex-wrap items-center justify-between gap-4">
+      <div className="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 flex flex-wrap items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-800">
             <Database className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-black text-white">Supabase Cloud PostgreSQL Database</span>
-              <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-sm font-black text-slate-900">Supabase Cloud PostgreSQL Database</span>
+              <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
                 Live Connected
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Dual-write storage active • In Supabase: <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.users ?? usersList.length}</span> Users, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.drivers ?? 20}</span> Drivers, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.bookings ?? 52}</span> Bookings, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.fareLocks ?? 0}</span> Fare Locks, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.driverEarnings ?? 0}</span> Earnings, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.disputes ?? 0}</span> Disputes, <span className="text-emerald-400 font-bold font-mono">{supabaseStatus?.tables?.safetyIncidents ?? 0}</span> Incidents
+            <p className="text-xs text-slate-600 mt-0.5">
+              Dual-write storage active • In Supabase: <span className="text-emerald-800 font-bold font-mono">{supabaseStatus?.tables?.users ?? usersList.length}</span> Users, <span className="text-emerald-800 font-bold font-mono">{supabaseStatus?.tables?.drivers ?? 20}</span> Drivers, <span className="text-emerald-800 font-bold font-mono">{supabaseStatus?.tables?.bookings ?? 52}</span> Bookings, <span className="text-emerald-800 font-bold font-mono">{supabaseStatus?.tables?.fareLocks ?? 0}</span> Fare Locks, <span className="text-emerald-800 font-bold font-mono">{supabaseStatus?.tables?.driverEarnings ?? 0}</span> Earnings, <span className="text-emerald-800 font-bold font-mono">{supabaseStatus?.tables?.disputes ?? 0}</span> Disputes, <span className="text-emerald-800 font-bold font-mono">{supabaseStatus?.tables?.safetyIncidents ?? 0}</span> Incidents
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           {syncNotification && (
-            <span className={`text-xs font-semibold px-3 py-1 rounded-xl ${syncNotification.type === 'error' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}`}>
+            <span className={`text-xs font-semibold px-3 py-1 rounded-xl ${syncNotification.type === 'error' ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}`}>
               {syncNotification.message}
             </span>
           )}
           <button
             onClick={handleSyncSupabase}
             disabled={isSyncingSupabase}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-sm"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-sm"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncingSupabase ? 'animate-spin' : ''}`} />
             {isSyncingSupabase ? 'Syncing to Supabase...' : 'Sync All Data to Supabase'}
@@ -381,58 +381,58 @@ export const AdminDashboardPage: React.FC = () => {
       {activeAdminTab === 'OVERVIEW' && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-            <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase">Total Rides</span>
-              <p className="text-xl font-black text-white font-mono">{kpis.totalBookings}</p>
-              <span className="text-[10px] text-emerald-400">+14% vs yesterday</span>
+            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase">Total Rides</span>
+              <p className="text-xl font-black text-slate-900 font-mono">{kpis.totalBookings}</p>
+              <span className="text-[10px] text-emerald-700 font-bold">+14% vs yesterday</span>
             </div>
-            <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase">Active Trips</span>
-              <p className="text-xl font-black text-cyan-400 font-mono">{kpis.activeTrips}</p>
-              <span className="text-[10px] text-slate-400">Live GPS tracking</span>
+            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase">Active Trips</span>
+              <p className="text-xl font-black text-indigo-600 font-mono">{kpis.activeTrips}</p>
+              <span className="text-[10px] text-slate-500">Live GPS tracking</span>
             </div>
-            <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase">Active Drivers</span>
-              <p className="text-xl font-black text-emerald-400 font-mono">{kpis.activeDrivers}</p>
-              <span className="text-[10px] text-slate-400">16 online in Hyd</span>
+            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase">Active Drivers</span>
+              <p className="text-xl font-black text-emerald-700 font-mono">{kpis.activeDrivers}</p>
+              <span className="text-[10px] text-slate-500">16 online in Hyd</span>
             </div>
-            <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase">Platform Volume</span>
-              <p className="text-xl font-black text-white font-mono">{formatCurrencyINR(kpis.totalRevenue)}</p>
-              <span className="text-[10px] text-emerald-400">Avg {formatCurrencyINR(kpis.averageFare)}/ride</span>
+            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase">Platform Volume</span>
+              <p className="text-xl font-black text-slate-900 font-mono">{formatCurrencyINR(kpis.totalRevenue)}</p>
+              <span className="text-[10px] text-emerald-700 font-bold">Avg {formatCurrencyINR(kpis.averageFare)}/ride</span>
             </div>
-            <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase">Cancellation Rate</span>
-              <p className="text-xl font-black text-emerald-400 font-mono">{kpis.cancellationRate}</p>
-              <span className="text-[10px] text-slate-400">Industry avg is 8.5%</span>
+            <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase">Cancellation Rate</span>
+              <p className="text-xl font-black text-emerald-700 font-mono">{kpis.cancellationRate}</p>
+              <span className="text-[10px] text-slate-500">Industry avg is 8.5%</span>
             </div>
-            <div className="glass-card p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 space-y-1">
-              <span className="text-[10px] font-bold text-emerald-400 uppercase">Green EV Rides</span>
-              <p className="text-xl font-black text-emerald-400 font-mono">{kpis.evRidesCount}</p>
-              <span className="text-[10px] text-emerald-300">420 kg CO2 avoided</span>
+            <div className="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 shadow-sm space-y-1">
+              <span className="text-[10px] font-bold text-emerald-800 uppercase">Green EV Rides</span>
+              <p className="text-xl font-black text-emerald-700 font-mono">{kpis.evRidesCount}</p>
+              <span className="text-[10px] text-emerald-800 font-semibold">420 kg CO2 avoided</span>
             </div>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-6">
             <InteractiveMap className="h-80" showCorridor={true} />
 
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-              <h3 className="font-bold text-base text-white">Live Dispatches & Auto-Recovery Health</h3>
-              <p className="text-xs text-slate-400">
+            <div className="p-6 rounded-3xl border border-slate-200 bg-white shadow-sm space-y-4">
+              <h3 className="font-bold text-base text-slate-900">Live Dispatches & Auto-Recovery Health</h3>
+              <p className="text-xs text-slate-600">
                 The Auto-Recovery dispatch engine has auto-healed 8 driver cancellations today with an average 18-second re-pairing time. Zero passengers experienced surge penalization.
               </p>
               <div className="space-y-2 text-xs">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-                  <span>Average Auto-Recovery Time:</span>
-                  <span className="font-bold text-emerald-400">18 seconds</span>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center">
+                  <span className="text-slate-700">Average Auto-Recovery Time:</span>
+                  <span className="font-bold text-emerald-700">18 seconds</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-                  <span>Driver Demanding Extra Cash Complaints:</span>
-                  <span className="font-bold text-amber-400">1 case (Investigation pending)</span>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center">
+                  <span className="text-slate-700">Driver Demanding Extra Cash Complaints:</span>
+                  <span className="font-bold text-amber-800">1 case (Investigation pending)</span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center">
-                  <span>Route Deviation Alerts Resolved:</span>
-                  <span className="font-bold text-emerald-400">3 cases (Normal traffic detours)</span>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center">
+                  <span className="text-slate-700">Route Deviation Alerts Resolved:</span>
+                  <span className="font-bold text-emerald-700">3 cases (Normal traffic detours)</span>
                 </div>
               </div>
             </div>
@@ -449,18 +449,18 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* TAB: USERS & PASSENGERS DIRECTORY */}
       {activeAdminTab === 'USERS' && (
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-5">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
             <div>
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-400" />
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-emerald-600" />
                 <span>USER & PASSENGER DIRECTORY</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 font-medium">
                 Live database of all registered riders, drivers, and partners with instant wallet & verification details
               </p>
             </div>
-            <span className="text-xs bg-emerald-500/20 text-emerald-300 font-black px-3 py-1 rounded-full border border-emerald-500/30">
+            <span className="text-xs bg-emerald-100 text-emerald-800 font-black px-3 py-1 rounded-full border border-emerald-200">
               {usersList.length} REGISTERED USERS
             </span>
           </div>
@@ -469,20 +469,20 @@ export const AdminDashboardPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                <Search className="w-4 h-4 text-emerald-400" />
+                <Search className="w-4 h-4 text-emerald-600" />
               </div>
               <input
                 type="text"
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
                 placeholder="Search by name, phone number, email address, or referral code..."
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500"
               />
             </div>
             <select
               value={userRoleFilter}
               onChange={(e) => setUserRoleFilter(e.target.value)}
-              className="px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-semibold focus:outline-none focus:border-emerald-400"
+              className="px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 font-semibold focus:outline-none focus:border-emerald-500"
             >
               <option value="ALL">All Roles ({usersList.length})</option>
               <option value="PASSENGER">Passengers</option>
@@ -495,48 +495,48 @@ export const AdminDashboardPage: React.FC = () => {
           {/* Users List Grid */}
           <div className="space-y-3">
             {isUsersLoading ? (
-              <div className="p-8 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
-                <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
+              <div className="p-8 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
+                <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
                 <span>Loading live user directory...</span>
               </div>
             ) : usersList.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400 bg-slate-950/60 rounded-2xl border border-slate-800">
+              <div className="p-8 text-center text-xs text-slate-500 bg-slate-50 rounded-2xl border border-slate-200">
                 No users found matching your search.
               </div>
             ) : (
               usersList.map((user) => (
                 <div
                   key={user._id || user.userId}
-                  className="p-4 rounded-2xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                  className="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 text-slate-950 font-black flex items-center justify-center text-sm shadow-md shrink-0">
+                    <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow shrink-0">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-extrabold text-sm text-white">{user.name}</h4>
+                        <h4 className="font-extrabold text-sm text-slate-900">{user.name}</h4>
                         <span
                           className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${
                             user.role === 'PASSENGER'
-                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                               : user.role === 'DRIVER'
-                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                              ? 'bg-amber-100 text-amber-800 border border-amber-200'
                               : user.role === 'SUPER_ADMIN'
-                              ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                              : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                              ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                              : 'bg-indigo-100 text-indigo-800 border border-indigo-200'
                           }`}
                         >
                           {user.role}
                         </span>
                       </div>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 mt-1">
-                        <span className="flex items-center gap-1 font-mono text-slate-300">
-                          <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-1">
+                        <span className="flex items-center gap-1 font-mono text-slate-700 font-medium">
+                          <Phone className="w-3.5 h-3.5 text-emerald-600" />
                           {user.phone || 'Phone not set'}
                         </span>
                         <span className="flex items-center gap-1 truncate max-w-[240px]">
-                          <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                          <Mail className="w-3.5 h-3.5 text-emerald-600" />
                           {user.email || 'Email not set'}
                         </span>
                       </div>
@@ -545,27 +545,27 @@ export const AdminDashboardPage: React.FC = () => {
 
                   <div className="flex flex-wrap items-center gap-4 text-xs shrink-0 self-end md:self-center">
                     <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block uppercase">Wallet Balance</span>
-                      <span className="font-mono font-bold text-white">
+                      <span className="text-[10px] text-slate-500 block uppercase">Wallet Balance</span>
+                      <span className="font-mono font-bold text-slate-900">
                         {formatCurrencyINR(user.walletBalance ?? 100)}
                       </span>
                     </div>
 
                     <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block uppercase">Trust Score</span>
-                      <span className="font-mono font-bold text-emerald-400">
+                      <span className="text-[10px] text-slate-500 block uppercase">Trust Score</span>
+                      <span className="font-mono font-bold text-emerald-700">
                         {user.trustScore ?? 99}% Verified
                       </span>
                     </div>
 
                     {user.referralCode && (
                       <div className="text-right hidden lg:block">
-                        <span className="text-[10px] text-slate-400 block uppercase">Referral Code</span>
-                        <span className="font-mono font-bold text-brand-300">{user.referralCode}</span>
+                        <span className="text-[10px] text-slate-500 block uppercase">Referral Code</span>
+                        <span className="font-mono font-bold text-indigo-600">{user.referralCode}</span>
                       </div>
                     )}
 
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                    <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200">
                       ✓ Active & Verified
                     </span>
                   </div>
@@ -578,16 +578,16 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* TAB 3: SAFETY CENTER (INCIDENT MANAGEMENT) */}
       {activeAdminTab === 'SAFETY' && (
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-5">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white shadow-sm space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <ShieldAlert className="w-5 h-5 text-rose-500" />
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-rose-600" />
                 <span>SAFETY OPERATIONS CONSOLE</span>
               </h3>
-              <p className="text-xs text-slate-400">Live priority triage for Emergency SOS and Route Guardian detours</p>
+              <p className="text-xs text-slate-500">Live priority triage for Emergency SOS and Route Guardian detours</p>
             </div>
-            <span className="text-xs bg-rose-500 text-white font-black px-2.5 py-1 rounded-full">
+            <span className="text-xs bg-rose-600 text-white font-black px-2.5 py-1 rounded-full">
               2 OPEN INCIDENTS
             </span>
           </div>
@@ -619,59 +619,59 @@ export const AdminDashboardPage: React.FC = () => {
             ].map((inc) => (
               <div
                 key={inc.id}
-                className="p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition-colors space-y-3"
+                className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                         inc.priority === 'CRITICAL'
-                          ? 'bg-rose-500 text-white animate-pulse'
-                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          ? 'bg-rose-600 text-white animate-pulse'
+                          : 'bg-amber-100 text-amber-800 border border-amber-200'
                       }`}
                     >
                       {inc.priority} PRIORITY
                     </span>
-                    <span className="font-mono font-bold text-white text-xs">{inc.id}</span>
+                    <span className="font-mono font-bold text-slate-900 text-xs">{inc.id}</span>
                   </div>
-                  <span className="text-xs text-slate-400">{inc.time}</span>
+                  <span className="text-xs text-slate-500">{inc.time}</span>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Passenger:</span>
-                    <span className="font-bold text-white">{inc.passenger}</span>
+                    <span className="text-slate-500 block text-[10px]">Passenger:</span>
+                    <span className="font-bold text-slate-900">{inc.passenger}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Driver:</span>
-                    <span className="font-bold text-white">{inc.driver}</span>
+                    <span className="text-slate-500 block text-[10px]">Driver:</span>
+                    <span className="font-bold text-slate-900">{inc.driver}</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                <p className="text-xs text-slate-700 bg-white p-2.5 rounded-xl border border-slate-200">
                   {inc.note}
                 </p>
 
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => alert(`Calling passenger ${inc.passenger} via secure masked hotline...`)}
-                    className="py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5"
+                    className="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
+                    <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Call Passenger</span>
                   </button>
 
                   <button
                     onClick={() => alert(`Calling driver ${inc.driver} via secure masked hotline...`)}
-                    className="py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5"
+                    className="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <PhoneCall className="w-3.5 h-3.5 text-amber-400" />
+                    <PhoneCall className="w-3.5 h-3.5 text-amber-600" />
                     <span>Call Driver</span>
                   </button>
 
                   <button
                     onClick={() => alert(`Incident ${inc.id} marked as RESOLVED and documented in audit logs.`)}
-                    className="py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs ml-auto shadow"
+                    className="py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs ml-auto shadow transition-colors cursor-pointer"
                   >
                     Mark Resolved ✓
                   </button>
@@ -684,16 +684,16 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* TAB 4: EVIDENCE-BASED DISPUTE RESOLUTION */}
       {activeAdminTab === 'DISPUTES' && (
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-5">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white shadow-sm space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <Scale className="w-5 h-5 text-amber-400" />
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Scale className="w-5 h-5 text-amber-600" />
                 <span>EVIDENCE-BASED DISPUTE RESOLUTION</span>
               </h3>
-              <p className="text-xs text-slate-400">All disputes come with auto-attached FareLocks, GPS trails and event logs</p>
+              <p className="text-xs text-slate-500">All disputes come with auto-attached FareLocks, GPS trails and event logs</p>
             </div>
-            <span className="text-xs bg-amber-500 text-slate-950 font-black px-2.5 py-1 rounded-full">
+            <span className="text-xs bg-amber-100 text-amber-800 border border-amber-200 font-black px-2.5 py-1 rounded-full">
               AUTO-EVIDENCE ACTIVE
             </span>
           </div>
@@ -719,57 +719,57 @@ export const AdminDashboardPage: React.FC = () => {
             ].map((disp) => (
               <div
                 key={disp.id}
-                className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4 shadow-xl"
+                className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 shadow-sm"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-[10px] font-black uppercase text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                    <span className="text-[10px] font-black uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
                       CATEGORY: {disp.category}
                     </span>
-                    <h4 className="font-bold text-white text-sm mt-1">{disp.id} • Booking {disp.bookingRef}</h4>
+                    <h4 className="font-bold text-slate-900 text-sm mt-1">{disp.id} • Booking {disp.bookingRef}</h4>
                   </div>
-                  <span className="text-xs font-mono font-bold text-rose-400">
+                  <span className="text-xs font-mono font-bold text-rose-600">
                     Disputed: +{formatCurrencyINR(disp.demandedAmount)}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                <p className="text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200">
                   "{disp.description}"
                 </p>
 
                 {/* Auto-Attached Evidence Bundle */}
-                <div className="bg-slate-900/90 p-4 rounded-xl border border-emerald-500/30 space-y-2 text-xs">
-                  <span className="text-[11px] font-black uppercase text-emerald-400 flex items-center gap-1.5">
+                <div className="bg-emerald-50/80 p-4 rounded-xl border border-emerald-200 space-y-2 text-xs">
+                  <span className="text-[11px] font-black uppercase text-emerald-800 flex items-center gap-1.5">
                     <FileCheck className="w-4 h-4" />
                     <span>Auto-Assembled Immutable Evidence Bundle</span>
                   </span>
-                  <div className="grid sm:grid-cols-2 gap-2 text-slate-300">
-                    <div>• Upfront Locked Fare: <span className="font-bold text-white">₹{disp.lockedFare}</span></div>
-                    <div>• GPS Track Points Verified: <span className="font-bold text-white">{disp.evidence.gpsTrackPoints} coordinates</span></div>
-                    <div>• Anti-Cancellation Risk Score: <span className="font-bold text-amber-400">{disp.evidence.driverAbuseRiskScore}</span></div>
-                    <div>• FareLock Certificate: <span className="font-bold text-emerald-400">Verified Match ✓</span></div>
+                  <div className="grid sm:grid-cols-2 gap-2 text-slate-700">
+                    <div>• Upfront Locked Fare: <span className="font-bold text-slate-900">₹{disp.lockedFare}</span></div>
+                    <div>• GPS Track Points Verified: <span className="font-bold text-slate-900">{disp.evidence.gpsTrackPoints} coordinates</span></div>
+                    <div>• Anti-Cancellation Risk Score: <span className="font-bold text-amber-800">{disp.evidence.driverAbuseRiskScore}</span></div>
+                    <div>• FareLock Certificate: <span className="font-bold text-emerald-800">Verified Match ✓</span></div>
                   </div>
                 </div>
 
                 {/* Admin Actions */}
-                <div className="flex gap-2 pt-2 border-t border-slate-800">
+                <div className="flex gap-2 pt-2 border-t border-slate-200">
                   <button
                     onClick={() => handleResolveDispute(disp.id, 'REFUND_APPROVED', disp.demandedAmount)}
-                    className="py-2 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs shadow-md shadow-emerald-500/20"
+                    className="py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow transition-colors cursor-pointer"
                   >
                     Approve Full Refund ({formatCurrencyINR(disp.demandedAmount)}) ✓
                   </button>
 
                   <button
                     onClick={() => handleResolveDispute(disp.id, 'REFUND_APPROVED', 75)}
-                    className="py-2 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs"
+                    className="py-2 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-colors cursor-pointer"
                   >
                     Partial Refund (₹75)
                   </button>
 
                   <button
                     onClick={() => handleResolveDispute(disp.id, 'REJECTED', 0)}
-                    className="py-2 px-4 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 font-bold text-xs"
+                    className="py-2 px-4 rounded-xl border border-slate-300 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
                   >
                     Reject Dispute ✕
                   </button>
@@ -782,14 +782,14 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* TAB 5: FRAUD & ABUSE CENTER */}
       {activeAdminTab === 'FRAUD' && (
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
-              <h3 className="text-base font-black text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-purple-400" />
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-600" />
                 <span>AI FRAUD & ABUSE WATCHDOG</span>
               </h3>
-              <p className="text-xs text-slate-400">Detecting multi-account collusion, coupon abuse, and mock GPS spoofers</p>
+              <p className="text-xs text-slate-500">Detecting multi-account collusion, coupon abuse, and mock GPS spoofers</p>
             </div>
           </div>
 
@@ -814,27 +814,27 @@ export const AdminDashboardPage: React.FC = () => {
                 action: 'REQUIRE_OPERATIONS_HEARING'
               }
             ].map((alertItem) => (
-              <div key={alertItem.id} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+              <div key={alertItem.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-purple-400 uppercase tracking-wide">
+                  <span className="font-bold text-purple-700 uppercase tracking-wide">
                     {alertItem.category} • Risk: {alertItem.riskLevel} (Confidence {alertItem.confidence})
                   </span>
-                  <span className="font-mono text-slate-400">{alertItem.id}</span>
+                  <span className="font-mono text-slate-500">{alertItem.id}</span>
                 </div>
-                <p className="font-bold text-white">Target Account: {alertItem.user}</p>
-                <p className="text-slate-300 bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                <p className="font-bold text-slate-900">Target Account: {alertItem.user}</p>
+                <p className="text-slate-700 bg-white p-2.5 rounded-xl border border-slate-200">
                   {alertItem.evidence}
                 </p>
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => alert(`Warning letter dispatched to ${alertItem.user}. Documented in audit logs.`)}
-                    className="py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold"
+                    className="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold border border-slate-300 transition-colors cursor-pointer"
                   >
                     Issue Warning
                   </button>
                   <button
                     onClick={() => alert(`Account verification required for ${alertItem.user}.`)}
-                    className="py-1.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold"
+                    className="py-1.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold transition-colors cursor-pointer"
                   >
                     Require Re-Verification
                   </button>
@@ -847,9 +847,9 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* TAB 6: IMMUTABLE AUDIT LOGS */}
       {activeAdminTab === 'AUDIT_LOGS' && (
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
-          <h3 className="font-black text-white text-base">Immutable Platform Audit Trail</h3>
-          <p className="text-xs text-slate-400">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white shadow-sm space-y-4">
+          <h3 className="font-black text-slate-900 text-base">Immutable Platform Audit Trail</h3>
+          <p className="text-xs text-slate-500">
             Append-only record of all critical administrative actions, refunds, dispute resolutions, and safety incidents.
           </p>
 
@@ -860,13 +860,13 @@ export const AdminDashboardPage: React.FC = () => {
               { time: '08:30 AM', actor: 'Sunita Verma (OPERATIONS_ADMIN)', action: 'DRIVER_VERIFIED', detail: 'Verified document RC98765412 for Altaf Hussain' },
               { time: 'Yesterday', actor: 'PRICING_ENGINE', action: 'FARE_CONFIG_LOG', detail: 'GST Rate set to 5%, Platform fee 8%' }
             ].map((log, i) => (
-              <div key={i} className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center text-slate-300">
+              <div key={i} className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center text-slate-700">
                 <div>
-                  <span className="text-emerald-400 font-bold">[{log.time}] </span>
-                  <span className="text-white font-bold">{log.action}: </span>
-                  <span className="text-slate-400">{log.detail}</span>
+                  <span className="text-emerald-700 font-bold">[{log.time}] </span>
+                  <span className="text-slate-900 font-bold">{log.action}: </span>
+                  <span className="text-slate-600">{log.detail}</span>
                 </div>
-                <span className="text-slate-500 text-[10px] hidden sm:inline">{log.actor}</span>
+                <span className="text-slate-400 text-[10px] hidden sm:inline">{log.actor}</span>
               </div>
             ))}
           </div>

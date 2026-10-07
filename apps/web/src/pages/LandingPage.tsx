@@ -700,24 +700,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onBookRide }) => {
 
             {/* Calculated Monthly Take-Home */}
             <div className="lg:col-span-5">
-              <div className="bg-slate-900/90 border border-slate-800 p-6 sm:p-7 rounded-2xl shadow-xl space-y-3.5">
-                <span className="text-xs uppercase font-bold text-slate-400 block tracking-wider">
+              <div className="bg-white border border-slate-200 p-6 sm:p-7 rounded-2xl shadow-sm space-y-3.5">
+                <span className="text-xs uppercase font-bold text-slate-500 block tracking-wider">
                   Estimated Monthly Net Profit
                 </span>
-                <div className="text-4xl sm:text-5xl font-black font-mono text-emerald-400">
+                <div className="text-4xl sm:text-5xl font-black font-mono text-emerald-700">
                   {formatCurrencyINR(Math.round(driverHours * 220 * 26))}
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
                   Calculated after flat 10% platform fee and estimated CNG/fuel deductions across 26 working days.
                 </p>
-                <div className="pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-xs">
-                  <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                    <span className="text-slate-400 text-[10px] block">Daily Net</span>
-                    <span className="text-white font-bold font-mono text-sm">{formatCurrencyINR(Math.round(driverHours * 220))}</span>
+                <div className="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <span className="text-slate-500 text-[10px] block font-medium">Daily Net</span>
+                    <span className="text-slate-900 font-bold font-mono text-sm">{formatCurrencyINR(Math.round(driverHours * 220))}</span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                    <span className="text-slate-400 text-[10px] block">Platform Cut</span>
-                    <span className="text-emerald-400 font-bold font-mono text-sm">Only 10%</span>
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <span className="text-slate-500 text-[10px] block font-medium">Platform Cut</span>
+                    <span className="text-emerald-700 font-bold font-mono text-sm">Only 10%</span>
                   </div>
                 </div>
               </div>

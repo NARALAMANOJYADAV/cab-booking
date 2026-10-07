@@ -146,30 +146,30 @@ export const DriverDashboardPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Header Bar: Status Toggle & Trust Badge */}
-      <div className="glass-panel rounded-3xl p-5 border border-slate-800 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+      <div className="rounded-3xl p-5 border border-slate-200 bg-white flex flex-wrap items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold text-xl">
+          <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 border border-amber-200 flex items-center justify-center font-bold text-xl">
             {currentUser.name.charAt(0)}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-black text-white">{currentUser.name}</h2>
-              <span className="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+              <h2 className="text-lg font-black text-slate-900">{currentUser.name}</h2>
+              <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>VERIFIED PARTNER</span>
               </span>
             </div>
-            <p className="text-xs text-slate-400">Hyundai Aura • TS07UB1420 • Trust Rating: 99%</p>
+            <p className="text-xs text-slate-500 font-medium">Hyundai Aura • TS07UB1420 • Trust Rating: 99%</p>
           </div>
         </div>
 
         {/* Online / Offline Switch */}
         <button
           onClick={() => setIsOnline(!isOnline)}
-          className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-black text-xs transition-all shadow-lg ${
+          className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-black text-xs transition-all shadow-md cursor-pointer ${
             isOnline
-              ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/25 ring-2 ring-emerald-400/50'
-              : 'bg-rose-600 text-white shadow-rose-600/30'
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+              : 'bg-rose-600 hover:bg-rose-700 text-white'
           }`}
         >
           <Power className="w-4 h-4 stroke-[3]" />
@@ -179,30 +179,30 @@ export const DriverDashboardPage: React.FC = () => {
 
       {/* Driver Daily Performance & Transparent Net Metrics */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Today Gross</span>
-          <p className="text-xl font-black text-white font-mono">{formatCurrencyINR(2870)}</p>
-          <span className="text-[10px] text-slate-400">7 trips completed</span>
+        <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Today Gross</span>
+          <p className="text-xl font-black text-slate-900 font-mono">{formatCurrencyINR(2870)}</p>
+          <span className="text-[10px] text-slate-500 font-medium">7 trips completed</span>
         </div>
 
-        <div className="glass-card p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+        <div className="p-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 shadow-sm space-y-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
             Estimated Net Take-Home
           </span>
-          <p className="text-xl font-black text-emerald-400 font-mono">{formatCurrencyINR(2640)}</p>
-          <span className="text-[10px] text-emerald-300">92% payout (Only 8% fee)</span>
+          <p className="text-xl font-black text-emerald-700 font-mono">{formatCurrencyINR(2640)}</p>
+          <span className="text-[10px] text-emerald-800 font-bold">92% payout (Only 8% fee)</span>
         </div>
 
-        <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Est. Fuel Consumed</span>
-          <p className="text-xl font-black text-amber-400 font-mono">{formatCurrencyINR(490)}</p>
-          <span className="text-[10px] text-slate-400">75 km driven today</span>
+        <div className="p-4 rounded-2xl border border-amber-200 bg-amber-50/70 shadow-sm space-y-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">Est. Fuel Consumed</span>
+          <p className="text-xl font-black text-amber-800 font-mono">{formatCurrencyINR(490)}</p>
+          <span className="text-[10px] text-slate-600 font-medium">75 km driven today</span>
         </div>
 
-        <div className="glass-card p-4 rounded-2xl border border-slate-800 space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Acceptance & Rating</span>
-          <p className="text-xl font-black text-white font-mono">98% • 4.92★</p>
-          <span className="text-[10px] text-slate-400">Zero-refusal record</span>
+        <div className="p-4 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Acceptance & Rating</span>
+          <p className="text-xl font-black text-slate-900 font-mono">98% • 4.92★</p>
+          <span className="text-[10px] text-slate-500 font-medium">Zero-refusal record</span>
         </div>
       </div>
 
@@ -221,35 +221,35 @@ export const DriverDashboardPage: React.FC = () => {
         </div>
       ) : activeBooking && activeBooking.state !== 'CANCELLED' && activeBooking.state !== 'TRIP_COMPLETED' ? (
         /* 2. DYNAMIC ACTIVE RIDE IN PROGRESS CARD */
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-5 shadow-2xl animate-in fade-in">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <span className="text-xs font-black uppercase text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1.5">
+        <div className="rounded-3xl p-6 border border-slate-200 bg-white space-y-5 shadow-md animate-in fade-in">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <span className="text-xs font-black uppercase text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
               STATUS: {activeBooking.state.replace('_', ' ')}
             </span>
-            <span className="text-xs text-amber-400 font-mono font-bold bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
+            <span className="text-xs text-amber-900 font-mono font-bold bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200">
               BOARDING PIN: {activeBooking.verificationPin || '5821'}
             </span>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-xs">
                 <div className="flex items-start gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 mt-1 shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 shrink-0" />
                   <div>
-                    <span className="text-slate-400">Pickup: </span>
-                    <span className="text-white font-bold">{activeBooking.pickupAddress}</span>
-                    <span className="block text-amber-300 font-medium mt-0.5">
+                    <span className="text-slate-500">Pickup: </span>
+                    <span className="text-slate-900 font-bold">{activeBooking.pickupAddress}</span>
+                    <span className="block text-amber-800 font-semibold mt-0.5">
                       📍 {activeBooking.specificInstructions || activeBooking.pickupPointType || 'Meet at Gate 1 near security'}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 mt-1 shrink-0" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1 shrink-0" />
                   <div>
-                    <span className="text-slate-400">Dropoff: </span>
-                    <span className="text-white font-bold">{activeBooking.destinationAddress}</span>
+                    <span className="text-slate-500">Dropoff: </span>
+                    <span className="text-slate-900 font-bold">{activeBooking.destinationAddress}</span>
                   </div>
                 </div>
               </div>
@@ -258,18 +258,18 @@ export const DriverDashboardPage: React.FC = () => {
               {activeBooking.state === 'DRIVER_ACCEPTED' ? (
                 <button
                   onClick={handleArrivedAtPickup}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/20 transition-all"
+                  className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-md transition-all cursor-pointer"
                 >
                   📍 I HAVE ARRIVED AT PICKUP POINT
                 </button>
               ) : activeBooking.state === 'DRIVER_ARRIVED' ? (
                 /* Boarding PIN verification */
-                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-3">
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-amber-300">
+                    <span className="text-xs font-bold text-amber-900">
                       Enter Passenger's 4-Digit Boarding PIN:
                     </span>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[10px] text-slate-500">
                       (Passenger has PIN: {activeBooking.verificationPin || '5821'})
                     </span>
                   </div>
@@ -284,23 +284,23 @@ export const DriverDashboardPage: React.FC = () => {
                         setPinError('');
                       }}
                       placeholder="Enter 4 digits"
-                      className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-base text-center font-mono font-black text-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400 flex-1 tracking-widest"
+                      className="bg-white border border-slate-300 rounded-xl px-3 py-2 text-base text-center font-mono font-black text-amber-900 focus:outline-none focus:ring-1 focus:ring-amber-500 flex-1 tracking-widest"
                     />
                     <button
                       onClick={handleVerifyPinAndStart}
-                      className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-emerald-500/20"
+                      className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition-colors cursor-pointer"
                     >
                       Verify & Start Ride
                     </button>
                   </div>
 
                   {pinError && (
-                    <p className="text-xs text-rose-400 font-bold flex items-center gap-1">
+                    <p className="text-xs text-rose-700 font-bold flex items-center gap-1">
                       <AlertTriangle className="w-3.5 h-3.5" />
                       {pinError}
                     </p>
                   )}
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[10px] text-slate-500">
                     Entering the PIN prevents picking up incorrect passengers and ensures legitimate dispatch.
                   </p>
                 </div>
@@ -308,7 +308,7 @@ export const DriverDashboardPage: React.FC = () => {
                 /* Trip in Transit */
                 <button
                   onClick={handleCompleteTrip}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-400 hover:to-cyan-300 text-slate-950 font-black text-sm shadow-xl shadow-emerald-500/20 transition-all"
+                  className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-md transition-all cursor-pointer"
                 >
                   🏁 ARRIVED AT DESTINATION • COMPLETE TRIP & SETTLE FARE
                 </button>
@@ -325,12 +325,12 @@ export const DriverDashboardPage: React.FC = () => {
         </div>
       ) : (
         /* 3. WAITING FOR DISPATCH */
-        <div className="p-8 rounded-3xl bg-slate-900/60 border border-slate-800 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto animate-pulse">
+        <div className="p-8 rounded-3xl bg-white border border-slate-200 text-center space-y-3 shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto animate-pulse">
             <Navigation className="w-6 h-6" />
           </div>
-          <h3 className="font-bold text-white text-base">Waiting for nearby ride requests...</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
+          <h3 className="font-bold text-slate-900 text-base">Waiting for nearby ride requests...</h3>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
             You are online in Hyderabad (Hitech City). When a passenger books a ride on the Passenger portal, their dynamic request will appear here instantly!
           </p>
         </div>

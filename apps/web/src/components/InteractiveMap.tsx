@@ -178,11 +178,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
   return (
     <div
-      className={`relative w-full rounded-3xl overflow-hidden border border-slate-700/60 bg-[#070b14] ${className} select-none shadow-2xl transition-all duration-300`}
+      className={`relative w-full rounded-3xl overflow-hidden border border-slate-200 bg-[#EEF4FB] ${className} select-none shadow-md transition-all duration-300`}
     >
       {/* Background Cartographic Vector Geometry */}
       <svg
-        className="absolute inset-0 w-full h-full pointer-events-none opacity-90"
+        className="absolute inset-0 w-full h-full pointer-events-none opacity-95"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 850 420"
         preserveAspectRatio="xMidYMid slice"
@@ -190,27 +190,27 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         <defs>
           {/* Subtle City Road Grid Pattern */}
           <pattern id="road-grid" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth="1" />
-            <circle cx="30" cy="30" r="1" fill="rgba(255, 255, 255, 0.05)" />
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(148, 163, 184, 0.25)" strokeWidth="1" />
+            <circle cx="30" cy="30" r="1.5" fill="rgba(148, 163, 184, 0.35)" />
           </pattern>
 
           {/* Durgam Cheruvu Lake Water Gradient */}
           <linearGradient id="lake-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0284c7" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#0369a1" stopOpacity="0.1" />
+            <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#7DD3FC" stopOpacity="0.6" />
           </linearGradient>
 
           {/* Planned Safe Journey Route Gradient */}
           <linearGradient id="safe-route-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10b981" />
-            <stop offset="50%" stopColor="#06b6d4" />
-            <stop offset="100%" stopColor="#3b82f6" />
+            <stop offset="0%" stopColor="#059669" />
+            <stop offset="50%" stopColor="#0284C7" />
+            <stop offset="100%" stopColor="#2563EB" />
           </linearGradient>
 
           {/* Danger Detour Gradient */}
           <linearGradient id="detour-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#ef4444" />
+            <stop offset="0%" stopColor="#D97706" />
+            <stop offset="100%" stopColor="#DC2626" />
           </linearGradient>
 
           {/* Glow Filters */}
@@ -227,10 +227,10 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         <path
           d="M 220 220 C 260 190, 310 200, 340 240 C 370 280, 330 320, 270 310 C 230 300, 200 250, 220 220 Z"
           fill="url(#lake-gradient)"
-          stroke="rgba(56, 189, 248, 0.2)"
+          stroke="#38BDF8"
           strokeWidth="1.5"
         />
-        <text x="255" y="260" fill="rgba(56, 189, 248, 0.45)" fontSize="9" fontWeight="700" letterSpacing="0.05em">
+        <text x="255" y="260" fill="#0284C7" fontSize="9" fontWeight="700" letterSpacing="0.05em">
           DURGAM CHERUVU LAKE
         </text>
 
@@ -238,36 +238,36 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         {/* Outer Ring Road Express */}
         <path
           d="M -20 180 C 200 130, 480 90, 880 200"
-          stroke="rgba(255,255,255,0.08)"
-          strokeWidth="10"
+          stroke="#E2E8F0"
+          strokeWidth="12"
           fill="none"
         />
         <path
           d="M -20 180 C 200 130, 480 90, 880 200"
-          stroke="rgba(148, 163, 184, 0.25)"
+          stroke="#94A3B8"
           strokeWidth="2"
           strokeDasharray="8 6"
           fill="none"
         />
-        <text x="390" y="112" fill="rgba(148, 163, 184, 0.4)" fontSize="8.5" fontWeight="600" letterSpacing="0.08em">
+        <text x="390" y="112" fill="#64748B" fontSize="8.5" fontWeight="700" letterSpacing="0.08em">
           PVNR ELEVATED EXPRESSWAY (100 KM/H)
         </text>
 
         {/* Secondary Arterials */}
-        <path d="M 130 -20 Q 180 200, 280 440" stroke="rgba(255,255,255,0.06)" strokeWidth="6" fill="none" />
-        <path d="M 450 -20 Q 420 180, 680 440" stroke="rgba(255,255,255,0.06)" strokeWidth="6" fill="none" />
-        <path d="M 50 360 C 240 280, 520 340, 820 290" stroke="rgba(255,255,255,0.05)" strokeWidth="5" fill="none" />
+        <path d="M 130 -20 Q 180 200, 280 440" stroke="#E2E8F0" strokeWidth="8" fill="none" />
+        <path d="M 450 -20 Q 420 180, 680 440" stroke="#E2E8F0" strokeWidth="8" fill="none" />
+        <path d="M 50 360 C 240 280, 520 340, 820 290" stroke="#E2E8F0" strokeWidth="7" fill="none" />
 
-        {/* Blue Neon Metro Line */}
+        {/* Blue Metro Line */}
         <path
           d="M 50 70 L 260 140 L 440 230 L 640 290"
-          stroke="rgba(6, 182, 212, 0.45)"
+          stroke="#0284C7"
           strokeWidth="3.5"
           strokeDasharray="10 5"
           fill="none"
         />
-        <circle cx="260" cy="140" r="4.5" fill="#06b6d4" stroke="#0f172a" strokeWidth="2" />
-        <text x="268" y="136" fill="#06b6d4" fontSize="8" fontWeight="700">
+        <circle cx="260" cy="140" r="4.5" fill="#0284C7" stroke="#ffffff" strokeWidth="2" />
+        <text x="268" y="136" fill="#0284C7" fontSize="8" fontWeight="800">
           METRO HITECH STN
         </text>
 
@@ -275,7 +275,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         {showCorridor && (
           <path
             d={routePath}
-            stroke="rgba(16, 185, 129, 0.16)"
+            stroke="rgba(16, 185, 129, 0.2)"
             strokeWidth="48"
             strokeLinecap="round"
             fill="none"
@@ -300,7 +300,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           strokeLinecap="round"
           strokeDasharray="4 16"
           fill="none"
-          className="animate-pulse opacity-75"
+          className="animate-pulse opacity-90"
         />
 
         {/* Deviation Detour Vector Line */}
@@ -315,31 +315,31 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
               fill="none"
             />
             {/* Warning zone indicator */}
-            <circle cx={detourX} cy={detourY} r="35" fill="rgba(239, 68, 68, 0.18)" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4 4" />
+            <circle cx={detourX} cy={detourY} r="35" fill="rgba(239, 68, 68, 0.15)" stroke="#DC2626" strokeWidth="1.5" strokeDasharray="4 4" />
           </>
         )}
 
         {/* Real-time Roaming Ambient Cabs */}
-        <g opacity="0.85">
+        <g opacity="0.9">
           <g transform="translate(190, 165)">
-            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.2)" />
-            <circle cx="0" cy="0" r="4" fill="#10b981" />
+            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.25)" />
+            <circle cx="0" cy="0" r="4.5" fill="#059669" />
           </g>
           <g transform="translate(520, 235)">
-            <circle cx="0" cy="0" r="10" fill="rgba(6, 182, 212, 0.2)" />
-            <circle cx="0" cy="0" r="4" fill="#06b6d4" />
+            <circle cx="0" cy="0" r="10" fill="rgba(2, 132, 199, 0.25)" />
+            <circle cx="0" cy="0" r="4.5" fill="#0284C7" />
           </g>
           <g transform="translate(340, 95)">
-            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.2)" />
-            <circle cx="0" cy="0" r="4" fill="#10b981" />
+            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.25)" />
+            <circle cx="0" cy="0" r="4.5" fill="#059669" />
           </g>
           <g transform="translate(620, 185)">
-            <circle cx="0" cy="0" r="10" fill="rgba(245, 158, 11, 0.2)" />
-            <circle cx="0" cy="0" r="4" fill="#f59e0b" />
+            <circle cx="0" cy="0" r="10" fill="rgba(217, 119, 6, 0.25)" />
+            <circle cx="0" cy="0" r="4.5" fill="#D97706" />
           </g>
           <g transform="translate(270, 310)">
-            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.2)" />
-            <circle cx="0" cy="0" r="4" fill="#10b981" />
+            <circle cx="0" cy="0" r="10" fill="rgba(16, 185, 129, 0.25)" />
+            <circle cx="0" cy="0" r="4.5" fill="#059669" />
           </g>
         </g>
       </svg>
@@ -349,19 +349,19 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         {/* Left: Route Guardian Live Corridor Status */}
         <div className="flex items-center gap-2 pointer-events-auto">
           <div
-            className={`px-3 py-1.5 rounded-2xl backdrop-blur-md border text-xs font-black flex items-center gap-2 shadow-lg transition-all ${
+            className={`px-3 py-1.5 rounded-2xl backdrop-blur-md border text-xs font-black flex items-center gap-2 shadow-md transition-all ${
               isDeviated
-                ? 'bg-rose-950/85 border-rose-500/80 text-rose-200 animate-pulse'
-                : 'bg-slate-900/85 border-emerald-500/40 text-emerald-300'
+                ? 'bg-rose-50 border-rose-300 text-rose-700 animate-pulse'
+                : 'bg-white/95 border-emerald-200 text-emerald-800'
             }`}
           >
-            <Shield className={`w-4 h-4 ${isDeviated ? 'text-rose-400' : 'text-emerald-400'}`} />
+            <Shield className={`w-4 h-4 ${isDeviated ? 'text-rose-600' : 'text-emerald-600'}`} />
             <span>
               {isDeviated ? 'ROUTE DEVIATION: 580m DETOUR FLAGGED' : 'ROUTE GUARDIAN: 100% CORRIDOR ADHERENCE'}
             </span>
             <span
               className={`w-2 h-2 rounded-full ${
-                isDeviated ? 'bg-rose-500 animate-ping' : 'bg-emerald-400'
+                isDeviated ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'
               }`}
             />
           </div>
@@ -369,13 +369,13 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
         {/* Right: Live Traffic Flow & Real-time Cabs Available Badges */}
         <div className="hidden sm:flex items-center gap-2 pointer-events-auto">
-          <div className="px-2.5 py-1.5 rounded-2xl bg-emerald-950/80 backdrop-blur-md border border-emerald-500/30 text-[11px] font-bold text-emerald-300 flex items-center gap-1.5 shadow-lg">
-            <Car className="w-3 h-3 text-emerald-400" />
+          <div className="px-2.5 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-emerald-200 text-[11px] font-bold text-emerald-700 flex items-center gap-1.5 shadow-sm">
+            <Car className="w-3 h-3 text-emerald-600" />
             <span>6 Cabs Nearby (2-4 min)</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-slate-700/60 text-xs font-bold text-slate-200 flex items-center gap-2 shadow-lg">
-            <Activity className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="px-3 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 text-xs font-bold text-slate-700 flex items-center gap-2 shadow-sm">
+            <Activity className="w-3.5 h-3.5 text-emerald-600" />
             <span>Expressway: Optimal</span>
           </div>
         </div>
@@ -386,11 +386,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         className="absolute z-10 flex flex-col items-center pointer-events-none transition-all duration-700 ease-out"
         style={{ left: `${(startX / 850) * 100}%`, top: `${(startY / 420) * 100}%`, transform: 'translate(-50%, -100%)' }}
       >
-        <div className="px-2.5 py-1 rounded-xl bg-emerald-500 text-slate-950 font-black text-[11px] shadow-xl flex items-center gap-1.5 border border-emerald-300 max-w-[210px]" title={pickupName}>
+        <div className="px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-black text-[11px] shadow-lg flex items-center gap-1.5 border border-emerald-400 max-w-[210px]" title={pickupName}>
           <MapPin className="w-3.5 h-3.5 stroke-[2.5] shrink-0" />
           <span className="truncate">PICKUP: {pickupName}</span>
         </div>
-        <div className="w-4 h-4 rounded-full bg-emerald-400 border-2 border-slate-950 shadow-lg shadow-emerald-500/80 mt-1" />
+        <div className="w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-md shadow-emerald-600/50 mt-1" />
       </div>
 
       {/* Destination Dropoff Point Marker (Right Hub) */}
@@ -398,11 +398,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         className="absolute z-10 flex flex-col items-center pointer-events-none transition-all duration-700 ease-out"
         style={{ left: `${(endX / 850) * 100}%`, top: `${(endY / 420) * 100}%`, transform: 'translate(-50%, -100%)' }}
       >
-        <div className="px-2.5 py-1 rounded-xl bg-cyan-500 text-slate-950 font-black text-[11px] shadow-xl flex items-center gap-1.5 border border-cyan-200 max-w-[210px]" title={destinationName}>
+        <div className="px-2.5 py-1 rounded-xl bg-cyan-600 text-white font-black text-[11px] shadow-lg flex items-center gap-1.5 border border-cyan-400 max-w-[210px]" title={destinationName}>
           <Navigation className="w-3.5 h-3.5 stroke-[2.5] shrink-0" />
           <span className="truncate">DESTINATION: {destinationName}</span>
         </div>
-        <div className="w-4 h-4 rounded-full bg-cyan-400 border-2 border-slate-950 shadow-lg shadow-cyan-400/80 mt-1" />
+        <div className="w-4 h-4 rounded-full bg-cyan-500 border-2 border-white shadow-md shadow-cyan-600/50 mt-1" />
       </div>
 
       {/* Moving Driver Vehicle Marker */}
@@ -418,31 +418,31 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         {!lowInternetMode && (
           <div
             className={`absolute w-16 h-16 rounded-full pointer-events-none radar-ring ${
-              isDeviated ? 'bg-rose-500/25' : 'bg-emerald-500/25'
+              isDeviated ? 'bg-rose-500/20' : 'bg-emerald-500/20'
             }`}
           />
         )}
 
         {/* Vehicle Icon Badge */}
         <div
-          className={`p-2.5 rounded-2xl border-2 shadow-2xl transition-all ${
+          className={`p-2.5 rounded-2xl border-2 shadow-xl transition-all ${
             isDeviated
-              ? 'bg-rose-600 border-white text-white shadow-rose-600/70 scale-110 animate-bounce'
-              : 'bg-slate-950 border-emerald-400 text-emerald-400 shadow-emerald-500/50 hover:scale-105'
+              ? 'bg-rose-600 border-white text-white shadow-rose-600/50 scale-110 animate-bounce'
+              : 'bg-white border-emerald-500 text-emerald-600 shadow-emerald-500/30 hover:scale-105'
           }`}
         >
           <Car className="w-5 h-5 stroke-[2.5]" />
         </div>
 
         {/* Live Driver Tag */}
-        <div className="mt-1.5 px-2.5 py-0.5 rounded-full bg-slate-950/90 backdrop-blur-md border border-slate-700 text-[10px] font-black tracking-wide text-white shadow-xl flex items-center gap-1">
+        <div className="mt-1.5 px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 text-[10px] font-black tracking-wide text-slate-800 shadow-md flex items-center gap-1">
           {isDeviated ? (
-            <span className="text-rose-400 flex items-center gap-1">
+            <span className="text-rose-600 flex items-center gap-1">
               <AlertTriangle className="w-3 h-3" />
               OFF-ROUTE ALERT
             </span>
           ) : (
-            <span className="text-slate-200">Rajesh (3 min away)</span>
+            <span className="text-slate-800 font-bold">Rajesh (3 min away)</span>
           )}
         </div>
       </div>
@@ -450,9 +450,9 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       {/* Floating Bottom Simulation & Testing Controls */}
       {allowSimulations && (
         <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 z-20">
-          <div className="flex items-center gap-1.5 bg-slate-950/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 shadow-xl overflow-x-auto">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-2 flex items-center gap-1">
-              <Zap className="w-3 h-3 text-amber-400" />
+          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 shadow-lg overflow-x-auto">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 px-2 flex items-center gap-1">
+              <Zap className="w-3 h-3 text-amber-500" />
               SIMULATE:
             </span>
 
@@ -461,11 +461,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
               onClick={handleToggleDeviation}
               className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 ${
                 isDeviated
-                  ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30'
-                  : 'bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700/60'
+                  ? 'bg-rose-600 text-white shadow-md'
+                  : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border border-slate-200'
               }`}
             >
-              <AlertTriangle className="w-3 h-3 text-rose-400" />
+              <AlertTriangle className="w-3 h-3 text-rose-500" />
               <span>{isDeviated ? 'Reset Route' : 'Test Detour'}</span>
             </button>
 
@@ -474,11 +474,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
               onClick={() => setIsAutoMoving(!isAutoMoving)}
               className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 ${
                 isAutoMoving
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
-                  : 'bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700/60'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border border-slate-200'
               }`}
             >
-              <Car className="w-3 h-3 text-emerald-400" />
+              <Car className="w-3 h-3 text-emerald-600" />
               <span>{isAutoMoving ? 'Pause Motion' : 'Auto-Move Cab'}</span>
             </button>
 
@@ -486,18 +486,18 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             {activeBooking && (
               <button
                 onClick={handleTestAutoRecovery}
-                className="px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-bold border border-amber-500/40 transition-all flex items-center gap-1"
+                className="px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] font-bold border border-amber-200 transition-all flex items-center gap-1"
                 title="Simulate driver cancellation with zero penalty auto-reassignment"
               >
-                <RotateCcw className="w-3 h-3 text-amber-400" />
+                <RotateCcw className="w-3 h-3 text-amber-600" />
                 <span>Test Auto-Recovery</span>
               </button>
             )}
           </div>
 
           {/* Compass Rose */}
-          <div className="w-8 h-8 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-800 flex items-center justify-center text-slate-400 shadow">
-            <Compass className="w-4 h-4 text-emerald-400" />
+          <div className="w-8 h-8 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 flex items-center justify-center text-slate-600 shadow-sm">
+            <Compass className="w-4 h-4 text-emerald-600" />
           </div>
         </div>
       )}

@@ -31,7 +31,8 @@ import {
   MessageSquare,
   Crosshair,
   Calendar,
-  Share2
+  Share2,
+  CheckCircle2
 } from 'lucide-react';
 import { InteractiveMap } from '../components/InteractiveMap';
 import { FareLockBadge } from '../components/FareLockBadge';
@@ -140,28 +141,62 @@ export const PassengerHomePage: React.FC = () => {
     fetchQuotes(pickupCoords, destinationCoords);
   }, [pickupCoords, destinationCoords, tripType, selectedPreference]);
 
-  const fetchQuotes = async (pCoords = pickupCoords, dCoords = destinationCoords) => {
+  const fetchQuotes = async (origin: [number, number], dest: [number, number]) => {
     try {
       const res = await api.getQuotes({
-        pickupCoordinates: pCoords,
-        destinationCoordinates: dCoords,
+        pickupCoords: origin,
+        destinationCoords: dest,
         tripType
       });
-      if (res.data?.quotes && res.data.quotes.length > 0) {
-        setQuotes(res.data.quotes);
-        const matched =
-          res.data.quotes.find((q: any) => q.vehicleCategory === selectedCategory) || res.data.quotes[0];
-        setLockedQuote(matched);
+      if (res.data && res.data.length > 0) {
+        setQuotes(res.data);
+        const current = res.data.find((q: any) => q.vehicleCategory === selectedCategory) || res.data[0];
+        setLockedQuote(current);
       }
     } catch {
-      // Fallback
+      // Fallback reliable initial fare estimation
+      const mockQuotes = Object.keys(VEHICLE_CONFIGS).map((cat) => {
+        const cfg = VEHICLE_CONFIGS[cat as VehicleCategory];
+        const distKm = 31.4;
+        const durMin = 42;
+        const total = Math.round(cfg.baseFare + distKm * cfg.perKmRate + durMin * cfg.perMinuteRate + 45);
+        return {
+          vehicleCategory: cat,
+          vehicleName: cfg.name || cat,
+          capacity: cfg.capacity,
+          durationMin: durMin,
+          distanceKm: distKm,
+          co2AvoidedKg: cat === 'EV' ? 3.8 : 0,
+          breakdown: {
+            baseFare: cfg.baseFare,
+            distanceCharge: Math.round(distKm * cfg.perKmRate),
+            timeComponent: Math.round(durMin * cfg.perMinuteRate),
+            toll: 45,
+            platformFee: 25,
+            tax: Math.round(total * 0.05),
+            totalFare: total,
+            currency: 'INR'
+          }
+        };
+      });
+      setQuotes(mockQuotes);
+      setLockedQuote(mockQuotes.find((q) => q.vehicleCategory === selectedCategory) || mockQuotes[0]);
     }
   };
 
+  const handleSelectPlace = (place: any) => {
+    setDestinationSearch(place.name + (place.address ? `, ${place.address}` : ''));
+    if (place.coords) {
+      setDestinationCoords(place.coords);
+    }
+    setSearchResults([]);
+    setIsSearchingDest(false);
+  };
+
   const handleSelectPickup = (place: any) => {
-    setPickupSearch(place.name || place.address);
-    if (place.coordinates) {
-      setPickupCoords(place.coordinates);
+    setPickupSearch(place.name + (place.address ? `, ${place.address}` : ''));
+    if (place.coords) {
+      setPickupCoords(place.coords);
     }
     setPickupSearchResults([]);
     setIsSearchingPickup(false);
@@ -181,15 +216,6 @@ export const PassengerHomePage: React.FC = () => {
       setPickupSearchResults([]);
       setIsSearchingPickup(false);
     }
-  };
-
-  const handleSelectPlace = (place: any) => {
-    setDestinationSearch(place.name || place.address);
-    if (place.coordinates) {
-      setDestinationCoords(place.coordinates);
-    }
-    setSearchResults([]);
-    setIsSearchingDest(false);
   };
 
   const handleDestinationInput = async (value: string) => {
@@ -296,7 +322,7 @@ export const PassengerHomePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Voice Booking Dialog */}
       <VoiceBookingModal
         isOpen={isVoiceModalOpen}
@@ -336,33 +362,37 @@ export const PassengerHomePage: React.FC = () => {
       />
 
       {/* TOP COMMAND HEADER: Personalized Greeting & Trust Metrics */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 glass-panel p-4 rounded-3xl border border-slate-800">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-black text-white tracking-tight">
-              Good evening, <span className="text-emerald-400">Aarav</span> 👋
+            <h1 className="text-xl font-black text-slate-900 tracking-tight">
+              {isAuthenticated && currentUser?.name ? (
+                <>Welcome back, <span className="text-emerald-700">{currentUser.name}</span> 👋</>
+              ) : (
+                <>Plan & Book Your Ride 👋</>
+              )}
             </h1>
-            <span className="text-[10px] bg-emerald-500/15 text-emerald-300 font-extrabold px-2 py-0.5 rounded-full border border-emerald-500/30">
-              PLATINUM PASSENGER
+            <span className="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-200">
+              TRUST-FIRST RIDE
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Book With Confidence • Guaranteed zero extra cash demands & transparent driver earnings.
+          <p className="text-xs text-slate-500 mt-1">
+            Book With Confidence • Guaranteed zero extra cash demands & upfront transparent driver earnings.
           </p>
         </div>
 
         {/* Live Platform Confidence Badges */}
         <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold">
-          <div className="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 flex items-center gap-1.5 shadow">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-center gap-1.5 shadow-sm">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>Zero Surge Guarantee</span>
           </div>
-          <div className="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 flex items-center gap-1.5 shadow">
-            <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+          <div className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-center gap-1.5 shadow-sm">
+            <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
             <span>Auto-Recovery Engine</span>
           </div>
-          <div className="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 flex items-center gap-1.5 shadow">
-            <Compass className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-center gap-1.5 shadow-sm">
+            <Compass className="w-3.5 h-3.5 text-cyan-600" />
             <span>Route Guardian 24/7</span>
           </div>
         </div>
@@ -375,14 +405,14 @@ export const PassengerHomePage: React.FC = () => {
         <div className="space-y-5 animate-in fade-in duration-300">
           {/* Auto-Recovery Banner if driver cancelled */}
           {activeBooking.state === 'RECOVERY' && (
-            <div className="p-4 rounded-3xl bg-amber-500/15 border-2 border-amber-500 text-amber-200 flex items-center justify-between shadow-2xl animate-pulse">
+            <div className="p-4 rounded-3xl bg-amber-50 border-2 border-amber-400 text-amber-900 flex items-center justify-between shadow-md animate-pulse">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-black">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black">
                   <RotateCcw className="w-6 h-6 animate-spin" />
                 </div>
                 <div>
-                  <h4 className="font-black text-sm text-white">{t('autoRecoveryTitle')}</h4>
-                  <p className="text-xs text-amber-300">{t('autoRecoveryDesc')}</p>
+                  <h4 className="font-black text-sm text-slate-900">{t('autoRecoveryTitle')}</h4>
+                  <p className="text-xs text-amber-800">{t('autoRecoveryDesc')}</p>
                 </div>
               </div>
               <span className="text-xs bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-full shadow">
@@ -419,25 +449,25 @@ export const PassengerHomePage: React.FC = () => {
           {/* In-Transit Cockpit Details Grid */}
           <div className="grid md:grid-cols-12 gap-5">
             {/* Driver Identity & Verification Card (5 Cols) */}
-            <div className="md:col-span-5 glass-panel rounded-3xl p-6 border border-slate-800 space-y-4 shadow-xl">
+            <div className="md:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3" />
                   VERIFIED HYDERABAD DRIVER
                 </span>
-                <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
+                <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
                   ★ {activeBooking.driver?.rating || 4.92}
                 </span>
               </div>
 
               {/* Driver Profile */}
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 text-slate-950 flex items-center justify-center text-2xl font-black shadow-lg">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-2xl font-black shadow-md">
                   {activeBooking.driver?.name?.charAt(0) || 'R'}
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-white">{activeBooking.driver?.name}</h3>
-                  <p className="text-xs text-slate-300 font-medium">
+                  <h3 className="text-lg font-black text-slate-900">{activeBooking.driver?.name}</h3>
+                  <p className="text-xs text-slate-600 font-medium">
                     {activeBooking.driver?.vehicleModel}
                   </p>
                   {/* Authentic Yellow Indian Vehicle Plate */}
@@ -448,126 +478,143 @@ export const PassengerHomePage: React.FC = () => {
               </div>
 
               {/* Driver Net Earnings Transparency (Solves Driver Demanding Cash) */}
-              <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs space-y-1">
-                <div className="flex justify-between text-slate-300 font-semibold">
-                  <span>Driver Net Take-Home:</span>
-                  <span className="text-emerald-400 font-black font-mono">
-                    {formatCurrencyINR(Math.round((activeBooking.lockedFare || 420) * 0.92))} (92%)
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-slate-700 flex items-center gap-1">
+                    <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                    Transparent Driver Net Take-Home
+                  </span>
+                  <span className="font-mono font-black text-emerald-700">
+                    {formatCurrencyINR(Math.round((activeBooking.lockedFare || 420) * 0.88))} (88%)
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-400">
-                  FairRide charges only 8% fee. Driver knows their full cut upfront. No cash haggling!
+                <p className="text-[11px] text-slate-500">
+                  Driver received guaranteed full net payout upfront. Zero cash request required.
                 </p>
               </div>
 
-              {/* Communication Buttons */}
-              <div className="grid grid-cols-2 gap-2 pt-1">
+              {/* Direct Actions: Call, Message, Share */}
+              <div className="grid grid-cols-3 gap-2 pt-2">
                 <a
-                  href={`tel:${activeBooking.driver?.phone}`}
-                  className="py-2.5 px-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 flex items-center justify-center gap-2 border border-slate-700/80 transition-all"
+                  href={`tel:${activeBooking.driver?.phone || '+919800000003'}`}
+                  className="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <Phone className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Call Driver</span>
+                  <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Call</span>
                 </a>
                 <button
-                  onClick={() => alert('Live driver chat: "Arriving at Gate 1 flagpole in 2 mins."')}
-                  className="py-2.5 px-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 flex items-center justify-center gap-2 border border-slate-700/80 transition-all"
+                  onClick={() => alert(`Direct in-app chat connected with ${activeBooking.driver?.name}`)}
+                  className="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-cyan-400" />
+                  <MessageSquare className="w-3.5 h-3.5 text-cyan-600" />
                   <span>Chat</span>
                 </button>
-              </div>
-            </div>
-
-            {/* Middle: High-Security Verification PIN & Safe Pickup Point (4 Cols) */}
-            <div className="md:col-span-4 glass-panel rounded-3xl p-6 border border-slate-800 flex flex-col justify-between text-center space-y-4 shadow-xl">
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">
-                  BOARDING VERIFICATION PIN
-                </span>
-                <div className="p-4 rounded-2xl bg-slate-950/90 border border-amber-500/40 glow-amber inline-block w-full">
-                  <span className="text-4xl font-black font-mono tracking-widest text-amber-400">
-                    {activeBooking.verificationPin || '5821'}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-2">
-                  Share this PIN <strong className="text-white">ONLY</strong> after sitting inside and checking license plate{' '}
-                  <strong className="text-amber-300 font-mono">{activeBooking.driver?.plateNumber}</strong>.
-                </p>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-left text-xs space-y-1">
-                <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>Designated Pickup:</span>
-                </div>
-                <p className="text-slate-300 text-[11px] pl-5">
-                  {activeBooking.pickupPointType || 'Gate 1 Main Security Flagpole'}
-                </p>
-              </div>
-            </div>
-
-            {/* Right: FareLock Guarantee & Safety Controls (3 Cols) */}
-            <div className="md:col-span-3 glass-panel rounded-3xl p-6 border border-slate-800 flex flex-col justify-between space-y-4 shadow-xl">
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 block mb-1">
-                  LOCKED UPFRONT FARE
-                </span>
-                <p className="text-3xl font-black text-white font-mono">
-                  {formatCurrencyINR(activeBooking.lockedFare || 420)}
-                </p>
-                <span className="text-[10px] text-emerald-400 font-semibold block mt-0.5">
-                  ✓ Protected against traffic delays
-                </span>
-              </div>
-
-              <div className="space-y-2 pt-2">
-                {/* Pay via UPI / Razorpay Button */}
-                {isTripPaid ? (
-                  <div className="w-full py-2.5 px-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    <span>Paid via Razorpay UPI</span>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setIsPaymentModalOpen(true)}
-                    className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-black shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5"
-                  >
-                    <CreditCard className="w-3.5 h-3.5 fill-slate-950" />
-                    <span>Pay via UPI / Razorpay</span>
-                  </button>
-                )}
-
-                {/* Share Live Trip Button */}
                 <button
                   onClick={handleShareTrip}
-                  className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700/80 transition-all flex items-center justify-center gap-1.5"
-                  title="Share Live Trip Tracking URL via WhatsApp"
+                  className="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <Share2 className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Share Live Trip</span>
+                  <Share2 className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Share</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Ride Status, PIN & Live State Flow (7 Cols) */}
+            <div className="md:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 space-y-5 shadow-sm">
+              {/* Trip Reference & Verification OTP PIN */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    BOOKING REFERENCE
+                  </span>
+                  <span className="font-mono font-black text-sm text-slate-900">
+                    {activeBooking.bookingReference || 'FR-LIVE-8291'}
+                  </span>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    START TRIP OTP PIN
+                  </span>
+                  <span className="font-mono font-black text-xl text-emerald-700 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200 tracking-widest inline-block">
+                    {activeBooking.verificationPin || '4892'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Progress Milestones */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-slate-700">Trip Progression:</span>
+                  <span className="text-emerald-700 uppercase font-mono font-black">
+                    {activeBooking.state}
+                  </span>
+                </div>
+
+                {/* State Progress Bar */}
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-600 transition-all duration-500"
+                    style={{
+                      width:
+                        activeBooking.state === 'REQUESTED'
+                          ? '20%'
+                          : activeBooking.state === 'DRIVER_ACCEPTED' || activeBooking.state === 'DRIVER_ASSIGNED'
+                          ? '40%'
+                          : activeBooking.state === 'DRIVER_ARRIVED'
+                          ? '60%'
+                          : activeBooking.state === 'TRIP_STARTED' || activeBooking.state === 'TRIP_IN_PROGRESS'
+                          ? '80%'
+                          : '100%'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Route Summary */}
+              <div className="space-y-2 text-xs">
+                <div className="flex items-start gap-2 text-slate-700">
+                  <div className="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] mt-0.5">
+                    A
+                  </div>
+                  <span className="font-medium text-slate-900">{activeBooking.pickupAddress}</span>
+                </div>
+                <div className="flex items-start gap-2 text-slate-700">
+                  <div className="w-3.5 h-3.5 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-[9px] mt-0.5">
+                    B
+                  </div>
+                  <span className="font-medium text-slate-900">{activeBooking.destinationAddress}</span>
+                </div>
+              </div>
+
+              {/* Actions: Pay Online & SOS */}
+              <div className="pt-3 border-t border-slate-200 flex items-center gap-3">
+                <button
+                  onClick={() => setIsPaymentModalOpen(true)}
+                  className="flex-1 py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>{isTripPaid ? 'Payment Complete ✓' : `Pay ${formatCurrencyINR(activeBooking.lockedFare || 420)} via UPI`}</span>
                 </button>
 
-                {/* Inspect Fare Audit */}
                 <button
                   onClick={() => setIsReceiptModalOpen(true)}
-                  className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700/80 transition-all flex items-center justify-center gap-1.5"
+                  className="py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Inspect Fare Audit</span>
+                  <DollarSign className="w-4 h-4 text-emerald-600" />
+                  <span>Fare Audit</span>
                 </button>
 
-                {/* Instant Emergency SOS */}
                 <button
                   onClick={() => {
                     if (confirm('🚨 EMERGENCY SOS: Trigger instant emergency police dispatch & alert trusted contacts?')) {
                       alert('EMERGENCY SOS BROADCAST ACTIVE: Police helpline 112 alerted. Emergency contacts pinged with live GPS.');
                     }
                   }}
-                  className="w-full py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black shadow-lg shadow-rose-600/40 glow-rose transition-all flex items-center justify-center gap-1.5"
+                  className="py-3 px-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black shadow-md shadow-rose-600/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <AlertTriangle className="w-4 h-4" />
-                  <span>EMERGENCY SOS</span>
+                  <span>SOS</span>
                 </button>
               </div>
             </div>
@@ -581,26 +628,26 @@ export const PassengerHomePage: React.FC = () => {
           {/* LEFT COLUMN: Modern Booking Dock (5 Columns) */}
           <div className="lg:col-span-5 space-y-5">
             {/* Main Booking Card */}
-            <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-5 shadow-2xl">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 space-y-5 shadow-sm">
               {/* Header with Title and Voice Booking Action */}
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-black text-white tracking-tight">Plan Your Journey</h2>
-                  <p className="text-xs text-slate-400">Guaranteed fares • No unexpected charges</p>
+                  <h2 className="text-lg font-black text-slate-900 tracking-tight">Plan Your Journey</h2>
+                  <p className="text-xs text-slate-500">Guaranteed fares • No unexpected charges</p>
                 </div>
 
                 <button
                   onClick={() => setIsVoiceModalOpen(true)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:to-cyan-500/30 text-emerald-300 text-xs font-bold border border-emerald-500/40 transition-all shadow-md group"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold border border-emerald-200 transition-all shadow-sm group cursor-pointer"
                   title="Speak your destination naturally in English, Hindi, or Telugu"
                 >
-                  <Mic className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
+                  <Mic className="w-3.5 h-3.5 text-emerald-600 group-hover:scale-110 transition-transform" />
                   <span>Voice Book</span>
                 </button>
               </div>
 
               {/* Trip Purpose Pill Switcher */}
-              <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-950/80 border border-slate-800/80 text-xs font-bold">
+              <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200 text-xs font-bold">
                 {[
                   { id: 'ONE_WAY', label: 'City Ride', icon: Car },
                   { id: 'AIRPORT_TRANSFER', label: 'Airport', icon: Plane },
@@ -612,10 +659,10 @@ export const PassengerHomePage: React.FC = () => {
                     <button
                       key={type.id}
                       onClick={() => setTripType(type.id as any)}
-                      className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                      className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 font-black shadow-md shadow-emerald-500/20'
-                          : 'text-slate-400 hover:text-white'
+                          ? 'bg-emerald-600 text-white font-black shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -626,56 +673,56 @@ export const PassengerHomePage: React.FC = () => {
               </div>
 
               {/* Ride Now vs Schedule Later Switcher */}
-              <div className="flex items-center justify-between bg-slate-950/80 p-1 rounded-2xl border border-slate-800/80 text-xs font-bold">
+              <div className="flex items-center justify-between bg-slate-100 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
                 <button
                   type="button"
                   onClick={() => setIsScheduled(false)}
-                  className={`flex-1 py-1.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     !isScheduled
-                      ? 'bg-slate-800 text-emerald-300 font-black shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-white text-emerald-700 font-black shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                  <Zap className="w-3.5 h-3.5 text-amber-500" />
                   <span>Ride Now</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsScheduled(true)}
-                  className={`flex-1 py-1.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-1.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     isScheduled
-                      ? 'bg-slate-800 text-emerald-300 font-black shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-white text-emerald-700 font-black shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                  <Calendar className="w-3.5 h-3.5 text-cyan-600" />
                   <span>Schedule Later</span>
                 </button>
               </div>
 
               {/* Scheduled Date & Time Pickers */}
               {isScheduled && (
-                <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-slate-950/90 border border-slate-800 animate-in fade-in">
+                <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-200 animate-in fade-in">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wider">
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">
                       Trip Date
                     </label>
                     <input
                       type="date"
                       value={scheduledDate}
                       onChange={(e) => setScheduledDate(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-wider">
+                    <label className="text-[10px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">
                       Pickup Time
                     </label>
                     <input
                       type="time"
                       value={scheduledTime}
                       onChange={(e) => setScheduledTime(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -684,46 +731,46 @@ export const PassengerHomePage: React.FC = () => {
               {/* Connected Journey Route Planner */}
               <div className="relative space-y-3">
                 {/* Visual Route Connector Line */}
-                <div className="absolute left-[21px] top-[26px] bottom-[26px] w-[2px] bg-gradient-to-b from-emerald-500 via-teal-400 to-cyan-400 z-0 pointer-events-none" />
+                <div className="absolute left-[21px] top-[26px] bottom-[26px] w-[2px] bg-gradient-to-b from-emerald-500 via-teal-400 to-cyan-500 z-0 pointer-events-none" />
 
                 {/* Pickup Location Field */}
                 <div className="relative z-30">
-                  <div className="absolute left-3.5 top-3.5 w-4 h-4 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <div className="absolute left-3.5 top-3.5 w-4 h-4 rounded-full bg-emerald-100 border-2 border-emerald-500 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                   </div>
                   <input
                     type="text"
                     value={pickupSearch}
                     onChange={(e) => handlePickupInput(e.target.value)}
                     placeholder="Enter pickup location (e.g. Cyber Towers)..."
-                    className="w-full bg-slate-950/90 border border-slate-800 rounded-2xl pl-10 pr-11 py-3 text-xs text-white font-medium focus:outline-none focus:ring-1 focus:ring-emerald-400 focus:border-emerald-400 transition-all placeholder:text-slate-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-11 py-3 text-xs text-slate-900 font-medium focus:outline-none focus:bg-white focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all placeholder:text-slate-400"
                   />
                   <button
                     type="button"
                     onClick={handleGetCurrentLocation}
                     disabled={isLocating}
-                    className="absolute right-3 top-2.5 p-1 rounded-lg text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-colors"
+                    className="absolute right-3 top-2.5 p-1 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
                     title="Use My Current GPS Location"
                   >
-                    <Crosshair className={`w-4 h-4 ${isLocating ? 'animate-spin text-emerald-300' : ''}`} />
+                    <Crosshair className={`w-4 h-4 ${isLocating ? 'animate-spin text-emerald-600' : ''}`} />
                   </button>
 
                   {/* Dynamic Pickup Places Autocomplete Dropdown */}
                   {pickupSearchResults.length > 0 && (
-                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-2 shadow-2xl z-50 space-y-1 max-h-56 overflow-y-auto">
+                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl z-50 space-y-1 max-h-56 overflow-y-auto">
                       {pickupSearchResults.map((result) => (
                         <button
                           key={result.id}
                           type="button"
                           onClick={() => handleSelectPickup(result)}
-                          className="w-full text-left p-2 rounded-xl hover:bg-slate-800 transition-colors flex items-start gap-2.5 group"
+                          className="w-full text-left p-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 group cursor-pointer"
                         >
-                          <MapPin className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
+                          <MapPin className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
                           <div className="min-w-0">
-                            <p className="text-xs font-bold text-white group-hover:text-emerald-300 truncate">
+                            <p className="text-xs font-bold text-slate-800 group-hover:text-emerald-700 truncate">
                               {result.name}
                             </p>
-                            <p className="text-[10px] text-slate-400 truncate">{result.address}</p>
+                            <p className="text-[10px] text-slate-500 truncate">{result.address}</p>
                           </div>
                         </button>
                       ))}
@@ -736,7 +783,7 @@ export const PassengerHomePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleSwapAddresses}
-                    className={`w-7 h-7 rounded-full bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-emerald-400 flex items-center justify-center shadow-lg transition-transform ${
+                    className={`w-7 h-7 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-emerald-500 flex items-center justify-center shadow-sm transition-transform cursor-pointer ${
                       isSwapping ? 'rotate-180' : ''
                     }`}
                     title="Swap pickup and destination"
@@ -747,33 +794,33 @@ export const PassengerHomePage: React.FC = () => {
 
                 {/* Destination Location Field */}
                 <div className="relative z-10">
-                  <div className="absolute left-3.5 top-3.5 w-4 h-4 rounded-full bg-cyan-500/20 border-2 border-cyan-400 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  <div className="absolute left-3.5 top-3.5 w-4 h-4 rounded-full bg-cyan-100 border-2 border-cyan-500 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-600" />
                   </div>
                   <input
                     type="text"
                     value={destinationSearch}
                     onChange={(e) => handleDestinationInput(e.target.value)}
                     placeholder="Where to? (Type any address or landmark)..."
-                    className="w-full bg-slate-950/90 border border-slate-800 rounded-2xl pl-10 pr-10 py-3 text-xs text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400 transition-all placeholder:text-slate-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-10 py-3 text-xs text-slate-900 font-medium focus:outline-none focus:bg-white focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all placeholder:text-slate-400"
                   />
 
                   {/* Dynamic Places Autocomplete Dropdown */}
                   {searchResults.length > 0 && (
-                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-2 shadow-2xl z-50 space-y-1 max-h-56 overflow-y-auto">
+                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-2xl p-2 shadow-2xl z-50 space-y-1 max-h-56 overflow-y-auto">
                       {searchResults.map((result) => (
                         <button
                           key={result.id}
                           type="button"
                           onClick={() => handleSelectPlace(result)}
-                          className="w-full text-left p-2 rounded-xl hover:bg-slate-800 transition-colors flex items-start gap-2.5 group"
+                          className="w-full text-left p-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 group cursor-pointer"
                         >
-                          <MapPin className="w-3.5 h-3.5 text-cyan-400 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
+                          <MapPin className="w-3.5 h-3.5 text-cyan-600 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
                           <div className="min-w-0">
-                            <p className="text-xs font-bold text-white group-hover:text-cyan-300 truncate">
+                            <p className="text-xs font-bold text-slate-800 group-hover:text-cyan-700 truncate">
                               {result.name}
                             </p>
-                            <p className="text-[10px] text-slate-400 truncate">{result.address}</p>
+                            <p className="text-[10px] text-slate-500 truncate">{result.address}</p>
                           </div>
                         </button>
                       ))}
@@ -784,7 +831,7 @@ export const PassengerHomePage: React.FC = () => {
 
               {/* Fast Landmark Shortcuts */}
               <div className="space-y-1.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
                   QUICK DESTINATIONS:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -793,9 +840,9 @@ export const PassengerHomePage: React.FC = () => {
                       key={place.name}
                       type="button"
                       onClick={() => handleSelectPlace(place)}
-                      className="px-2.5 py-1 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800/80 text-[11px] text-slate-300 hover:text-white transition-all flex items-center gap-1"
+                      className="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-[11px] text-slate-700 hover:text-emerald-800 transition-all flex items-center gap-1 cursor-pointer"
                     >
-                      <MapPin className="w-2.5 h-2.5 text-cyan-400" />
+                      <MapPin className="w-2.5 h-2.5 text-cyan-600" />
                       <span>{place.name.split(' ')[0]}</span>
                     </button>
                   ))}
@@ -803,13 +850,13 @@ export const PassengerHomePage: React.FC = () => {
               </div>
 
               {/* Smart Pickup Point Coordinator */}
-              <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2.5">
-                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-emerald-400">
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
+                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-emerald-700">
                   <span className="flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
                     SMART PICKUP POINT COORDINATION:
                   </span>
-                  <span className="text-slate-400 font-normal lowercase">prevents driver confusion</span>
+                  <span className="text-slate-500 font-normal lowercase">prevents driver confusion</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-1.5 text-[11px]">
@@ -825,10 +872,10 @@ export const PassengerHomePage: React.FC = () => {
                         key={pt}
                         type="button"
                         onClick={() => setSelectedPickupPoint(pt)}
-                        className={`p-2 rounded-xl text-left font-medium transition-all ${
+                        className={`p-2 rounded-xl text-left font-medium transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 font-bold shadow-sm'
-                            : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 border border-slate-800/80'
+                            ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold shadow-sm'
+                            : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
                         }`}
                       >
                         {pt}
@@ -842,15 +889,15 @@ export const PassengerHomePage: React.FC = () => {
                   value={specificInstructions}
                   onChange={(e) => setSpecificInstructions(e.target.value)}
                   placeholder="Optional driver note: 'Standing near the flagpole'"
-                  className="w-full bg-slate-900 border border-slate-800/80 rounded-xl px-3 py-2 text-[11px] text-slate-300 focus:outline-none focus:border-emerald-400/50"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[11px] text-slate-800 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               {/* Airport Flight Sync Box (When Airport Transfer is active) */}
               {tripType === 'AIRPORT_TRANSFER' && (
-                <div className="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-2 animate-in fade-in">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-400">
-                    <Plane className="w-3.5 h-3.5" />
+                <div className="p-3.5 rounded-2xl bg-cyan-50 border border-cyan-200 space-y-2 animate-in fade-in">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-800">
+                    <Plane className="w-3.5 h-3.5 text-cyan-600" />
                     <span>Airport Transfer: Flight Auto-Sync</span>
                   </div>
                   <input
@@ -858,9 +905,9 @@ export const PassengerHomePage: React.FC = () => {
                     value={flightNumber}
                     onChange={(e) => setFlightNumber(e.target.value)}
                     placeholder="Enter Flight Number (e.g. 6E 534 / AI 840)"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-white border border-cyan-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-cyan-500"
                   />
-                  <p className="text-[10px] text-cyan-200">
+                  <p className="text-[10px] text-cyan-700">
                     Provides automatic traffic buffer and directs driver directly to designated airline check-in terminal.
                   </p>
                 </div>
@@ -868,7 +915,7 @@ export const PassengerHomePage: React.FC = () => {
 
               {/* Ride Optimization Criteria */}
               <div className="space-y-1.5">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
                   OPTIMIZE RIDE FOR:
                 </span>
                 <div className="grid grid-cols-3 gap-1.5 text-[11px] font-semibold">
@@ -885,10 +932,10 @@ export const PassengerHomePage: React.FC = () => {
                       <button
                         key={pref.id}
                         onClick={() => setSelectedPreference(pref.id as any)}
-                        className={`py-2 px-1 rounded-xl text-center transition-all ${
+                        className={`py-2 px-1 rounded-xl text-center transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-slate-800 text-emerald-400 border border-emerald-500/50 font-bold shadow'
-                            : 'bg-slate-950/70 text-slate-400 border border-slate-900 hover:text-white'
+                            ? 'bg-emerald-600 text-white font-bold shadow-sm'
+                            : 'bg-slate-100 text-slate-600 border border-slate-200 hover:text-slate-900 hover:bg-slate-200'
                         }`}
                       >
                         {pref.label}
@@ -900,13 +947,13 @@ export const PassengerHomePage: React.FC = () => {
             </div>
 
             {/* Multimodal Transit Comparison Card */}
-            <div className="glass-panel rounded-3xl p-4 border border-slate-800 text-xs flex items-center justify-between shadow-lg">
+            <div className="bg-white rounded-3xl p-4 border border-slate-200 text-xs flex items-center justify-between shadow-sm">
               <div className="space-y-0.5">
-                <p className="font-bold text-white flex items-center gap-1.5">
-                  <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+                <p className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <Leaf className="w-3.5 h-3.5 text-emerald-600" />
                   Multimodal Journey Planner
                 </p>
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500">
                   Save 40% (₹145) by connecting Cab + Hitech Express Metro
                 </p>
               </div>
@@ -916,7 +963,7 @@ export const PassengerHomePage: React.FC = () => {
                     'Multimodal Transit Breakdown:\n• Cab to Metro Stn: ₹85 (6 min)\n• Metro Express: ₹40 (18 min)\n• Final ETA: 24 mins (Save ₹215)'
                   )
                 }
-                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-bold border border-slate-700 transition-all"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition-all cursor-pointer"
               >
                 Compare
               </button>
@@ -949,29 +996,29 @@ export const PassengerHomePage: React.FC = () => {
             {/* Available Vehicle Fleets with Transparent Locked Pricing */}
             <div className="space-y-3">
               {/* AI Route & Vehicle Recommendation */}
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-transparent border border-emerald-500/20 text-xs flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4 animate-pulse" />
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-white font-bold text-xs flex items-center gap-1.5">
+                  <p className="text-slate-900 font-bold text-xs flex items-center gap-1.5">
                     <span>AI Route & Vehicle Recommendation</span>
-                    <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono font-black">
+                    <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-mono font-black">
                       OPTIMAL CORRIDOR
                     </span>
                   </p>
-                  <p className="text-[11px] text-slate-300 truncate">
+                  <p className="text-[11px] text-slate-600 truncate">
                     Expressway adherence 100% • Lowest surge • Recommended: Sedan for fast airport & city connection.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-300">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-700">
                   SELECT VEHICLE TIER (GUARANTEED FARE):
                 </span>
-                <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3" />
+                <span className="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" />
                   Zero Sudden Surge
                 </span>
               </div>
@@ -987,21 +1034,21 @@ export const PassengerHomePage: React.FC = () => {
                         setSelectedCategory(q.vehicleCategory);
                         setLockedQuote(q);
                       }}
-                      className={`p-3.5 rounded-2xl text-left border transition-all flex flex-col justify-between relative overflow-hidden group ${
+                      className={`p-4 rounded-2xl text-left border transition-all flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-b from-emerald-500/15 to-slate-900/90 border-emerald-400 text-white shadow-xl shadow-emerald-500/15 ring-1 ring-emerald-400'
-                          : 'bg-slate-900/60 border-slate-800/80 text-slate-300 hover:border-slate-700 hover:bg-slate-900/90'
+                          ? 'bg-emerald-50/70 border-emerald-500 text-slate-900 shadow-md ring-2 ring-emerald-500/20'
+                          : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
                       {/* Top Row: Vehicle Name & Eco Badge */}
                       <div className="flex items-center justify-between w-full">
-                        <span className="font-extrabold text-xs text-white">{q.vehicleName}</span>
+                        <span className="font-extrabold text-xs text-slate-900">{q.vehicleName}</span>
                         {q.co2AvoidedKg > 0 ? (
-                          <span className="text-[9px] bg-emerald-500/20 text-emerald-300 font-extrabold px-1.5 py-0.5 rounded border border-emerald-500/30">
+                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded border border-emerald-200">
                             ZERO EMISSIONS
                           </span>
                         ) : (
-                          <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                          <span className="text-[10px] text-slate-500 flex items-center gap-1">
                             <Users className="w-2.5 h-2.5" />
                             {q.capacity || 4}
                           </span>
@@ -1011,18 +1058,18 @@ export const PassengerHomePage: React.FC = () => {
                       {/* Middle: Price in Large Typography */}
                       <div className="mt-3">
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xl font-black font-mono tracking-tight text-white">
+                          <span className="text-xl font-black font-mono tracking-tight text-slate-900">
                             {formatCurrencyINR(q.breakdown.totalFare)}
                           </span>
                         </div>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
+                        <p className="text-[10px] text-slate-500 mt-0.5">
                           {q.durationMin} mins away • Direct route
                         </p>
                       </div>
 
                       {/* Selection Checkmark Indicator */}
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-400" />
+                        <div className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-emerald-600" />
                       )}
                     </button>
                   );
@@ -1035,18 +1082,18 @@ export const PassengerHomePage: React.FC = () => {
               <div className="pt-2">
                 <button
                   onClick={handleLockAndBook}
-                  className="w-full min-h-[68px] sm:min-h-[72px] px-5 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:from-emerald-300 hover:to-cyan-300 text-slate-950 shadow-xl shadow-emerald-500/25 flex items-center justify-between gap-3 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer border border-emerald-300/50 group relative overflow-hidden text-left"
+                  className="w-full min-h-[68px] sm:min-h-[72px] px-6 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 flex items-center justify-between gap-3 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer border border-emerald-500 group relative overflow-hidden text-left"
                 >
                   {/* Left: Icon + Title + Subtitle */}
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-slate-950/20 text-slate-950 flex items-center justify-center font-black shadow-sm shrink-0">
+                    <div className="w-11 h-11 rounded-xl bg-white/20 text-white flex items-center justify-center font-black shadow-sm shrink-0">
                       <Lock className="w-5 h-5 stroke-[2.8]" />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-xs sm:text-sm font-black tracking-tight uppercase text-slate-950 block truncate">
+                      <span className="text-xs sm:text-sm font-black tracking-tight uppercase text-white block truncate">
                         LOCK FARE & CONFIRM BOOKING
                       </span>
-                      <span className="text-[11px] text-slate-900/90 font-bold block truncate mt-0.5">
+                      <span className="text-[11px] text-emerald-100 font-bold block truncate mt-0.5">
                         Instant Match • 4-Digit Security PIN
                       </span>
                     </div>
@@ -1054,11 +1101,11 @@ export const PassengerHomePage: React.FC = () => {
 
                   {/* Right: Fare Price + Action Arrow */}
                   <div className="text-right shrink-0 flex items-center gap-2">
-                    <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-slate-950 bg-slate-950/15 px-3 py-1 rounded-xl leading-none">
+                    <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-white bg-white/15 px-3 py-1 rounded-xl leading-none">
                       ({formatCurrencyINR(lockedQuote.breakdown.totalFare)})
                     </span>
-                    <div className="w-9 h-9 rounded-xl bg-slate-950/15 flex items-center justify-center group-hover:translate-x-1 transition-transform shrink-0">
-                      <ChevronRight className="w-5 h-5 text-slate-950 stroke-[3]" />
+                    <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center group-hover:translate-x-1 transition-transform shrink-0">
+                      <ChevronRight className="w-5 h-5 text-white stroke-[3]" />
                     </div>
                   </div>
                 </button>

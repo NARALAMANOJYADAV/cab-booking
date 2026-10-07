@@ -58,46 +58,46 @@ export const PassengerTripsPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-white">YOUR TRIPS & FARE AUDITS</h1>
-        <p className="text-xs text-slate-400">View complete trip history with transparent FareLock receipts</p>
+        <h1 className="text-2xl font-black text-slate-900">YOUR TRIPS & FARE AUDITS</h1>
+        <p className="text-xs text-slate-500 font-medium">View complete trip history with transparent FareLock receipts</p>
       </div>
 
       <div className="space-y-4">
         {sampleTrips.map((trip) => (
           <div
             key={trip.id}
-            className="glass-panel p-5 rounded-3xl border border-slate-800 hover:border-slate-700 transition-colors space-y-3"
+            className="p-5 rounded-3xl border border-slate-200 bg-white shadow-sm hover:border-slate-300 transition-colors space-y-3"
           >
-            <div className="flex justify-between items-center pb-2 border-b border-slate-800 text-xs">
-              <span className="font-mono font-bold text-white">{trip.id}</span>
-              <span className="text-slate-400">{trip.date}</span>
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100 text-xs">
+              <span className="font-mono font-bold text-slate-900">{trip.id}</span>
+              <span className="text-slate-500">{trip.date}</span>
             </div>
 
             <div className="space-y-1.5 text-xs">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-slate-300 font-medium">{trip.from}</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span className="text-slate-800 font-semibold">{trip.from}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                <span className="text-slate-300 font-medium">{trip.to}</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
+                <span className="text-slate-800 font-semibold">{trip.to}</span>
               </div>
             </div>
 
-            <div className="flex justify-between items-center pt-2 border-t border-slate-800/80">
+            <div className="flex justify-between items-center pt-2 border-t border-slate-100">
               <div>
-                <span className="text-[10px] text-slate-400 block">Driver: {trip.driverName} • {trip.category}</span>
-                <span className="text-base font-black text-emerald-400 font-mono">
-                  {formatCurrencyINR(trip.fare)} (Locked & Verified ✓)
+                <span className="text-[11px] text-slate-500 block">Driver: {trip.driverName} • {trip.category}</span>
+                <span className="text-base font-black text-emerald-700 font-mono">
+                  {formatCurrencyINR(trip.fare)} <span className="text-xs text-emerald-600 font-sans font-bold">(Locked & Verified ✓)</span>
                 </span>
               </div>
 
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedReceipt(trip)}
-                  className="py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5"
+                  className="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <FileText className="w-3.5 h-3.5" />
+                  <FileText className="w-3.5 h-3.5 text-slate-600" />
                   <span>Fare Audit</span>
                 </button>
                 <button
@@ -105,7 +105,7 @@ export const PassengerTripsPage: React.FC = () => {
                     setDisputeBookingRef(trip.id);
                     setDisputeModalOpen(true);
                   }}
-                  className="py-1.5 px-3 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-bold flex items-center gap-1"
+                  className="py-1.5 px-3 rounded-xl border border-rose-300 text-rose-700 hover:bg-rose-50 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   <Scale className="w-3.5 h-3.5" />
                   <span>Dispute</span>
@@ -133,30 +133,30 @@ export const PassengerTripsPage: React.FC = () => {
 
       {/* File Dispute Dialog */}
       {disputeModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleSubmitDispute}
-            className="bg-slate-900 border border-slate-700 rounded-3xl max-w-md w-full p-6 space-y-4 relative shadow-2xl"
+            className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 relative shadow-2xl"
           >
             <button
               type="button"
               onClick={() => setDisputeModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-800"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full bg-slate-100 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="font-bold text-white text-base">File Evidence-Based Dispute</h3>
-            <p className="text-xs text-slate-400">
-              Trip Ref: <span className="font-mono text-emerald-400">{disputeBookingRef}</span>. The system will automatically attach the original FareLock and GPS breadcrumb trail.
+            <h3 className="font-bold text-slate-900 text-base">File Evidence-Based Dispute</h3>
+            <p className="text-xs text-slate-500">
+              Trip Ref: <span className="font-mono text-emerald-700 font-bold">{disputeBookingRef}</span>. The system will automatically attach the original FareLock and GPS breadcrumb trail.
             </p>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Dispute Category:</label>
+              <label className="text-xs font-bold text-slate-700">Dispute Category:</label>
               <select
                 value={disputeCategory}
                 onChange={(e) => setDisputeCategory(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
               >
                 <option value="DRIVER_DEMANDED_EXTRA_MONEY">Driver demanded extra cash over locked fare</option>
                 <option value="WRONG_FARE">Incorrect toll or charge added</option>
@@ -168,20 +168,20 @@ export const PassengerTripsPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Explanation & Details:</label>
+              <label className="text-xs font-bold text-slate-700">Explanation & Details:</label>
               <textarea
                 rows={4}
                 required
                 value={disputeDesc}
                 onChange={(e) => setDisputeDesc(e.target.value)}
                 placeholder="Explain what happened. Support agents will review with full trip evidence..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-lg shadow-rose-600/30"
+              className="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md transition-colors cursor-pointer"
             >
               Submit Dispute with Evidence Bundle
             </button>
