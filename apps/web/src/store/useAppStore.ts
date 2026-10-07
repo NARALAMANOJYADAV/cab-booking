@@ -53,6 +53,8 @@ interface AppState {
   isAuthenticated: boolean;
   isAuthModalOpen: boolean;
   setAuthModalOpen: (open: boolean) => void;
+  isBecomeDriverModalOpen: boolean;
+  setBecomeDriverModalOpen: (open: boolean) => void;
   setCurrentUser: (user: UserSession, token?: string) => void;
   login: (user: UserSession, token: string) => void;
   logout: () => void;
@@ -147,8 +149,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   token: initialAuth.token,
   isAuthenticated: initialAuth.isAuth,
   isAuthModalOpen: false,
-
   setAuthModalOpen: (open) => set({ isAuthModalOpen: open }),
+  isBecomeDriverModalOpen: false,
+  setBecomeDriverModalOpen: (open) => set({ isBecomeDriverModalOpen: open }),
 
   setCurrentUser: (user, token) => set({ currentUser: user, token: token || get().token }),
 

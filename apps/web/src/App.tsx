@@ -3,6 +3,7 @@ import { useAppStore } from './store/useAppStore';
 import { Navbar } from './components/Navbar';
 import { DemoSimulationModal } from './components/DemoSimulationModal';
 import { AuthModal } from './components/AuthModal';
+import { BecomeDriverModal } from './components/BecomeDriverModal';
 import { LandingPage } from './pages/LandingPage';
 import { PassengerHomePage } from './pages/PassengerHomePage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
@@ -38,7 +39,9 @@ export const App: React.FC = () => {
     activeBooking,
     setActiveBooking,
     isAuthModalOpen,
-    setAuthModalOpen
+    setAuthModalOpen,
+    isBecomeDriverModalOpen,
+    setBecomeDriverModalOpen
   } = useAppStore();
   const [passengerSubTab, setPassengerSubTab] = useState<'BOOK' | 'TRIPS' | 'WALLET' | 'SAFETY' | 'LANDING'>('LANDING');
   const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
@@ -378,6 +381,12 @@ export const App: React.FC = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setAuthModalOpen(false)}
+      />
+
+      {/* Become a Driver Partner Modal */}
+      <BecomeDriverModal
+        isOpen={isBecomeDriverModalOpen}
+        onClose={() => setBecomeDriverModalOpen(false)}
       />
     </div>
   );

@@ -49,6 +49,7 @@ export const PassengerHomePage: React.FC = () => {
     currentUser,
     isAuthenticated,
     setAuthModalOpen,
+    setBecomeDriverModalOpen,
     activeBooking,
     setActiveBooking,
     updateBookingState,
@@ -1111,6 +1112,36 @@ export const PassengerHomePage: React.FC = () => {
                 </button>
               </div>
             )}
+
+            {/* Become a Captain / Driver Promotion Banner */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-50 via-emerald-50 to-amber-50 border border-amber-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 mt-2">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-black shadow-md shadow-amber-500/20 shrink-0">
+                  <Car className="w-6 h-6 stroke-[2.5]" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-black text-slate-900">
+                      Have a Commercial Vehicle? Drive with FairRide
+                    </h4>
+                    <span className="text-[10px] bg-amber-200 text-amber-900 font-extrabold px-2 py-0.5 rounded-full border border-amber-300">
+                      92% NET TAKE-HOME
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    Upgrade your rider account in 2 mins with basic RC & Driving License. Daily payouts & zero commission lock-in.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBecomeDriverModalOpen(true)}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-400 font-black text-xs transition-all shadow-md flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+              >
+                <span>Become a Captain</span>
+                <ChevronRight className="w-4 h-4 stroke-[3]" />
+              </button>
+            </div>
           </div>
         </div>
       )}
