@@ -40,7 +40,7 @@ export const App: React.FC = () => {
     isAuthModalOpen,
     setAuthModalOpen
   } = useAppStore();
-  const [passengerSubTab, setPassengerSubTab] = useState<'BOOK' | 'TRIPS' | 'WALLET' | 'SAFETY' | 'LANDING'>('BOOK');
+  const [passengerSubTab, setPassengerSubTab] = useState<'BOOK' | 'TRIPS' | 'WALLET' | 'SAFETY' | 'LANDING'>('LANDING');
   const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
   const [isSimControlsOpen, setIsSimControlsOpen] = useState(true);
 
@@ -356,7 +356,7 @@ export const App: React.FC = () => {
           ) : passengerSubTab === 'SAFETY' ? (
             <SafetyCenterPage />
           ) : (
-            <LandingPage />
+            <LandingPage onBookRide={() => setPassengerSubTab('BOOK')} />
           )
         ) : activeRoleView === 'DRIVER' ? (
           <DriverDashboardPage />
