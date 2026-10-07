@@ -27,7 +27,9 @@ import {
   ChevronDown,
   Navigation,
   KeyRound,
-  DollarSign
+  DollarSign,
+  Smartphone,
+  Download
 } from 'lucide-react';
 import { formatCurrencyINR } from '@fairride/shared';
 
@@ -36,7 +38,7 @@ interface LandingPageProps {
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onBookRide }) => {
-  const { setActiveRoleView, quickSwitchRole } = useAppStore();
+  const { setActiveRoleView, quickSwitchRole, setInstallModalOpen } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<'FARE_LOCK' | 'AUTO_RECOVERY' | 'NET_EARNINGS' | 'ROUTE_GUARDIAN'>('FARE_LOCK');
   const [selectedVehicle, setSelectedVehicle] = useState<'SEDAN' | 'EV' | 'AUTO' | 'BIKE' | 'SUV'>('SEDAN');
@@ -132,25 +134,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onBookRide }) => {
                 </button>
 
                 <button
-                  onClick={() => {
-                    quickSwitchRole('DRIVER');
-                    setActiveRoleView('DRIVER');
-                  }}
-                  className="py-4 px-7 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-base border border-slate-300 shadow-sm hover:shadow-md flex items-center gap-2 transition-all cursor-pointer"
+                  type="button"
+                  onClick={() => setInstallModalOpen(true)}
+                  className="py-4 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all cursor-pointer flex items-center gap-2 hover:scale-[1.02]"
                 >
-                  <Car className="w-5 h-5 text-amber-500" />
-                  <span>Drive & Keep 90%</span>
+                  <Smartphone className="w-4 h-4 text-emerald-400" />
+                  <span>Get Mobile App</span>
                 </button>
 
                 <button
                   onClick={() => {
-                    quickSwitchRole('CORPORATE');
-                    setActiveRoleView('CORPORATE');
+                    quickSwitchRole('DRIVER');
+                    setActiveRoleView('DRIVER');
                   }}
-                  className="py-4 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-all cursor-pointer flex items-center gap-1.5"
+                  className="py-4 px-6 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm border border-slate-300 shadow-sm hover:shadow-md flex items-center gap-2 transition-all cursor-pointer"
                 >
-                  <Building2 className="w-4 h-4 text-slate-500" />
-                  <span>Corporate</span>
+                  <Car className="w-4 h-4 text-amber-500" />
+                  <span>Drive (92%)</span>
                 </button>
               </div>
 
@@ -833,11 +833,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onBookRide }) => {
               BOOK A RIDE NOW
             </button>
             <button
+              type="button"
+              onClick={() => setInstallModalOpen(true)}
+              className="py-4 px-7 rounded-2xl bg-slate-950/80 hover:bg-slate-950 text-white font-bold text-base border border-white/20 backdrop-blur-md transition-all cursor-pointer flex items-center gap-2"
+            >
+              <Smartphone className="w-5 h-5 text-emerald-400" />
+              <span>Install Mobile App</span>
+            </button>
+            <button
               onClick={() => {
                 quickSwitchRole('DRIVER');
                 setActiveRoleView('DRIVER');
               }}
-              className="py-4 px-7 rounded-2xl bg-emerald-900/60 hover:bg-emerald-900/90 text-white font-bold text-base border border-white/30 backdrop-blur-md transition-all cursor-pointer"
+              className="py-4 px-6 rounded-2xl bg-emerald-900/60 hover:bg-emerald-900/90 text-white font-bold text-base border border-white/30 backdrop-blur-md transition-all cursor-pointer"
             >
               Drive with FairRide
             </button>
@@ -871,11 +879,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onBookRide }) => {
           </div>
 
           <div className="space-y-2">
-            <h6 className="font-bold text-slate-900 uppercase text-[11px] tracking-wider">Partner Portals</h6>
+            <h6 className="font-bold text-slate-900 uppercase text-[11px] tracking-wider">Mobility & Captains</h6>
             <ul className="space-y-1.5">
-              <li><button onClick={() => { quickSwitchRole('DRIVER'); setActiveRoleView('DRIVER'); }} className="hover:text-emerald-600 transition-colors">Driver Partner Portal</button></li>
-              <li><button onClick={() => { quickSwitchRole('CORPORATE'); setActiveRoleView('CORPORATE'); }} className="hover:text-emerald-600 transition-colors">Corporate Mobility Portal</button></li>
-              <li><button onClick={() => { quickSwitchRole('ADMIN'); setActiveRoleView('ADMIN'); }} className="hover:text-emerald-600 transition-colors">Admin Command Center</button></li>
+              <li><button onClick={() => setInstallModalOpen(true)} className="hover:text-emerald-600 transition-colors font-semibold text-emerald-700">📱 Install Mobile App</button></li>
+              <li><button onClick={() => { quickSwitchRole('DRIVER'); setActiveRoleView('DRIVER'); }} className="hover:text-emerald-600 transition-colors">Become a Captain (92%)</button></li>
+              <li><button onClick={() => { quickSwitchRole('CORPORATE'); setActiveRoleView('CORPORATE'); }} className="hover:text-emerald-600 transition-colors">Corporate Mobility</button></li>
             </ul>
           </div>
 

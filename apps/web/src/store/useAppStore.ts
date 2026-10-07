@@ -55,6 +55,10 @@ interface AppState {
   setAuthModalOpen: (open: boolean) => void;
   isBecomeDriverModalOpen: boolean;
   setBecomeDriverModalOpen: (open: boolean) => void;
+  isInstallModalOpen: boolean;
+  setInstallModalOpen: (open: boolean) => void;
+  deferredInstallPrompt: any;
+  setDeferredInstallPrompt: (prompt: any) => void;
   setCurrentUser: (user: UserSession, token?: string) => void;
   login: (user: UserSession, token: string) => void;
   logout: () => void;
@@ -152,6 +156,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   setAuthModalOpen: (open) => set({ isAuthModalOpen: open }),
   isBecomeDriverModalOpen: false,
   setBecomeDriverModalOpen: (open) => set({ isBecomeDriverModalOpen: open }),
+  isInstallModalOpen: false,
+  setInstallModalOpen: (open) => set({ isInstallModalOpen: open }),
+  deferredInstallPrompt: null,
+  setDeferredInstallPrompt: (prompt) => set({ deferredInstallPrompt: prompt }),
 
   setCurrentUser: (user, token) => set({ currentUser: user, token: token || get().token }),
 

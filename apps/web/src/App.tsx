@@ -4,6 +4,8 @@ import { Navbar } from './components/Navbar';
 import { DemoSimulationModal } from './components/DemoSimulationModal';
 import { AuthModal } from './components/AuthModal';
 import { BecomeDriverModal } from './components/BecomeDriverModal';
+import { InstallAppModal } from './components/InstallAppModal';
+import { MobileInstallBanner } from './components/MobileInstallBanner';
 import { LandingPage } from './pages/LandingPage';
 import { PassengerHomePage } from './pages/PassengerHomePage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
@@ -388,6 +390,12 @@ export const App: React.FC = () => {
         isOpen={isBecomeDriverModalOpen}
         onClose={() => setBecomeDriverModalOpen(false)}
       />
+
+      {/* Mobile Responsive App Installation Modal */}
+      <InstallAppModal />
+
+      {/* Floating Bottom App Installation Banner for Mobile */}
+      <MobileInstallBanner />
     </div>
   );
 };
