@@ -220,7 +220,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     try {
       const token = get().token;
       if (!token || token.startsWith('mock_')) return;
-      const res = await fetch('/api/v1/auth/me', {
+      const envUrl = (import.meta.env.VITE_API_URL || (import.meta as any).env?.VITE_BACKEND_URL || '') as string;
+      const apiBase = envUrl && envUrl.trim() ? `${envUrl.trim().replace(/\/+$/, '')}/api/v1` : '/api/v1';
+      const res = await fetch(`${apiBase}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();

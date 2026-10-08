@@ -43,25 +43,70 @@ export const App: React.FC = () => {
     if (!supabase) return;
 
     const syncSession = async (session: any) => {
+      console.log('[Auth] Syncing Supabase session:', session);
       if (!session?.user) return;
       const u = session.user;
       const meta = u.user_metadata || {};
       const fullName = meta.full_name || meta.name || u.email?.split('@')[0] || 'Google Rider';
       const email = u.email || `${u.id.substring(0, 8)}@fairride.auth`;
+      const avatarUrl = meta.avatar_url || meta.picture || undefined;
 
+      // Construct immediate session object to update UI right away
+      const initialSessionObj: UserSession = {
+        userId: u.id,
+        name: fullName,
+        email: email,
+        phone: u.phone || '+91 9800000002',
+        role: 'PASSENGER',
+        trustScore: 100,
+        walletBalance: 100,
+        fairPoints: 100,
+        isVerified: true,
+        avatarUrl: avatarUrl
+      };
+
+      // 1. Immediately log in the user in client state so the Navbar switches from "Sign In" to user profile
+      login(initialSessionObj, session.access_token);
+
+      // 2. Direct database storage in Supabase public.users table
+      if (supabase) {
+        try {
+          console.log('[Auth] Upserting user record into Supabase public.users...');
+          const { error: sbErr } = await supabase.from('users').upsert({
+            id: u.id,
+            email: email.toLowerCase().trim(),
+            full_name: fullName,
+            role: 'PASSENGER',
+            avatar_url: avatarUrl || null,
+            wallet_balance: 1000.00
+          }, { onConflict: 'id' });
+
+          if (sbErr) {
+            console.warn('[Auth] Supabase public.users upsert notice:', sbErr.message);
+          } else {
+            console.log('[Auth] User successfully stored in Supabase public.users table!');
+          }
+        } catch (err) {
+          console.warn('[Auth] Direct Supabase storage error:', err);
+        }
+      }
+
+      // 3. Sync to backend API (MongoDB / Server sync)
       try {
+        console.log('[Auth] Calling backend /auth/google-sync...');
         const res = await api.syncGoogleAuth({
           email,
           name: fullName,
-          avatarUrl: meta.avatar_url || meta.picture,
+          avatarUrl: avatarUrl,
           supabaseUid: u.id,
           role: 'PASSENGER'
         });
-
-        const userData = res.data?.user;
+        
+        console.log('[Auth] Backend sync successful:', res);
+        const userData = res.data?.user || res.data;
         const accessToken = res.data?.accessToken || session.access_token;
 
-        const sessionObj: UserSession = {
+        const updatedSessionObj: UserSession = {
           userId: userData?.userId || userData?._id || u.id,
           name: fullName,
           email: email,
@@ -72,37 +117,26 @@ export const App: React.FC = () => {
           fairPoints: userData?.fairPoints ?? 100,
           isVerified: true,
           referralCode: userData?.referralCode,
-          avatarUrl: meta.avatar_url || meta.picture
+          avatarUrl: avatarUrl
         };
 
-        login(sessionObj, accessToken);
-      } catch {
-        // Fallback local login if backend is booting or syncing
-        const fallbackSession: UserSession = {
-          userId: u.id,
-          name: fullName,
-          email: email,
-          phone: u.phone || '+91 9800000002',
-          role: 'PASSENGER',
-          trustScore: 100,
-          walletBalance: 100,
-          fairPoints: 100,
-          isVerified: true,
-          avatarUrl: meta.avatar_url || meta.picture
-        };
-        login(fallbackSession, session.access_token);
+        login(updatedSessionObj, accessToken);
+      } catch (err) {
+        console.warn('[Auth] Backend API sync unreachable or failed (using Supabase session):', err);
       }
     };
 
-    // Check existing or returned OAuth session (e.g. from redirect hash/query)
+    // Check existing or returned OAuth session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session && !isAuthenticated) {
+      console.log('[Auth] Initial getSession result:', session ? 'Found' : 'Null');
+      if (session) {
         syncSession(session);
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session && !isAuthenticated) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log(`[Auth] onAuthStateChange event: ${event}`, session ? 'Has Session' : 'No Session');
+      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
         syncSession(session);
       }
     });
@@ -110,7 +144,7 @@ export const App: React.FC = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [isAuthenticated]);
+  }, []);
 
   const isLanding = activeRoleView === 'PASSENGER' && passengerSubTab === 'LANDING';
 

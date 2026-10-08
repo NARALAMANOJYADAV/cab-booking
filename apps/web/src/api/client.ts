@@ -1,6 +1,15 @@
 import { useAppStore } from '../store/useAppStore';
 
-const API_BASE = '/api/v1';
+const getApiBase = () => {
+  const envUrl = (import.meta.env.VITE_API_URL || (import.meta as any).env?.VITE_BACKEND_URL || '') as string;
+  if (envUrl && envUrl.trim()) {
+    const cleaned = envUrl.trim().replace(/\/+$/, '');
+    return cleaned.endsWith('/api/v1') ? cleaned : `${cleaned}/api/v1`;
+  }
+  return '/api/v1';
+};
+
+export const API_BASE = getApiBase();
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = useAppStore.getState().token;

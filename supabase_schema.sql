@@ -179,6 +179,25 @@ ON public.bookings FOR UPDATE
 TO authenticated, anon
 USING (true);
 
+-- Allow users to view and manage their own profiles in public.users
+DROP POLICY IF EXISTS "Public can view users" ON public.users;
+CREATE POLICY "Public can view users" 
+ON public.users FOR SELECT 
+TO authenticated, anon 
+USING (true);
+
+DROP POLICY IF EXISTS "Users can insert profile" ON public.users;
+CREATE POLICY "Users can insert profile" 
+ON public.users FOR INSERT 
+TO authenticated, anon 
+WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Users can update profile" ON public.users;
+CREATE POLICY "Users can update profile" 
+ON public.users FOR UPDATE 
+TO authenticated, anon 
+USING (true);
+
 -- Allow service role full bypass on all tables (Backend API service key)
 CREATE POLICY "Service role full access users" ON public.users FOR ALL TO service_role USING (true);
 CREATE POLICY "Service role full access drivers" ON public.drivers FOR ALL TO service_role USING (true);
@@ -187,6 +206,43 @@ CREATE POLICY "Service role full access fare_locks" ON public.fare_locks FOR ALL
 CREATE POLICY "Service role full access safety" ON public.safety_incidents FOR ALL TO service_role USING (true);
 CREATE POLICY "Service role full access disputes" ON public.disputes FOR ALL TO service_role USING (true);
 CREATE POLICY "Service role full access earnings" ON public.driver_earnings FOR ALL TO service_role USING (true);
+
+-- ====================================================================
+-- 9b. AUTOMATIC TRIGGER FOR GOOGLE / SUPABASE OAUTH USERS
+-- ====================================================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.users (
+    id,
+    email,
+    full_name,
+    role,
+    avatar_url,
+    wallet_balance
+  )
+  VALUES (
+    new.id,
+    new.email,
+    COALESCE(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
+    'PASSENGER',
+    COALESCE(new.raw_user_meta_data->>'avatar_url', new.raw_user_meta_data->>'picture'),
+    1000.00
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    full_name = EXCLUDED.full_name,
+    avatar_url = EXCLUDED.avatar_url,
+    updated_at = now();
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger execution automatically on auth.users signup/signin
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- ====================================================================
 -- 10. REALTIME CONFIGURATION (Idempotent)

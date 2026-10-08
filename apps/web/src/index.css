@@ -157,3 +157,12 @@
   background-size: 300% 300%;
   animation: flow-gradient 6s infinite linear;
 }
+
+/* Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

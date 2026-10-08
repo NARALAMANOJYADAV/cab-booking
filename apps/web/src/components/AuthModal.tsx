@@ -80,11 +80,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       if (isSupabaseReady()) {
         await signInWithGoogle(window.location.origin);
       } else {
-        // Fallback simulation if supabase env keys are not ready
+        const userEmail = window.prompt("Google Auth Simulation: Enter your Google email address to continue:", "user@gmail.com");
+        if (!userEmail) {
+          setIsGoogleLoading(false);
+          return;
+        }
+        const userName = userEmail.split('@')[0] || 'Google User';
+        
         const mockGoogleUser: UserSession = {
           userId: 'usr_google_' + Date.now(),
-          name: 'Google User',
-          email: 'user.google@gmail.com',
+          name: userName,
+          email: userEmail,
           phone: '+91 9800000002',
           role: selectedRole === 'DRIVER' ? 'DRIVER' : 'PASSENGER',
           trustScore: 100,
@@ -94,7 +100,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         };
         login(mockGoogleUser, 'token_google_mock_' + Date.now());
         setActiveRoleView(selectedRole);
-        setSuccessMsg('Signed in with Google! Welcome to FairRide.');
+        setSuccessMsg(`Signed in as ${userName} via Google!`);
         setTimeout(() => {
           onClose();
           if (onSuccess) onSuccess();
@@ -513,7 +519,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-bold text-slate-700 block mb-1">Mobile Number</label>
                       <input

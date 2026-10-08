@@ -751,7 +751,7 @@ export const PassengerHomePage: React.FC = () => {
 
               {/* Scheduled Date & Time Pickers */}
               {isScheduled && (
-                <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-200 animate-in fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200 animate-in fade-in">
                   <div>
                     <label className="text-[10px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">
                       Trip Date
